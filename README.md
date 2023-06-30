@@ -13,7 +13,9 @@ The country I'm living in, and TBC internally, use the metric system. I've added
 With TBC V5.90 the Ironpython version was changed from 2.7 to 3.4. That syntax change made it necessary to have two separate repositories.
 
 # Installation
-The collection of files found in this repository must be stored in the following folder.
+The size of the repository results mainly from the animated GIF's in the Help folder.
+
+The collection of files included in the ZIP archive must be extracted into the following folder.
 
 until version V5.81
 "C:\ProgramData\Trimble\MacroCommands\SCR Macros"
