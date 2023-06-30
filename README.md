@@ -25,7 +25,7 @@ from version V5.90 onwards
 "C:\ProgramData\Trimble\MacroCommands3\SCR Macros"
 ![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/57d158e5-5a77-40fd-8bbe-3733218dafa7)
 
-
+## some background information
 Each script needs to import several assemblies at startup.
 In order to simplify the maintenance I have outsourced them into one single file "SCR_Imports.py" that must be located in the above mentioned folder.
 
