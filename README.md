@@ -17,12 +17,11 @@ The collection of files found in this repository must be stored in the following
 
 until version V5.81
 "C:\ProgramData\Trimble\MacroCommands\SCR Macros"
-![image](https://github.com/RonnySchneider/SCR_TBC_Macros_Public/assets/112836384/49e29fd8-a553-49ac-98ac-d5b6061d30f9)
-
+![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/d39fb9a5-4379-47c2-a4d0-5e8f18443f07)
 
 from version V5.90 onwards
 "C:\ProgramData\Trimble\MacroCommands3\SCR Macros"
-![image](https://github.com/RonnySchneider/SCR_TBC_Macros_Public/assets/112836384/cf081ecc-3fc9-413e-82c4-b0614a4e0156)
+![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/57d158e5-5a77-40fd-8bbe-3733218dafa7)
 
 
 Each script needs to import several assemblies at startup.
