@@ -19,11 +19,13 @@ The collection of files included in the ZIP archive must be extracted into the f
 
 until version V5.81
 "C:\ProgramData\Trimble\MacroCommands\SCR Macros"
-![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/d39fb9a5-4379-47c2-a4d0-5e8f18443f07)
+![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/f27db62c-169a-4261-9a22-12bd32f05954)
+
 
 from version V5.90 onwards
 "C:\ProgramData\Trimble\MacroCommands3\SCR Macros"
-![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/57d158e5-5a77-40fd-8bbe-3733218dafa7)
+![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/1f236359-a9ab-4a74-a9c9-83df6d98d596)
+
 
 ## some background information
 Each script needs to import several assemblies at startup.
