@@ -18,12 +18,12 @@ The size of the repository results mainly from the animated GIF's in the Help fo
 The collection of files included in the ZIP archive must be extracted into the following folder.
 
 until version V5.81
-"C:\ProgramData\Trimble\MacroCommands\SCR Macros"
+"C:\ProgramData\Trimble\MacroCommands"
 ![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/f27db62c-169a-4261-9a22-12bd32f05954)
 
 
 from version V5.90 onwards
-"C:\ProgramData\Trimble\MacroCommands3\SCR Macros"
+"C:\ProgramData\Trimble\MacroCommands3"
 ![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/1f236359-a9ab-4a74-a9c9-83df6d98d596)
 
 
