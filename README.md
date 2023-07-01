@@ -43,7 +43,7 @@ execfile("C:\ProgramData\Trimble\MacroCommands\SCR Macros\SCR_Imports.py")
 
 Trimble occasionally changes the namespace of some assemblies in a new release of TBC. This is unfortunately not documented anywhere. As developer you'll find out when the import fails in a new version. In that case the imports file needs to be updated, and that's the reason for all those try/except calls in it.
 
-# Developing Macros for TBC
+# Developing your own Macros for TBC
 You'll need a free TrimbleID to access the following pages.
 
 See the getting started guide here
