@@ -13,18 +13,19 @@ The country I'm living in, and TBC internally, use the metric system. I've added
 With TBC V5.90 the Ironpython version was changed from 2.7 to 3.4. That syntax change made it necessary to have two separate repositories.
 
 # Installation
-The collection of files found in this repository must be stored in the following folder.
+The size of the repository results mainly from the animated GIF's in the Help folder.
+
+The collection of files included in the ZIP archive must be extracted into the following folder.
 
 until version V5.81
 "C:\ProgramData\Trimble\MacroCommands\SCR Macros"
-![image](https://github.com/RonnySchneider/SCR_TBC_Macros_Public/assets/112836384/49e29fd8-a553-49ac-98ac-d5b6061d30f9)
-
+![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/d39fb9a5-4379-47c2-a4d0-5e8f18443f07)
 
 from version V5.90 onwards
 "C:\ProgramData\Trimble\MacroCommands3\SCR Macros"
-![image](https://github.com/RonnySchneider/SCR_TBC_Macros_Public/assets/112836384/cf081ecc-3fc9-413e-82c4-b0614a4e0156)
+![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/57d158e5-5a77-40fd-8bbe-3733218dafa7)
 
-
+## some background information
 Each script needs to import several assemblies at startup.
 In order to simplify the maintenance I have outsourced them into one single file "SCR_Imports.py" that must be located in the above mentioned folder.
 
