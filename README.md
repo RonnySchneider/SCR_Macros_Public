@@ -29,7 +29,7 @@ from version V5.90 onwards
 ![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/1f236359-a9ab-4a74-a9c9-83df6d98d596)
 
 
->:memo: <p style="color:blue">**Note:**</p> ***New with V5.90, and due to supposedly popular demand, is Trimble enabling the write protection for this folder during the TBC installation.***
+>:memo: <style>p{color:red;}**Note:**</style> ***New with V5.90, and due to supposedly popular demand, is Trimble enabling the write protection for this folder during the TBC installation.***
 >
 >***To avoid error messages during the first TBC start and during runtime of some macros, which create temporary CSV files, do the following:
 >-> Right click the folder
