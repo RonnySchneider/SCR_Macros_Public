@@ -28,12 +28,13 @@ from version V5.90 onwards
 
 ![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/1f236359-a9ab-4a74-a9c9-83df6d98d596)
 
+<font color="red">
 >:memo: **Note:** ***New with V5.90, and due to supposedly popular demand, is Trimble enabling the write protection for this folder during the TBC installation.***
 >
 >***To avoid error messages during the first TBC start and during runtime of some macros, which create temporary CSV files, do the following:
 >-> Right click the folder
 >-> go to Properties -> Security Tab -> give Users write rights or full control***
-
+</font>
 
 ## some background information
 Each script needs to import several assemblies at startup.
