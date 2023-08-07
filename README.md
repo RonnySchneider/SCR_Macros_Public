@@ -32,6 +32,7 @@ from version V5.90 onwards
 >:memo: **Note:** ***New with V5.90, and due to supposedly popular demand, is Trimble enabling the write protection for this folder during the TBC installation.***
 >
 >*-**To avoid error messages during the first TBC start and during runtime of some macros, which create temporary CSV files, do the following:
+>
 >--> Right click the folder
 >--> go to Properties -> Security Tab -> give Users write rights or full control***
 
