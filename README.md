@@ -19,6 +19,7 @@ The collection of files included in the ZIP archive must be extracted into the f
 
 until version V5.81
 "C:\ProgramData\Trimble\MacroCommands"
+
 ![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/f27db62c-169a-4261-9a22-12bd32f05954)
 
 
@@ -28,6 +29,7 @@ New with V5.90, and due to supposedly popular demand, is Trimble enabling the wr
 To avoid error messages during the first TBC start and during runtime of some macros, which create temporary CSV files, do the following:
 -> Right click the folder
 -> go to Properties -> Security Tab -> give Users write rights or full control
+
 ![image](https://github.com/RonnySchneider/SCR_Macros_Public/assets/112836384/1f236359-a9ab-4a74-a9c9-83df6d98d596)
 
 
