@@ -1,0 +1,78 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="300" d:DesignHeight="800">
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+        <StackPanel>
+            <Label Content="All Layers:"/>
+            <UniformGrid Columns="2">
+                <Label Content="Pre-Filter List&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                <TextBox x:Name="ticklistfilter" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+            </UniformGrid>
+            <GroupBox Height="200">
+                <Wpf:CheckedListBoxEntityPicker x:Name="layerticklist" Background="#FFF3F3F7" MouseDoubleClick="layerticklist_doubleclick"/>
+            </GroupBox>
+            <Label Content="Double-Click to add to list below,&#xA;or highlight and use Arrow-Button:"/>
+        </StackPanel>
+    </Border>
+    <!--<Label Content="tick Layers and use those Buttons"/>-->
+    <UniformGrid Columns="3">
+        <Button x:Name="addtoshortlist" Content="&#x1F87B;" Click="addbutton_Click"/>
+        <Button x:Name="removefromshortlist" Content="&#x1F879; (single)" Click="removebutton_Click"/>
+        <Button x:Name="removeallfromshortlist" Content="&#x1F879; (all)" Click="removeallbutton_Click"/>
+    </UniformGrid>
+
+    <Border BorderBrush="#FFC700FF" BorderThickness="1" Background="#FFB488C0">
+        <StackPanel>
+            <Label Content="Relayer Target Selection:&#xA;Double-Click on Layer to re-layer selected objects"/>
+
+            <GroupBox Height="200">
+                <Wpf:CheckedListBoxEntityPicker x:Name="relayerticklist" Background="#FFF3F3F7" MouseDoubleClick="relayerticklist_doubleclick"/>
+            </GroupBox>
+        </StackPanel>
+    </Border>
+    <Border BorderBrush="#FFE0AB22" BorderThickness="1" Background="#FFE8D39D">
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="85"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="select Objects:" Grid.Column="0"/>
+                <Wpf:MemberSelection x:Name="objs" Grid.Column="1"/>
+            </Grid>
+            <CheckBox x:Name="filter_objs" Content="filter for Points"/>
+            <StackPanel IsEnabled="{Binding IsChecked, ElementName=filter_objs}">
+                <Grid x:Name="separatefilters">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                        <CheckBox x:Name="pointnamefiltercheckbox" Content="Name-Filter (case insensitive)" Grid.Column="0" Grid.Row="0"/>
+                        <TextBox x:Name="pointnamefilter" Text="" IsEnabled="{Binding IsChecked, ElementName=pointnamefiltercheckbox}" Grid.Column="1" Grid.Row="0"/>
+                        <CheckBox x:Name="pointcodefiltercheckbox" Content="Featurecode-Filter (case insensitive)" Grid.Column="0" Grid.Row="1"/>
+                        <TextBox x:Name="pointcodefilter" Text="" IsEnabled="{Binding IsChecked, ElementName=pointcodefiltercheckbox}" Grid.Column="1" Grid.Row="1"/>
+                </Grid>
+                <CheckBox x:Name="combinedfiltercheckbox" Content="matches Name or Featurecode (case insensitive)" Checked="combinedfiltercheckboxChanged" Unchecked="combinedfiltercheckboxChanged"/>
+                <TextBox x:Name="combinedfilter" Text="" IsEnabled="{Binding IsChecked, ElementName=combinedfiltercheckbox}" />
+            </StackPanel>
+
+
+            <!--<UniformGrid Columns="2">
+                <RadioButton x:Name="pointfilteror" Content="OR" IsChecked="True" GroupName="orand"/>
+                <RadioButton x:Name="pointfilterand" Content="AND" GroupName="orand"/>
+            </UniformGrid>-->
+            <Label Content="if it's ticked it needs to be found to pass the Filter" Grid.Column="0"/>
+        </StackPanel>
+    </Border>
+
+
+
+    <Label x:Name="error" Content="" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+</StackPanel> 

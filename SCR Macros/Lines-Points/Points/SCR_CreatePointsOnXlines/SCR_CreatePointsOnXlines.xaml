@@ -1,0 +1,127 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="749.8" >
+
+    <Label Content="create Points where a XLine crosses another line"/>
+
+    <Expander BorderThickness="2,2,2,2" IsExpanded="{Binding IsChecked, ElementName=creationmode}" Background="#FFCBECC2" BorderBrush="#FF337C27">
+
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="creationmode" IsChecked="True" VerticalAlignment="Center" GroupName="inspection"/>
+                <Label Content="Point Creation Mode"/>
+            </WrapPanel>
+
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=creationmode}">
+            <Label Content="select Output Layer:"/>
+            <Wpf:LayerPicker x:Name="layerpicker"/>
+
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <CheckBox x:Name="createnamedpoint" Content="create named Point (instead of simple CAD-Point)" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=createnamedpoint}">
+                        <UniformGrid Columns="2">
+                            <Label Content="Point Text Part" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <TextBox x:Name="pointnametext"/>
+                            <Label Content="Point Start Number" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:NumericEdit x:Name="pointnamestart"/>
+                            <Label Content="Point Number Increment" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:NumericEdit x:Name="pointnameincrement"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Label Content="Line 1 - Interval is used on that one"/>
+            <Border BorderBrush="Green" BorderThickness="2">
+                <Wpf:SelectEntity x:Name="linepicker1"/>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <CheckBox x:Name="chooserange" Content="choose Chainage range" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=chooserange}">
+                        <UniformGrid Columns="2">
+                            <Label Content="Start Chainage:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:StationEdit x:Name="startstation" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                            <Label Content="End Chainage:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:StationEdit x:Name="endstation" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Label Content="Line 2"/>
+            <Border BorderBrush="Blue" BorderThickness="2">
+                <Wpf:SelectEntity x:Name="linepicker2"/>
+            </Border>
+
+
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <UniformGrid Columns="2">
+                        <Label x:Name="labelinterval" Content="Interval:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="interval" />
+                        <!--VerticalAlignment="Center"-->
+                        <!--VerticalContentAlignment="Center"/>-->
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel>
+                    <UniformGrid Columns="2">
+                        <Label x:Name="labeleloffset" Content="Elevation Offset:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="eloffset"/>
+                        <!--VerticalAlignment="Center" VerticalContentAlignment="Center"/>-->
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+
+            <CheckBox x:Name="includegradechanges" Content="include Grade Changes on Line 2" IsChecked="True"/>
+            <CheckBox x:Name="drawxlines" Content="draw XLines" IsChecked="False"/>
+            <CheckBox x:Name="benchpattern" Content="create bench pattern" IsChecked="False" IsEnabled="{Binding IsChecked, ElementName=drawxlines}"/>
+            <CheckBox x:Name="drawpoints" Content="draw Points" IsChecked="True"/>
+
+        </StackPanel>
+    </Expander>
+
+    <Expander BorderThickness="2,2,2,2" IsExpanded="{Binding IsChecked, ElementName=inspectionmode}" Background="#FFDABB83" BorderBrush="#FFCD8025">
+
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="inspectionmode" IsChecked="False" VerticalAlignment="Center" GroupName="inspection"/>
+                <Label Content="Inspection Mode"/>
+            </WrapPanel>
+
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=inspectionmode}">
+            <Label Content="Line 1 - Reference Line"/>
+            <Border BorderBrush="Red" BorderThickness="2">
+                <Wpf:SelectEntity x:Name="linepicker3"/>
+            </Border>
+            <Label Content="Reference Chainage on Line 1:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <Wpf:StationEdit x:Name="refstation" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+            <Label Content="Line 2 - Inspection Line"/>
+            <Border BorderBrush="Magenta" BorderThickness="2">
+                <Wpf:SelectEntity x:Name="linepicker4"/>
+            </Border>
+            <Label Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <UniformGrid Columns="2">
+                <Label x:Name="inspectionresultel" Content="Elevation on Line 2: " VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                <Label x:Name="inspectel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold"/>
+                <Label x:Name="inspectionresultos" Content="Offset to Line 2: " VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                <Label x:Name="inspectos" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold"/>
+            </UniformGrid>
+            <Label Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+
+        </StackPanel>
+    </Expander>
+    
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+
+</StackPanel> 
+    

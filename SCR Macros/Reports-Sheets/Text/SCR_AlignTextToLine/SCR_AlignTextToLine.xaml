@@ -1,0 +1,81 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="872.093" >
+    <Label Content="align Text to Line"/>
+    <GroupBox Header="Input" Background="#FFCBECC2" BorderBrush="#FF337C27">
+        <StackPanel>
+            <Border Background="#FF93DA80" BorderThickness="1" BorderBrush="#FF97BD92">
+                <StackPanel>
+                    <Label Content="select Text"/>
+                    <Wpf:MemberSelection x:Name="textobjs"/>
+                </StackPanel>
+            </Border>
+
+            <Border BorderThickness="1" BorderBrush="#FF97BD92">
+                <StackPanel>
+                    <RadioButton x:Name="singleline" Content="select a single Line" IsChecked="True" VerticalAlignment="Center" GroupName="group1"/>
+                    <Wpf:SelectEntity x:Name="linepicker1" IsEnabled="{Binding IsChecked, ElementName=singleline}"/>
+
+                    <RadioButton x:Name="closestline" Content="find closest Line in Layer:" IsChecked="False" VerticalAlignment="Center" GroupName="group1"/>
+                    <Wpf:LayerPicker x:Name="layerpicker" IsEnabled="{Binding IsChecked, ElementName=closestline}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </GroupBox>
+
+    <GroupBox Header="Offset" BorderBrush="#FFC700FF" Background="#FFB488C0">
+        <StackPanel>
+            <Border BorderBrush="#FFC700FF" Background="#FFB488C0">
+                <StackPanel>
+                    <CheckBox x:Name="adjustoffset" Content="adjust Text Offset" IsChecked="True" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=adjustoffset}">
+                        <UniformGrid Columns="2">
+                            <Label x:Name="labeloffset" Content="Offset" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:OffsetEdit x:Name="newoffset"  VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF8E42A2" Background="#FFD1B6D8">
+                <StackPanel>
+                    <CheckBox x:Name="textelfromlineel" Content="change Text Elevation to Line Elevation" IsChecked="True" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </GroupBox>
+
+
+    <GroupBox Header="set Rotation" Background="#FFDABB83" BorderBrush="#FFCD8025">
+        <StackPanel>
+            <Border BorderBrush="#FFCD8025">
+                <StackPanel>
+                    <RadioButton x:Name="rotfromline" Content="from Line" IsChecked="True" VerticalAlignment="Center" GroupName="group2"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=rotfromline}">
+                        <Label Content="additional Rotation"/>
+                        <Wpf:AngularEdit x:Name="addrot"/>
+                        <UniformGrid Columns="2">
+                            <Button x:Name="ccw45" Content="&#x21b6; 45&#x00b0;" Click="ccw45_Click"/>
+                            <Button x:Name="cw45" Content="45&#x00b0; &#x21b7;" Click="cw45_Click"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FFCD8025" Background="#FFFFE2AC">
+                <StackPanel>
+                    <RadioButton x:Name="rotfixed" Content="fixed Bearing" IsChecked="False" VerticalAlignment="Center" GroupName="group2"/>
+                    <Wpf:BearingEdit x:Name="fixedrot" IsEnabled="{Binding IsChecked, ElementName=rotfixed}"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </GroupBox>
+
+    
+    
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+
+</StackPanel> 
+    

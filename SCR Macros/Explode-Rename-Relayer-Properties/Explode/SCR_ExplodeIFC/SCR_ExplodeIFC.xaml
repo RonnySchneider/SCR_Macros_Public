@@ -1,0 +1,57 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="362" >
+    <Label Content="explode IFC object with face angle filter"/>
+    <Border Background="#FFCBECC2" BorderBrush="#FF337C27">
+        <StackPanel>
+
+            <Label Content="select IFC Objects:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <Wpf:MemberSelection x:Name="ifcs" Height="30" Margin="0" IsEnabled="True" UseLocalSelection="True"/>
+
+            <!--<Label Content="combine double vertices within n decimals" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <Wpf:NumericEdit x:Name="toldecimals" Value="6" NumberOfDecimals="0" VerticalAlignment="Center" VerticalContentAlignment="Center"/>-->
+            <Label Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+
+            <CheckBox x:Name="create3dfaces" Content="create 3DFaces (untick for lines)" IsChecked="False" VerticalAlignment="Center"/>
+            <Expander BorderThickness="2,2,2,2" IsExpanded="{Binding IsChecked, ElementName=anglefilter}" Background="#FFDABB83" BorderBrush="#FFCD8025">
+                <Expander.Header>
+                    <WrapPanel>
+                        <CheckBox x:Name="anglefilter" IsChecked="False" VerticalAlignment="Center"/>
+                        <Label Content="filter faces by slope angle"/>
+                    </WrapPanel>
+
+                </Expander.Header>
+                <StackPanel IsEnabled="{Binding IsChecked, ElementName=anglefilter}">
+
+
+                    <Label Content="Upwards = 90&#xA;Vertical = 180&#xA;Downwards = 270"/>
+                    <UniformGrid Columns="2">
+                        <Label Content="Maindirection" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                        <Wpf:VerticalAngleEdit x:Name="maindirectionui"/>
+
+                        <Label Content="Angle Variation - Up" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                        <Wpf:AngularEdit x:Name="anglevariationupui" />
+                        <Label Content="Angle Variation - Down" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                        <Wpf:AngularEdit x:Name="anglevariationdownui" />
+                    </UniformGrid>
+                </StackPanel>
+            </Expander>
+
+            <UniformGrid Columns="2">
+                <CheckBox x:Name="setcolor" Content="Ouput Color" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                <Wpf:ColorPicker x:Name="outcolorpicker"/>
+                <RadioButton x:Name="picklayer" Content="select Layer" IsChecked="False" GroupName="1" VerticalContentAlignment="Center"/>
+                <Wpf:LayerPicker x:Name="layerpicker"  IsEnabled="{Binding IsChecked, ElementName=picklayer}"/>
+                <RadioButton x:Name="addlayersuffix" Content="Source Layer Name Suffix" IsChecked="True" GroupName="1" VerticalContentAlignment="Center"/>
+                <TextBox x:Name="addtolayername" VerticalAlignment="Center" VerticalContentAlignment="Center" IsEnabled="{Binding IsChecked, ElementName=addlayersuffix}"/>
+            </UniformGrid>
+        </StackPanel>
+    </Border>
+
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+</StackPanel> 

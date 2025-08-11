@@ -1,0 +1,103 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="872.093" >
+    <Label Content="create Pavement Step Lines"/>
+
+    <Label Content="FSL Surface:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    <Wpf:ComboBoxEntityPicker x:Name="designsurfacepicker" IsEnabled="True" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+
+    <Label Content="select Alignment"/>
+    <Wpf:SelectEntity x:Name="linepicker1"/>
+
+ <GroupBox x:Name="stationframe" IsEnabled="False">
+    <StackPanel>
+            <Border  BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <UniformGrid Columns="2">
+                        <Label Content="Station Offset +/-" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="stationoffset" Distance="0.0015" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                    </UniformGrid>
+                    <CheckBox x:Name="stepskew" Content="use Skew Angle (only for the two Step lines;&#xA;all other lines will be perp. to the Alignment)" IsChecked="False" Checked="stepskewChanged" Unchecked="stepskewChanged"/>
+                    <Wpf:BearingEdit x:Name="skewbearingpicker" IsEnabled="False"/>
+                </StackPanel>
+            </Border>
+            <Border  BorderBrush="#FF7D7D7D" BorderThickness="1">
+            <StackPanel>
+                <UniformGrid Columns="2">
+                    <Label Content="Station:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:StationEdit x:Name="station" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+        <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+            <StackPanel>
+                <UniformGrid Columns="2">
+                    <Label Content="Offset 1" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:OffsetEdit x:Name="offsetleft" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                    <Label Content="Offset 2" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:OffsetEdit x:Name="offsetright" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+        <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+            <StackPanel>
+                    <Label Content="Use Coordinate Picker or enter manually" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:CoordinateEdit x:Name="coordpick1"/>
+                <UniformGrid Columns="2">
+                    <Label Content="Depth Low Station" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="depthlowstation" Distance="-0.300" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+            <StackPanel>
+                    <Label Content="Use Coordinate Picker or enter manually" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:CoordinateEdit x:Name="coordpick2"/>
+                    <UniformGrid Columns="2">
+                        <Label Content="Depth High Station" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="depthhighstation" Distance="-0.200" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel>
+                    <Label Content="additional Profiles +/-" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <UniformGrid Columns="2">
+                        <Label Content="No. of Lines" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:NumericEdit x:Name="additionallines" Value="2"/>
+                        <Label Content="Interval" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="interval" Distance="0.2" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <CheckBox x:Name="extendtodtm" Content="extend Lines to DTM" Height="25" IsChecked="True"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel>
+                    <CheckBox x:Name="adddtmprofile" Content="add DTM profile" IsChecked="True" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <UniformGrid Columns="2">
+                        <Label Content="for x" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="dtmprofilelength" Distance="10.000" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+</GroupBox>
+
+
+ <Label Content="select Output Line Layer:"/>
+ <Wpf:LayerPicker x:Name="layerpicker"/>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+
+
+
+</StackPanel> 
+    

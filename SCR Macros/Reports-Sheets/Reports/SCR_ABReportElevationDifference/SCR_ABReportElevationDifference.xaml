@@ -1,0 +1,278 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="312.4" d:DesignHeight="1200">
+    <GroupBox Header="Units and Textsize">
+        <StackPanel>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="45*"/>
+                            <ColumnDefinition Width="30*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Distance Units" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <ComboBox Grid.Column="1" x:Name="unitpicker" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <CheckBox Grid.Column="2" x:Name="addunitsuffix" Content="add&#xA;Output-Suffix" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel>
+                    <UniformGrid Columns="4">
+                        <Label Content="Text Decimals" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:NumericEdit x:Name="textdecimals" Value="3"/>
+                        <Button x:Name="decdecimals" Content="-" Click="decdecimals_Click" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Button x:Name="incdecimals" Content="+" Click="incdecimals_Click" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <UniformGrid Columns="2">
+                        <Label Content="Text Height" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="textheight" Distance="0.2" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </GroupBox>
+    <GroupBox>
+        <Expander Header="Thresholds [m] and Colors"  IsExpanded="False">
+            <StackPanel>
+                <Border Background="#FF93DA80" BorderThickness="1" BorderBrush="#FF97BD92">
+                    <StackPanel>
+                        <UniformGrid Columns="3">
+                            <Label Content="&lt;=" Margin="0,0,39.6,0" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                            <Wpf:DistanceEdit x:Name="thresh1" Distance="0.005" Margin="-39.6,0,49.2,0" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:ColorPicker x:Name="thresh1colorpicker" Margin="-49.2,0,-0.2,0"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+                <Border BorderThickness="1" BorderBrush="#FF97BD92">
+                    <StackPanel>
+                        <UniformGrid Columns="3">
+                            <Label Content="&lt;=" Margin="0,0,39.6,0" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                            <Wpf:DistanceEdit x:Name="thresh2" Distance="0.010" Margin="-39.6,0,49.2,0" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:ColorPicker x:Name="thresh2colorpicker" Margin="-49.2,0,-0.2,0"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+                <Border Background="#FF93DA80" BorderThickness="1" BorderBrush="#FF97BD92">
+                    <StackPanel>
+                        <UniformGrid Columns="3">
+                            <Label Content="&lt;=" Margin="0,0,39.6,0" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                            <Wpf:DistanceEdit x:Name="thresh3" Distance="0.015" Margin="-39.6,0,49.2,0" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:ColorPicker x:Name="thresh3colorpicker" Margin="-49.2,0,-0.2,0"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+                <Border BorderThickness="1" BorderBrush="#FF97BD92">
+                    <StackPanel>
+                        <UniformGrid Columns="3">
+                            <Label Content="&gt;" Margin="0,0,39.6,0" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:DistanceEdit x:Name="thresh4" Distance="0.015" Margin="-39.6,0,49.2,0" VerticalAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden"/>
+                            <Wpf:ColorPicker x:Name="thresh4colorpicker" Margin="-49.2,0,-0.2,0"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Expander>
+    </GroupBox>
+    <GroupBox Header="Thresholds [m] and Colors" Background="#FFCBECC2" BorderBrush="#FF337C27">
+        <StackPanel>
+            <Border Background="#FF93DA80" BorderThickness="1" BorderBrush="#FF97BD92">
+                <StackPanel>
+                    <CheckBox x:Name="showcompareRL" Content="show RL of Compare Point" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=showcompareRL}">
+                        <UniformGrid Columns="2" Height="30">
+                            <Label Content="Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,2,-24,2.4"/>
+                            <TextBox x:Name="textcompareRL" Text="DesRL=" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="1,6,3,6.4"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border BorderThickness="1" BorderBrush="#FF97BD92">
+                <StackPanel>
+                    <CheckBox x:Name="showasbuiltRL" Content="show RL of Asbuilt Point" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=showasbuiltRL}">
+                        <UniformGrid Columns="2" Height="30">
+                            <Label Content="Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,2,-24,2.4"/>
+                            <TextBox x:Name="textasbuiltRL" Text="ABTOC=" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="1,6,3,6.4"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border Background="#FF93DA80" BorderThickness="1" BorderBrush="#FF97BD92">
+                <StackPanel>
+                    <CheckBox x:Name="showRLdifference" Content="show Difference between Asbuilt and Compare Point" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=showRLdifference}">
+                        <UniformGrid Columns="2" Height="30">
+                            <Label Content="Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,2,-24,2.4"/>
+                            <TextBox x:Name="textRLdifference" Text="dZ=" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="1,6,3,6.4"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border BorderThickness="1" BorderBrush="#FF97BD92">
+                <StackPanel>
+                    <CheckBox x:Name="drawleader" Content="draw Leader" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=drawleader}">
+                        <CheckBox x:Name="leaderarrow" Content="with Arrow" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <UniformGrid Columns="2" Height="30">
+                            <Label Content="Arrow Size" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,2,-24,2.4"/>
+                            <Wpf:DistanceEdit x:Name="leaderarrowsize" Distance="0.2" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="1,6,3,6.4" IsEnabled="{Binding IsChecked, ElementName=leaderarrow}"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </GroupBox>
+
+    <GroupBox Header="Compare-Elevation from" Background="#FFDABB83" BorderBrush="#FFCD8025">
+        <StackPanel>
+
+            <Border BorderThickness="1" BorderBrush="#FFCD8025">
+                <StackPanel>
+                    <RadioButton x:Name="usedtm" Content="use DTM for Elevation Difference" IsChecked="True" GroupName="designelevation" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=usedtm}">
+                        <UniformGrid Columns="2">
+                            <Label Content="Compare Surface:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:ComboBoxEntityPicker x:Name="comparesurfacepicker" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border BorderThickness="1" BorderBrush="#FFCD8025" Background="#FFFFE2AC">
+                <StackPanel>
+                    <RadioButton x:Name="usepoint" Content="use Point for Elevation Difference" GroupName="designelevation" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=usepoint}">
+                        <UniformGrid Columns="2">
+                            <Label Content="select Point:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:SelectEntity x:Name="comparepointpicker"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border BorderThickness="1" BorderBrush="#FFCD8025">
+                <StackPanel>
+                    <RadioButton x:Name="useline" Content="use specific Line for Elevation Difference" GroupName="designelevation" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=useline}">
+                        <UniformGrid Columns="2" Height="30">
+                            <Label Content="select Line"/>
+                            <Wpf:SelectEntity x:Name="linepicker"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border BorderThickness="1" BorderBrush="#FFCD8025" Background="#FFFFE2AC">
+                <StackPanel>
+                    <RadioButton x:Name="usemanualinput" Content="use manual Input for Elevation Difference" GroupName="designelevation" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=usemanualinput}">
+                        <UniformGrid Columns="2">
+                            <Label Content="enter Elevation:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:DistanceEdit x:Name="manualelevation" />
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border BorderThickness="1" BorderBrush="#FFCD8025">
+                <StackPanel>
+                    <RadioButton x:Name="uselayercontent" Content="find closest Line in whole Layer" GroupName="designelevation" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <StackPanel IsEnabled="{Binding IsChecked, ElementName=uselayercontent}">
+                        <UniformGrid Columns="2">
+                            <Label Content="Select Layer:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:LayerPicker x:Name="designlayerpicker" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Label Content="search radius:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:DistanceEdit x:Name="searchradius" Distance="0.1" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </GroupBox>
+
+    <Expander BorderBrush="#FFC700FF" Background="#FFB488C0" IsExpanded="{Binding IsChecked, ElementName=computethickness}">
+
+        <Expander.Header>
+            <WrapPanel>
+                <CheckBox x:Name="computethickness" IsChecked="False" VerticalAlignment="Center" />
+                <Label Content="add Thickness Computation"/>
+            </WrapPanel>
+
+        </Expander.Header>
+        <GroupBox Header="" BorderBrush="#FF8E42A2">
+            <StackPanel IsEnabled="{Binding IsChecked, ElementName=computethickness}">
+                <Border BorderBrush="#FF8E42A2" BorderThickness="1">
+                    <StackPanel>
+                        <Label Content="Select a Design Thickness Line or Surface (Underside?)"/>
+                        <Wpf:SelectEntity x:Name="designthicknessentity"/>
+                        <CheckBox x:Name="showdesignthicknessRL" Content="show RL of Design Thickness Point (Underside?)" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <StackPanel IsEnabled="{Binding IsChecked, ElementName=showdesignthicknessRL}">
+                            <UniformGrid Columns="2" Height="30">
+                                <Label Content="Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,2,-24,2.4"/>
+                                <TextBox x:Name="textdesignthicknessRL" Text="DesUS-RL=" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="1,6,3,6.4"/>
+                            </UniformGrid>
+                        </StackPanel>
+                        <CheckBox x:Name="showdesignthickness" Content="show Design Thickness" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <StackPanel IsEnabled="{Binding IsChecked, ElementName=showdesignthickness}">
+                            <UniformGrid Columns="2" Height="30">
+                                <Label Content="Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,2,-24,2.4"/>
+                                <TextBox x:Name="textdesignthickness" Text="DesThick=" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="1,6,3,6.4"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+
+                <Border BorderBrush="#FF8E42A2" BorderThickness="1" Background="#FFD1B6D8">
+                    <StackPanel>
+                        <Label Content="Select an Asbuilt Thickness Line or Surface (Blinding?)"/>
+                        <Wpf:SelectEntity x:Name="asbuiltthicknessentity"/>
+                        <CheckBox x:Name="showasbuiltthicknessRL" Content="show RL of Asbuilt Thickness Point (Blinding?)" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <StackPanel IsEnabled="{Binding IsChecked, ElementName=showasbuiltthicknessRL}">
+                            <UniformGrid Columns="2" Height="30">
+                                <Label Content="Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,2,-24,2.4"/>
+                                <TextBox x:Name="textasbuiltthicknessRL" Text="ABBlndRL=" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="1,6,3,6.4"/>
+                            </UniformGrid>
+                        </StackPanel>
+                        <CheckBox x:Name="showasbuiltthickness" Content="show Asbuilt Thickness" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <StackPanel IsEnabled="{Binding IsChecked, ElementName=showasbuiltthickness}">
+                            <UniformGrid Columns="2" Height="30">
+                                <Label Content="Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,2,-24,2.4"/>
+                                <TextBox x:Name="textasbuiltthickness" Text="ABThick=" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="1,6,3,6.4"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="#FF8E42A2" BorderThickness="1">
+                        <StackPanel>
+                            <CheckBox x:Name="showthicknessdeviation" Content="show Thickness Deviation" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <StackPanel IsEnabled="{Binding IsChecked, ElementName=showthicknessdeviation}">
+                                <UniformGrid Columns="2" Height="30">
+                                    <Label Content="Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,2,-24,2.4"/>
+                                    <TextBox x:Name="textthicknessdeviation" Text="dThick=" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="1,6,3,6.4"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </StackPanel>
+                </Border>
+            </StackPanel>
+        </GroupBox>
+
+    </Expander>
+
+    
+    <Label Content="select Layer for Report Data:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    <Wpf:LayerPicker x:Name="ablayerpicker"/>
+
+    <Label Content="AB Point:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    <Wpf:MemberSelection x:Name="abpointpicker"/>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+</StackPanel> 

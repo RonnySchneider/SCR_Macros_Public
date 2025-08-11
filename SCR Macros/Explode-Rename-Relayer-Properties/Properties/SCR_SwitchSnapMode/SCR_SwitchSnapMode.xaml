@@ -1,0 +1,48 @@
+<StackPanel Background="#FFF3F3F7"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
+    mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+    d:DesignWidth="222" d:DesignHeight="362">
+    <!--Title="switch snap mode" Height="60" Width="610" MinHeight="60" MinWidth="610">-->
+
+    <!--<StackPanel>-->
+
+        <StackPanel>
+        <!--<Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="520"/>
+            </Grid.ColumnDefinitions>-->
+            <!--<ToggleButton  Grid.Column="0" x:Name="buttonnosnap" Content="No Snap" Width="50" IsChecked="False" Checked="nosnapChanged" Unchecked="nosnapChanged"/>-->
+            <ToggleButton  x:Name="buttonnosnap" Content="No Snap" Width="50" IsChecked="False" Checked="nosnapChanged" Unchecked="nosnapChanged"/>
+            <!--<Label  Grid.Column="1"/>-->
+            <Label Width="20"/>
+                <!--<StackPanel Grid.Column="2" x:Name="buttonlist">-->
+                <StackPanel x:Name="buttonlist">
+                    <!--<UniformGrid Columns="13">-->
+                        <ToggleButton x:Uid="0" x:Name="buttonpoint" Content="Point" Width="120" IsChecked="True" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="1" x:Name="buttonend" Content="Segment-End" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="2" x:Name="buttonmid" Content="Segment-Mid" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="3" x:Name="buttonnear" Content="Near/Along Line" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="4" x:Name="buttoncenter" Content="Circle-Center" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="5" x:Name="buttoninsertion" Content="Text-Insertion" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="7" x:Name="buttonperp" Content="Perpendicular" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="8" x:Name="buttontangent" Content="Tangent" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="9" x:Name="buttonnode" Content="Surface/Mesh Vertex" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="11" x:Name="buttonintersection" Content="Intersection" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="12" x:Name="buttonfree" Content="Free" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="19" x:Name="buttonquad" Content="Circle-Quadrant" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                        <ToggleButton x:Uid="20" x:Name="buttonimage" Content="Vector-Ends on PDF" Width="120" IsChecked="False" Click="snapmodeClicked"/>
+                    <!--</UniformGrid>-->
+                </StackPanel>
+        <!--</Grid>-->
+        </StackPanel>
+        <Label x:Name="success" Content=""/>
+        <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+
+    <!--</StackPanel>-->
+</StackPanel> 

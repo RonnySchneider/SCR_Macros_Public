@@ -1,0 +1,69 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="245.277" d:DesignHeight="491.228"  >
+    <Label Content="import CSV as Table"/>
+
+    <Button x:Name="openbutton" Content="select CSV File" Height="42" HorizontalContentAlignment="Center" Click="openbutton_Click" />
+    <Label>
+        <TextBlock x:Name="openfilename" Text="C:\Users\ronny.schneider\Downloads\Bridges Wrights Creek proposed control.csv"/>
+    </Label>
+
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+        <StackPanel>
+            <UniformGrid Columns="2" Height="30">
+                <Label Content="select Textstyle" VerticalAlignment="Center"/>
+                <Wpf:TextStylePicker x:Name="textstylepicker" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+            </UniformGrid>
+        </StackPanel>
+    </Border>
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" >
+        <StackPanel>
+            <UniformGrid Columns="2" Height="30">
+                <Label Content="enter Textheight" VerticalAlignment="Center"/>
+                <Wpf:DistanceEdit x:Name="textheight" Distance="1.000" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="39,6,3,6.4"/>
+            </UniformGrid>
+        </StackPanel>
+    </Border>
+
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+        <StackPanel>
+            <UniformGrid Columns="2" Height="30">
+                <Label Content="select Text/Lineweight" VerticalAlignment="Center"/>
+                <Wpf:LineweightPicker x:Name="textweightpicker" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="36,2,0,1.4"/>
+            </UniformGrid>
+        </StackPanel>
+    </Border>
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" >
+        <StackPanel>
+            <UniformGrid Columns="2" Height="30">
+                <Label Content="Textmargin Left/Right" VerticalAlignment="Center"/>
+                <Wpf:DistanceEdit x:Name="marginlr" Distance="0.500" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="39,6,3,6.4"/>
+            </UniformGrid>
+        </StackPanel>
+    </Border>
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+        <StackPanel>
+            <UniformGrid Columns="2" Height="30">
+                <Label Content="Textmargin Top/Bottom" VerticalAlignment="Center"/>
+                <Wpf:DistanceEdit x:Name="margintb" Distance="0.200" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="39,6,3,6.4"/>
+            </UniformGrid>
+        </StackPanel>
+    </Border>
+    
+    <CheckBox x:Name="drawrectangle" Content="draw a rectangle around the table" Height="25" IsChecked="True"/>
+
+    <Label Content="select Table Layer:"/>
+    <Wpf:LayerPicker x:Name="layerpicker"/>
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+        <StackPanel>
+            <Label Content="Position of top left corner" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <Wpf:CoordinateEdit x:Name="coordpick1"/>
+        </StackPanel>
+    </Border>
+
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+</StackPanel> 

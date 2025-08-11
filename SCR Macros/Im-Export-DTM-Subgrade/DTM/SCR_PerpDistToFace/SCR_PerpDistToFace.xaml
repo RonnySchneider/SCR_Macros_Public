@@ -1,0 +1,76 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="650" >
+    <Label Content="perpendicular distance to face"/>
+    <CheckBox x:Name="computeplumb" Content="compute vertical/plumb anyway" Foreground="Red"/>
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+        <StackPanel>
+            <Label Content="select Output Layer:"/>
+            <Wpf:LayerPicker x:Name="layerpicker"/>
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="45*"/>
+                        <ColumnDefinition Width="30*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Distance Units" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <ComboBox Grid.Column="1" x:Name="unitpicker" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <CheckBox Grid.Column="2" x:Name="addunitsuffix" Content="add&#xA;Output-Suffix" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Grid>
+                <UniformGrid Columns="4">
+                    <Label Content="Text Decimals" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:NumericEdit x:Name="textdecimals" Value="3"/>
+                    <Button x:Name="decdecimals" Content="-" Click="decdecimals_Click" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Button x:Name="incdecimals" Content="+" Click="incdecimals_Click" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                </UniformGrid>
+
+                <UniformGrid Columns="2">
+                    <Label Content="Ouput Color" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                    <Wpf:ColorPicker x:Name="outcolorpicker"/>
+                    <Label x:Name="textheightlabel" Content="Text Height" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    <Wpf:DistanceEdit x:Name="textheight" Distance="0.2" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                </UniformGrid>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+    <CheckBox x:Name="checkBox_point" Content="create intersection point" Height="25" IsChecked="False"/>
+    <CheckBox x:Name="checkBox_line" Content="create line to intersection point" Height="25" IsChecked="True"/>
+    <CheckBox x:Name="checkBox_text" Content="create text with distance value" Height="25" IsChecked="True"/>
+
+    <Label Content="Face Vertex 1:"/>
+    <Wpf:CoordinateEdit x:Name="coordCtl1" ShowElevationIf3D="True" AutoTab="True"/>
+    <Label Content="Face Vertex 2:"/>
+    <Wpf:CoordinateEdit x:Name="coordCtl2" ShowElevationIf3D="True" AutoTab="True"/>
+    <Label Content="Face Vertex 3:"/>
+    <Wpf:CoordinateEdit x:Name="coordCtl3" ShowElevationIf3D="True" AutoTab="True"/>
+
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+        <StackPanel>
+            <RadioButton x:Name="projectsinglepoint" Content="project a single point" GroupName="1"/>
+            <Wpf:CoordinateEdit x:Name="coordCtl4" ShowElevationIf3D="True" AutoTab="False" IsEnabled="{Binding IsChecked, ElementName=projectsinglepoint}"/>
+
+            <RadioButton x:Name="projectmultipoints" Content="project multiple points" GroupName="1"/>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel IsEnabled="{Binding IsChecked, ElementName=projectmultipoints}">
+                    <Wpf:MemberSelection x:Name="objs" Height="30" Margin="0" UseLocalSelection="True"/>
+                </StackPanel>
+            </Border>
+
+            <RadioButton x:Name="projectdirectionalshot" Content="project a directional shot" GroupName="1"/>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel IsEnabled="{Binding IsChecked, ElementName=projectdirectionalshot}">
+                    <Label Content="Shot Source:"/>
+                    <Wpf:CoordinateEdit x:Name="coordCtl5" ShowElevationIf3D="True" AutoTab="True"/>
+                    <Label Content="Shot Direction:"/>
+                    <Wpf:CoordinateEdit x:Name="coordCtl6" ShowElevationIf3D="True" AutoTab="True"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Border>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+</StackPanel> 
