@@ -40,7 +40,7 @@ from System.Windows.Threading import DispatcherPriority
 _XAML = """<Window Background="#FFF3F3F7"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SCR Macro Installer" Height="600" Width="880"
+        Title="SCR Macro Installer" Height="600" Width="1000"
         MinHeight="320" MinWidth="520">
 
     <Window.Resources>
@@ -62,6 +62,9 @@ _XAML = """<Window Background="#FFF3F3F7"
                 </DataTrigger>
                 <DataTrigger Binding="{Binding [status]}" Value="New">
                     <Setter Property="Background" Value="#FFD4E8FF"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="Incomplete">
+                    <Setter Property="Background" Value="#FFFFD8A0"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding [status]}" Value="Local is newer">
                     <Setter Property="Background" Value="#FFECE0FF"/>
@@ -134,7 +137,9 @@ _XAML = """<Window Background="#FFF3F3F7"
 
 
 # filenames always downloaded silently alongside any macro batch, never shown in the grid
-_HELPER_FILENAMES = {"scr_imports.py", "scr_globalhelpers.py"}
+_HELPER_FILENAMES      = {"scr_imports.py", "scr_globalhelpers.py"}
+# resource files always silently copied with any macro download, never shown in the grid
+_ALWAYS_COPY_FILENAMES = {"ab arrow block.vcl"}
 
 # sync macro — mandatory install so users can update macros later
 _SYNC_FILENAME = "scr_macroupdate.py"
@@ -155,7 +160,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version     = 1.02
+        cmdData.Version     = 1.04
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo   = r""
 
@@ -174,8 +179,6 @@ def Execute(cmd, currentProject, macroFileFolder, parameters):
     SCR_InstallDialog(currentProject, macroFileFolder).Show()
 
 
-# ── dialog ────────────────────────────────────────────────────────────────────
-
 class SCR_InstallDialog(Window):
 
     def __init__(self, currentProject, macroFileFolder):
@@ -193,6 +196,8 @@ class SCR_InstallDialog(Window):
         self._did_install       = False
         self._did_install_macro = False
         self._propagating       = False
+        self._downloading       = False
+        self._cancel            = False
 
         self._repo_url       = "https://github.com/RonnySchneider/SCR_Macros_Public"
         self._repo_subfolder = "SCR Macros"   # e.g. "subfolder" to sync only that subtree; "" = whole repo
@@ -234,12 +239,20 @@ class SCR_InstallDialog(Window):
         with StreamReader(resp.GetResponseStream()) as rdr:
             return json.loads(rdr.ReadToEnd())
 
+    _TEXT_EXTENSIONS     = {'.py', '.xaml', '.htm', '.html', '.txt', '.json', '.xml', '.csv', '.md'}
+    _REQUIRED_EXTENSIONS = {'.py', '.xaml', '.png', '.htm', '.html'}  # only these trigger Incomplete
+    _SKIP_EXTENSIONS     = {'.p', '.recursiveversion', '.bak', '.tmp'}  # dev artifacts, never download
+
     def _git_blob_sha(self, file_path):
         try:
             raw = File.ReadAllBytes(file_path)
-            normalized = Encoding.UTF8.GetString(raw).replace("\r\n", "\n").replace("\r", "\n")
-            content    = Encoding.UTF8.GetBytes(normalized)
-            prefix     = Encoding.ASCII.GetBytes("blob " + str(len(content)) + "\0")
+            ext = os.path.splitext(file_path)[1].lower()
+            if ext in self._TEXT_EXTENSIONS:
+                content = Encoding.UTF8.GetBytes(
+                    Encoding.UTF8.GetString(raw).replace("\r\n", "\n").replace("\r", "\n"))
+            else:
+                content = raw
+            prefix = Encoding.ASCII.GetBytes("blob " + str(len(content)) + "\0")
             ms = MemoryStream()
             ms.Write(prefix,  0, len(prefix))
             ms.Write(content, 0, len(content))
@@ -303,7 +316,7 @@ class SCR_InstallDialog(Window):
                         row["download"] = new_val
                 except Exception:
                     pass
-            # helpers and SCR_MacroSync are mandatory whenever any regular macro is ticked
+            # helpers and sync macro are mandatory whenever any non-helper macro row is ticked
             any_dl = any(
                 bool(r["download"])
                 for r in self._dt.Rows
@@ -334,11 +347,24 @@ class SCR_InstallDialog(Window):
             if not exists:
                 local_ver = "-"
                 status    = "New"
-                do_dl     = True
-            elif local_sha == remote_sha:
-                local_ver = self._extract_version(local_path)
-                status    = "Up to date"
                 do_dl     = False
+            elif local_sha == remote_sha:
+                local_ver  = self._extract_version(local_path)
+                py_folder  = "/".join(path.split("/")[:-1])
+                incomplete = None
+                for si in tree_items:
+                    if si.get("type") != "blob" or si["path"] == path:
+                        continue
+                    if os.path.splitext(si["path"])[1].lower() not in self._REQUIRED_EXTENSIONS:
+                        continue
+                    if "/".join(si["path"].split("/")[:-1]) != py_folder:
+                        continue
+                    si_local = os.path.join(local_root, si["path"].replace("/", "\\"))
+                    if not os.path.isfile(si_local) or self._git_blob_sha(si_local) != si.get("sha", ""):
+                        incomplete = si["path"].split("/")[-1]
+                        break
+                status = "Incomplete ({})".format(incomplete) if incomplete else "Up to date"
+                do_dl  = False
             else:
                 local_ver  = self._extract_version(local_path)
                 remote_ver = self._fetch_remote_version(path)
@@ -383,17 +409,29 @@ class SCR_InstallDialog(Window):
             local_path = os.path.join(local_root, path.replace("/", "\\"))
             exists     = os.path.isfile(local_path)
             local_sha  = self._git_blob_sha(local_path) if exists else None
+            folder_prefix = folder + "/" if folder else ""
             if not exists:
                 status = "New"
-                do_dl  = True
+                do_dl  = False
             elif local_sha == remote_sha:
-                status = "Up to date"
+                incomplete = None
+                for si in tree_items:
+                    if si.get("type") != "blob" or si["path"] == path:
+                        continue
+                    if os.path.splitext(si["path"])[1].lower() not in self._REQUIRED_EXTENSIONS:
+                        continue
+                    if not si["path"].startswith(folder_prefix):
+                        continue
+                    si_local = os.path.join(local_root, si["path"].replace("/", "\\"))
+                    if not os.path.isfile(si_local) or self._git_blob_sha(si_local) != si.get("sha", ""):
+                        incomplete = si["path"].split("/")[-1]
+                        break
+                status = "Incomplete ({})".format(incomplete) if incomplete else "Up to date"
                 do_dl  = False
             else:
                 status = "Update available"
                 do_dl  = False
             row = dt.NewRow()
-            folder_prefix = folder + "/" if folder else ""
             file_count = sum(1 for i in tree_items
                              if i.get("type") == "blob"
                              and (i["path"] == path or i["path"].startswith(folder_prefix))
@@ -407,12 +445,6 @@ class SCR_InstallDialog(Window):
 
         self._dt = dt
         self.datagrid.DataContext = dt
-        self._resize_window()
-
-    def _resize_window(self):
-        self.datagrid.UpdateLayout()
-        total_w = sum(col.ActualWidth for col in self.datagrid.Columns) + 42
-        self.Width = max(total_w, self.MinWidth)
 
     def _rebind_grid(self):
         self.datagrid.DataContext = None
@@ -425,7 +457,7 @@ class SCR_InstallDialog(Window):
         self.success.Content = "Fetching file list from GitHub…"
         owner, repo = self._parse_repo(self._repo_url)
         if not owner:
-            self.error.Content   = "Invalid GitHub URL."
+            self.error.Content   = "Invalid GitHub URL – expected https://github.com/owner/repo"
             self.success.Content = ""
             return
 
@@ -453,7 +485,7 @@ class SCR_InstallDialog(Window):
             pyfiles = [i for i in tree if i.get("type") == "blob" and i["path"].endswith(".py")]
             msg = "{} macro(s) found in repo".format(len(pyfiles))
             if truncated:
-                msg += "  ⚠ result was truncated by GitHub"
+                msg += "  ⚠ result was truncated by GitHub – tree may be incomplete"
             self.success.Content = msg
         except Exception as ex:
             self.error.Content   = "GitHub error: " + str(ex)
@@ -476,6 +508,10 @@ class SCR_InstallDialog(Window):
         self._rebind_grid()
 
     def _download_click(self, sender, e):
+        if self._downloading:
+            self._cancel = True
+            return
+
         self.error.Content   = ""
         self.success.Content = ""
 
@@ -502,23 +538,32 @@ class SCR_InstallDialog(Window):
                 siblings = [item["path"] for item in self._repo_tree
                             if item.get("type") == "blob"
                             and (item["path"] == py_path or item["path"].startswith(folder_prefix))
-                            and not item["path"].lower().endswith(".dict")]
+                            and os.path.splitext(item["path"])[1].lower()
+                            and os.path.splitext(item["path"])[1].lower() not in self._SKIP_EXTENSIONS]
             else:
                 siblings = [item["path"] for item in self._repo_tree
                             if item.get("type") == "blob"
                             and "/".join(item["path"].split("/")[:-1]) == folder
-                            and not item["path"].lower().endswith(".dict")]
+                            and os.path.splitext(item["path"])[1].lower()
+                            and os.path.splitext(item["path"])[1].lower() not in self._SKIP_EXTENSIONS]
             jobs.append({"row": row, "py_path": py_path, "siblings": siblings})
 
         if not jobs:
             self.error.Content = "No files selected."
             return
 
+        # silently prepend resource files that should always accompany any macro download
+        for item in self._repo_tree:
+            if item.get("type") == "blob" and item["path"].split("/")[-1].lower() in _ALWAYS_COPY_FILENAMES:
+                jobs.insert(0, {"row": None, "py_path": item["path"], "siblings": [item["path"]]})
+
         total_files = sum(len(j["siblings"]) for j in jobs)
+        self._downloading             = True
+        self._cancel                  = False
         self.fetchbtn.IsEnabled       = False
-        self.downloadbtn.IsEnabled    = False
         self.selectallbtn.IsEnabled   = False
         self.deselectallbtn.IsEnabled = False
+        self.downloadbtn.Content      = "✕  Cancel"
         self.progressbar.Maximum      = max(total_files, 1)
         self.progressbar.Value        = 0
         self.progressbar.Visibility   = Visibility.Visible
@@ -540,6 +585,8 @@ class SCR_InstallDialog(Window):
 
         try:
             for job in jobs:
+                if self._cancel:
+                    break
                 row        = job["row"]
                 py_path    = job["py_path"]
                 siblings   = job["siblings"]
@@ -552,6 +599,8 @@ class SCR_InstallDialog(Window):
 
                 row_ok = True
                 for path in siblings:
+                    if self._cancel:
+                        break
                     raw_url  = "https://raw.githubusercontent.com/{}/{}/HEAD/{}".format(owner, repo, repo_path_prefix + path)
                     loc_path = os.path.join(local_root, path.replace("/", "\\"))
                     loc_dir  = os.path.dirname(loc_path)
@@ -593,8 +642,13 @@ class SCR_InstallDialog(Window):
         except Exception as ex:
             errors.append("Unexpected error: " + str(ex))
 
-        err_text  = "\n".join(errors)
-        if has_macro:
+        err_text      = "\n".join(errors)
+        was_cancelled = self._cancel
+        if was_cancelled:
+            ok_text      = "Download cancelled – refreshing file list…"
+            err_text     = ""
+            restart_text = ""
+        elif has_macro:
             ok_text      = "Installation complete – {} macro(s) installed.".format(done)
             restart_text = (
                 "⚠  Please close this window and restart TBC to load the new macros.\n"
@@ -604,18 +658,22 @@ class SCR_InstallDialog(Window):
             ok_text      = "Download complete."
             restart_text = ""
 
-        def finish(e=err_text, o=ok_text, r=restart_text, m=has_macro):
+        def finish(e=err_text, o=ok_text, r=restart_text, m=has_macro and not was_cancelled, cancelled=was_cancelled):
+            self._downloading             = False
+            self._cancel                  = False
             self._did_install             = True
             self._did_install_macro       = m
             self.error.Content            = "\n".join(x for x in [r, e] if x)
             self.success.Content          = o
             self.progressbar.Visibility   = Visibility.Collapsed
             self.fetchbtn.IsEnabled       = True
-            self.downloadbtn.IsEnabled    = True
+            self.downloadbtn.Content      = "↓  Install Selected Macros"
             self.selectallbtn.IsEnabled   = True
             self.deselectallbtn.IsEnabled = True
             self._rebind_grid()
-            if not m:
+            if cancelled:
+                self._fetch_click(None, None)
+            elif not m:
                 htm = os.path.join(self._local_root, "MacroHelp", "MacroHelp.htm")
                 if os.path.isfile(htm):
                     webbrowser.open(htm)
