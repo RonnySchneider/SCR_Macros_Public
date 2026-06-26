@@ -1,0 +1,25 @@
+        <h3 id="SCR_3PtsToCircle" class="header3"><a id="SCR_3PtsToCircle"></a>SCR_3PtsToCircle</h3>
+          <ul>
+			  <li>create a circle and its center from 3 points (CAD or named Points)</li>
+			  <li>handy to check bolt blockouts</li>
+			  <li>once you have the center point you can run the <a href="#SCR_ABReportWithBearing" class="class2">SCR_ABReportWithBearing</a> to compare them to design<br><br>
+			  <video controls="controls" width="800">
+			  <source src="./Media/SCR_3PtsToCircle.mp4" type="video/mp4">Your browser does not support the video tag.</video><br>
+			  <br></li>
+
+			  <li>added option to create 3D circle</li>
+			  <ul>
+				  <li>either use just the 3 points that define the circle as target plane; each circles plane potentially has a different orientation</li>
+				  <li>or define a reference plane and the 3 circle points are projected onto it before the circle is computed</li>
+				  <li>in the below example the circle points were selected in the point cloud but the circle computed on the blue plane</li>
+			  </ul>
+			  <img alt="" src="Media/SCR_3PtsToCircle-1.png" width="800" border="1"><br><br>
+
+			  <li>added mode for best-fit circles</li>
+			  <ul>
+				  <li>with given or computed radius</li>
+				  <li>on a 2D Z-average, 3D best-fit or user-defined plane</li>
+				  <li>works with cloud points as well</li>
+			  </ul>
+		  </ul>
+

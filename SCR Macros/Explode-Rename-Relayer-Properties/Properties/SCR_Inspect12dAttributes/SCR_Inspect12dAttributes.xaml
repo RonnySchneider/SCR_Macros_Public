@@ -1,0 +1,125 @@
+﻿<Window Background="#FFF3F3F7"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
+        xmlns:test="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+        xmlns:test2="clr-namespace:Xceed.Wpf.Toolkit.Primitives;assembly=Xceed.Wpf.Toolkit"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="SCR_Inspect12dAttributes" Height="500" Width="500" MinHeight="100" MinWidth="200"
+        mc:Ignorable="d">
+
+
+
+    <Window.Resources>
+        <Style TargetType="{x:Type DataGridColumnHeader}" x:Key="commonHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="MinWidth" Value="85"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader" x:Name="coloredHeader" BasedOn="{StaticResource commonHeader}">
+            <Setter Property="Background" Value="LightBlue"/>
+        </Style>
+        <!--<Style TargetType="DataGridColumnHeader" x:Name="errorcolumnHeader" BasedOn="{DynamicResource commonHeader}">
+            <Setter Property="Background" Value="Red"/>
+        </Style>-->
+
+        <!--<Style TargetType="DataGridRowHeader" x:Key="commonrowHeader" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="MinWidth" Value="50"></Setter>
+            --><!--<Setter Property="Content" Value="{Binding serial}"/>--><!--
+        </Style>
+        <Style TargetType="DataGridRowHeader" x:Name="errorrowHeader" BasedOn="{StaticResource commonrowHeader}">
+            <Setter Property="Background" Value="Red"/>
+        </Style>-->
+
+        <Style TargetType="DataGridCell" x:Key="commonCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <!--<Setter Property="BorderBrush" Value="Black"/>-->
+            <!--<Setter Property="BorderThickness" Value="1"/>-->
+        </Style>
+        <Style TargetType="DataGridCell" x:Name="doubleattributecellstyle" BasedOn="{StaticResource commonCell}">
+            <Setter Property="Background" Value="Red"/>
+        </Style>
+    </Window.Resources>
+
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- 0 select lines text-->
+            <RowDefinition Height="Auto"/> <!-- 1 object selection-->
+            <RowDefinition Height="Auto"/> <!-- 2 uniform grid save/restore buttons and labels-->
+            <RowDefinition Height="Auto"/> <!-- 3 update button-->
+            <RowDefinition Height="10*"/>    <!-- 4 Datagrid-->
+            <RowDefinition Height="2*"/> <!-- 5 error labels at bottom-->
+            <RowDefinition Height="Auto"/> <!-- 7 success label at bottom-->
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Select lines"/>
+        <Wpf:MemberSelection Grid.Row="1" Grid.Column="0" x:Name="objs" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+
+        <UniformGrid Grid.Row="2" Grid.Column="0" Columns="2">
+            <Button x:Name="buttonsavesel" Content="Save selection"/>
+            <Button x:Name="buttonrestoresel" Content="Restore selection in view"/>
+            <Label Content="Count of temporarily saved objects"/>
+            <Label x:Name="savecount" Content=""/>
+        </UniformGrid>
+        <Button Grid.Row="3" Grid.Column="0" x:Name="buttonupdatelist" Content="⇓ Update Listbox - if you did something elsewhere⇓"/>
+
+        <DataGrid 
+            Grid.Row="4" Grid.Column="0"       
+            x:Name="datagrid" FrozenColumnCount="1" AlternatingRowBackground="LightBlue" GridLinesVisibility="All" 
+            AutoGenerateColumns="True" ItemsSource="{Binding}"  
+            CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" 
+            SelectionUnit="Cell" SelectionMode="Extended"
+            CellStyle="{StaticResource commonCell}"
+            ColumnHeaderStyle="{StaticResource commonHeader}">
+
+
+        <!--RowHeaderStyle="{StaticResource commonrowHeader}"-->
+
+                <!--<DataGrid.Columns>
+                
+                -->
+                <!--<DataGridTextColumn Width="100" Binding="{Binding Path=c1}" Header="Column 1"></DataGridTextColumn>
+                <DataGridTextColumn Width="100" Binding="{Binding Path=c2}" Header="Column 2"></DataGridTextColumn>
+                <DataGridTextColumn Width="100" Binding="{Binding Path=c3}" Header="Column 3"></DataGridTextColumn>-->
+                <!--
+                
+                </DataGrid.Columns>-->
+        </DataGrid>
+
+        <!--example for datagrid with List-->
+        <!--<DataGrid x:Name="testgrid" AutoGenerateColumns="False" Height="150" CanUserAddRows="False" CanUserDeleteRows="False">
+            <DataGrid.Columns>
+
+
+                <DataGridTextColumn Width="100" Binding="{Binding [0]}" Header="Column 1"/>
+                <DataGridTextColumn Width="100" Binding="{Binding [1]}" Header="Column 2"/>
+                --><!--<DataGridTextColumn Width="100" Binding="{Binding Path=c3}" Header="Column 3"></DataGridTextColumn>--><!--
+
+
+            </DataGrid.Columns>
+        </DataGrid>-->
+
+
+        <!--<Button x:Name="CloseBtn" Content="Close" Margin="5 " IsCancel="True"  Height="20" VerticalAlignment="Top" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Right" Width="100"/>-->
+        <UniformGrid Grid.Row="5" Grid.Column="0" Columns="2">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+            </ScrollViewer>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Label x:Name="error2" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Magenta"/>
+            </ScrollViewer>
+        </UniformGrid>
+        <Label Grid.Row="6" Grid.Column="0" x:Name="success" Content=""/>
+    </Grid>
+
+</Window>

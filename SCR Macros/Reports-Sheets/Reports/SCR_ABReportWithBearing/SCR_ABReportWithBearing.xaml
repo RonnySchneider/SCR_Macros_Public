@@ -1,0 +1,168 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="822.267">
+    <GroupBox Header="Block Selection">
+        <StackPanel>
+                <Wpf:ComboBoxEntityPicker x:Name="blockpicker"/>
+                <UniformGrid Columns="2">
+                    <Label Content="Block Scale" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:NumericEdit x:Name="blockscale" Value="1.0"/>
+                </UniformGrid>
+            <CheckBox x:Name="arrowstmrspec" Content="Arrows according to TMR Spec&#xA;'indicate direction to design location'" IsChecked="True"/>
+        </StackPanel>
+    </GroupBox>
+
+    <GroupBox Header="Units and Textsize">
+        <StackPanel>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="45*"/>
+                            <ColumnDefinition Width="30*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Distance Units" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <ComboBox Grid.Column="1" x:Name="unitpicker" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <CheckBox Grid.Column="2" x:Name="addunitsuffix" Content="add&#xA;Output-Suffix" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel>
+                    <UniformGrid Columns="4">
+                        <Label Content="Text Decimals" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:NumericEdit x:Name="textdecimals" Value="3"/>
+                        <Button x:Name="decdecimals" Content="-" Click="decdecimals_Click" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Button x:Name="incdecimals" Content="+" Click="incdecimals_Click" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <UniformGrid Columns="2">
+                        <Label Content="Text Height" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="textheight" Distance="0.2" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </GroupBox>
+
+    <GroupBox>
+        <Expander Header="Thresholds and Colors" IsExpanded="False">
+            <StackPanel>
+                <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="15*"/>
+                                <ColumnDefinition Width="30*"/>
+                                <ColumnDefinition Width="60*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label  Grid.Column="0" Content="&lt;=" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                            <Wpf:DistanceEdit Grid.Column="1" x:Name="thresh1" Distance="0.005" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:ColorPicker Grid.Column="2" x:Name="thresh1colorpicker" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="40*"/>
+                                <ColumnDefinition Width="60*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="&lt;=" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                            <Wpf:DistanceEdit Grid.Column="1" x:Name="thresh2" Distance="0.010" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:ColorPicker Grid.Column="2" x:Name="thresh2colorpicker" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="40*"/>
+                                <ColumnDefinition Width="60*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="&lt;=" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                            <Wpf:DistanceEdit Grid.Column="1" x:Name="thresh3" Distance="0.015" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:ColorPicker Grid.Column="2" x:Name="thresh3colorpicker" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="40*"/>
+                                <ColumnDefinition Width="60*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="&gt;" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <TextBox Grid.Column="1" x:Name="thresh4" Text="0.015" VerticalAlignment="Center" VerticalContentAlignment="Center" Visibility="Hidden"/>
+                            <Wpf:ColorPicker Grid.Column="2" x:Name="thresh4colorpicker" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Expander>
+    </GroupBox>
+
+    <GroupBox Header="search and compute parameters">
+        <StackPanel>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <UniformGrid Columns="2">
+                        <Label Content="search radius:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="searchradius" Distance="0.25" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+
+            <CheckBox x:Name="drawx" Content="draw/compute X-Direction" IsChecked="True"/>
+            <CheckBox x:Name="drawy" Content="draw/compute Y-Direction" IsChecked="True"/>
+            <CheckBox x:Name="search3d" Content="search/compare in 3D" IsChecked="True" Checked="search3dChanged" Unchecked="search3dChanged"/>
+
+            <Border x:Name="dtmborder" BorderBrush="#FF7D7D7D" BorderThickness="1"  Background="#FF97B9D9">
+                <StackPanel>
+                    <CheckBox x:Name="usedtm" Content="use DTM for Elevation check" IsChecked="False" Checked="usedtmChanged" Unchecked="usedtmChanged" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <UniformGrid Columns="2">
+                        <Label Content="Design Surface:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:ComboBoxEntityPicker x:Name="designsurfacepicker" IsEnabled="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel>
+                    
+                        <Label Content="Design Points Layer:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:LayerPicker x:Name="designlayerpicker" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </GroupBox>
+
+    <Label Content="select Layer for Report Data:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    <Wpf:LayerPicker x:Name="ablayerpicker"/>
+
+
+    <Label Content="select AB points" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    <Wpf:MemberSelection x:Name="objs" UseLocalSelection="True"/>
+
+
+    <Label Content="define Bearing to compute to"/>
+    <Wpf:BearingEdit x:Name="bearingpicker"/>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+   
+
+</StackPanel> 

@@ -1,0 +1,23 @@
+﻿<StackPanel  HorizontalAlignment="Stretch"  Margin="4"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls">
+    <Label Content="Surface:"  Margin="0" />
+    <Wpf:ComboBoxEntityPicker x:Name="surface" Margin="0" />
+    <Label Content="Explode Layer:" />
+    <Wpf:LayerPicker x:Name="LineLayers"/>
+    <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+        <Label Content="Line type:" VerticalContentAlignment="Center" Padding="0,0,6,0"/>
+        <RadioButton x:Name="createlinestring" Content="Linestring" IsChecked="True" GroupName="linetype" VerticalContentAlignment="Center" Margin="0,0,8,0"/>
+        <RadioButton x:Name="createcadpoly3d" Content="CAD Poly3D" IsChecked="False" GroupName="linetype" VerticalContentAlignment="Center"/>
+    </StackPanel>
+    <GroupBox  >
+        <GroupBox.Header>
+            <CheckBox x:Name="slopeCB"  Content="Only at slope break" ToolTip="Only create lines at slope breaks" IsChecked="False"/>
+        </GroupBox.Header>
+        <StackPanel>
+            <Label Content="'Break' Angle:" />
+            <Wpf:AngularEdit x:Name="slopeLimitCtl" />
+        </StackPanel>
+    </GroupBox>
+</StackPanel>

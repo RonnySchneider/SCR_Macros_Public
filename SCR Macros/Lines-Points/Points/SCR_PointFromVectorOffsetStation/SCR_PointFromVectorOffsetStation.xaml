@@ -1,0 +1,72 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="300   " d:DesignHeight="872.093">
+    <Label Content="create Point by Offset/Station"/>
+
+    <Label Content="select Output Point Layer:"/>
+    <Wpf:LayerPicker x:Name="layerpicker"/>
+
+
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel>
+                    <Label Content="Pick 1st point" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:CoordinateEdit x:Name="coordpick1"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <Label Content="Pick 2nd Point" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:CoordinateEdit x:Name="coordpick2"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                <StackPanel>
+                    <UniformGrid Columns="2">
+                        <RadioButton x:Name="stationis2d" Content="Station is 2D" IsChecked="True" VerticalAlignment="Center" GroupName="group1"/>
+                        <RadioButton x:Name="stationis3d" Content="Station is 3D" IsChecked="False" VerticalAlignment="Center" GroupName="group1"/>
+
+                        <Label x:Name="labelstation" Content="Station (used on OK-Click)" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="station"/>
+
+                        <CheckBox x:Name="enableinterval" Content="enable Interval" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+
+                        <Wpf:DistanceEdit x:Name="interval" IsEnabled="{Binding IsChecked, ElementName=enableinterval}"/>
+
+                        <Label x:Name="labelhzoffset" Content="horizontal Offset" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="offset"/>
+                        <RadioButton x:Name="dhisplumb" Content="dh is plumb" IsChecked="True" VerticalAlignment="Center" GroupName="group2"/>
+                        <RadioButton x:Name="dhisperp" Content="dh is perpendicular" IsChecked="False" VerticalAlignment="Center" GroupName="group2"/>
+                        <Label x:Name="labelvzoffset" Content="vertical Offset" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="voffset"/>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+    
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <CheckBox x:Name="createnamedpoint" Content="create named Point (instead of simple CAD-Point)" IsChecked="False" Checked="createnamedpointChanged" Unchecked="createnamedpointChanged" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    
+                    <StackPanel x:Name="createnamedpointpanel" IsEnabled="False">
+                        <UniformGrid Columns="2">
+                            <Label Content="Point Text Part" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <TextBox x:Name="pointnametext"/>
+                            <Label Content="Point Start Number" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:NumericEdit x:Name="pointnamestart"/>
+                            <Label Content="Point Number Increment" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:NumericEdit x:Name="pointnameincrement"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+
+
+
+
+</StackPanel> 
+    

@@ -1,0 +1,114 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="800">
+    <Label Content="Select 3 points"/>
+    <Label Content="Select output layer:"/>
+    <Wpf:LayerPicker x:Name="layerpicker"/>
+    <CheckBox x:Name="drawcircle" Content="Draw circle" IsChecked="True"/>
+    <CheckBox x:Name="drawcenter" Content="Draw center point" IsChecked="True"/>
+
+
+    <Expander x:Name="expander_threepoint" BorderThickness="2,2,2,2" IsExpanded="True" Background="#FFCBECC2" BorderBrush="#FF337C27">
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="threepoint" GroupName="3" IsChecked="True" VerticalAlignment="Center" Click="DrawOverlayClicked"/>
+                <Label Content="3-point circle" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=threepoint}">
+            <RadioButton x:Name="standardmode" Content="Simple 2D circle" GroupName="1" IsChecked="True"/>
+            <RadioButton x:Name="mode3d" Content="3D circle" GroupName="1"/>
+
+            <Expander x:Name="expander_mode3d" BorderThickness="2,2,2,2" IsExpanded="False"
+                      IsEnabled="{Binding IsChecked, ElementName=mode3d}"
+                      Background="#FFE8FADC" BorderBrush="#FF5AA04A">
+                <StackPanel>
+                    <Expander x:Name="expander_defineplane" BorderThickness="1,1,1,1" IsExpanded="False" Background="#FFE8FADC">
+                        <Expander.Header>
+                            <CheckBox x:Name="defineplane" Content="Define dedicated projection plane" Click="DefinePlaneClicked"/>
+                        </Expander.Header>
+                        <StackPanel IsEnabled="{Binding IsChecked, ElementName=defineplane}" Background="#FFE8FADC">
+                            <Label Content="Face vertex 1:"/>
+                            <Wpf:CoordinateEdit x:Name="coordCtl1" ShowElevationIf3D="True" AutoTab="True"/>
+                            <Label Content="Face vertex 2:"/>
+                            <Wpf:CoordinateEdit x:Name="coordCtl2" ShowElevationIf3D="True" AutoTab="True"/>
+                            <Label Content="Face vertex 3:"/>
+                            <Wpf:CoordinateEdit x:Name="coordCtl3" ShowElevationIf3D="True" AutoTab="True"/>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </Expander>
+
+            <StackPanel>
+                <RadioButton x:Name="selectpoints" Content="Select 3 point entities" GroupName="2" IsChecked="True"/>
+                <StackPanel IsEnabled="{Binding IsChecked, ElementName=selectpoints}">
+                    <Wpf:MemberSelection x:Name="objs1" Height="30" Margin="0" UseLocalSelection="True" UpdateTextOnSelectionChange="False" PreviewGotKeyboardFocus="Selection_PreviewGotFocus" ValueChanged="Selection_ValueChanged"/>
+                </StackPanel>
+                <RadioButton x:Name="pickpoints" Content="Pick 3 coordinates" GroupName="2"/>
+                <StackPanel IsEnabled="{Binding IsChecked, ElementName=pickpoints}">
+                    <Label Content="Circle P1:"/>
+                    <Wpf:CoordinateEdit x:Name="coordCtl4" ShowElevationIf3D="True" AutoTab="True"/>
+                    <Label Content="Circle P2:"/>
+                    <Wpf:CoordinateEdit x:Name="coordCtl5" ShowElevationIf3D="True" AutoTab="True"/>
+                    <Label Content="Circle P3:"/>
+                    <Wpf:CoordinateEdit x:Name="coordCtl6" ShowElevationIf3D="True" AutoTab="True"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Expander>
+
+    <Expander x:Name="expander_bestfit" BorderThickness="2,2,2,2" IsExpanded="False" Background="#FFD8E8FF" BorderBrush="#FF2860C0">
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="bestfit" GroupName="3" VerticalAlignment="Center" Click="DrawOverlayClicked"/>
+                <Label Content="Best-fit circle" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=bestfit}">
+            <GroupBox Header="Radius">
+                <StackPanel>
+                    <UniformGrid Rows="1">
+                        <RadioButton x:Name="givenradius" Content="Given radius" GroupName="4" IsChecked="True" VerticalAlignment="Center"/>
+                        <Wpf:DistanceEdit x:Name="radiusedit" Distance="1.000" IsEnabled="{Binding IsChecked, ElementName=givenradius}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+                        <Button Content="Estimate" Click="EstimateClicked" VerticalAlignment="Center" Margin="2,0,3,0"/>
+                    </UniformGrid>
+                    <RadioButton x:Name="bestfitradius" Content="Best-fit radius" GroupName="4"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Plane">
+                <StackPanel>
+                    <RadioButton x:Name="avgplane" Content="Average 2D plane" GroupName="5" IsChecked="True" Click="DrawOverlayClicked"/>
+                    <RadioButton x:Name="bestfitplane" Content="Best-fit 3D plane" GroupName="5" Click="DrawOverlayClicked"/>
+                    <RadioButton x:Name="userdefplane" Content="User-defined plane" GroupName="5" Click="DrawOverlayClicked"/>
+                    <Expander x:Name="expander_userdefplane" BorderThickness="1,1,1,1" IsExpanded="False"
+                              IsEnabled="{Binding IsChecked, ElementName=userdefplane}"
+                              Background="#FFF0F6FF" BorderBrush="#FF4E7ED6">
+                        <StackPanel Background="#FFF0F6FF">
+                            <Label Content="Plane vertex 1:"/>
+                            <Wpf:CoordinateEdit x:Name="coordCtl7" ShowElevationIf3D="True" AutoTab="True"/>
+                            <Label Content="Plane vertex 2:"/>
+                            <Wpf:CoordinateEdit x:Name="coordCtl8" ShowElevationIf3D="True" AutoTab="True"/>
+                            <Label Content="Plane vertex 3:"/>
+                            <Wpf:CoordinateEdit x:Name="coordCtl9" ShowElevationIf3D="True" AutoTab="True"/>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </GroupBox>
+            <Label Content="Select points or cloud region:"/>
+            <UniformGrid Columns="2" Visibility="Visible">
+                <Label Content="Sampling distance:"/>
+                <Wpf:DistanceEdit x:Name="samplingdistance" Distance="0.001"/>
+                <Label Content="Max points:"/>
+                <Wpf:NumericEdit x:Name="samplingcount" Value="15000"/>
+            </UniformGrid>
+            <Wpf:MemberSelection x:Name="objs2" Height="30" Margin="0" UseLocalSelection="True" UpdateTextOnSelectionChange="False" PreviewGotKeyboardFocus="Selection_PreviewGotFocus" ValueChanged="Selection_ValueChanged"/>
+        </StackPanel>
+    </Expander>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+
+</StackPanel> 

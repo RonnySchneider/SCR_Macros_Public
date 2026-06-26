@@ -1,0 +1,102 @@
+<Window Background="#FFF3F3F7"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="SCR Macro Update – GitHub" Height="600" Width="880"
+        MinHeight="320" MinWidth="520"
+        mc:Ignorable="d">
+
+    <Window.Resources>
+        <Style TargetType="DataGridColumnHeader" x:Key="hdrStyle">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush"    Value="Gray"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="Background"     Value="#FFCBD8EA"/>
+            <Setter Property="FontWeight"     Value="Bold"/>
+            <Setter Property="Padding"        Value="4,3"/>
+        </Style>
+        <Style TargetType="DataGridRow">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding [status]}" Value="Up to date">
+                    <Setter Property="Background" Value="#FFD4F0D4"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="Update available">
+                    <Setter Property="Background" Value="#FFFFF0C0"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="New">
+                    <Setter Property="Background" Value="#FFD4E8FF"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="Local only">
+                    <Setter Property="Background" Value="#FFFFD8B0"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="Deleted">
+                    <Setter Property="Background" Value="#FFE0E0E0"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="Error">
+                    <Setter Property="Background" Value="#FFFFCCCC"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- 0  action buttons -->
+            <RowDefinition Height="*"/>     <!-- 1  data grid -->
+            <RowDefinition Height="Auto"/>  <!-- 2  download button -->
+            <RowDefinition Height="Auto"/>  <!-- 3  progress bar -->
+            <RowDefinition Height="Auto"/>  <!-- 4  status labels -->
+        </Grid.RowDefinitions>
+
+        <!-- Row 0: Action buttons -->
+        <UniformGrid Grid.Row="0" Rows="1" Columns="3" Margin="0,0,0,6">
+            <Button x:Name="fetchbtn"       Content="↓  Fetch File List from GitHub" Height="30" Margin="0,0,4,0" FontWeight="Bold" Background="#FFBDE0FF"/>
+            <Button x:Name="selectallbtn"   Content="Select All"   Height="30" Margin="2,0"/>
+            <Button x:Name="deselectallbtn" Content="Deselect All" Height="30" Margin="4,0,0,0"/>
+        </UniformGrid>
+
+        <!-- Row 1: File comparison grid -->
+        <DataGrid Grid.Row="1" x:Name="datagrid"
+                  AutoGenerateColumns="False" ItemsSource="{Binding}"
+                  CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False"
+                  GridLinesVisibility="All"
+                  BorderBrush="Gray" BorderThickness="1"
+                  ColumnHeaderStyle="{StaticResource hdrStyle}"
+                  HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto"
+                  EnableRowVirtualization="False">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="↓" Width="Auto" CanUserSort="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding [download], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="File Path"     Binding="{Binding [path]}"         SortMemberPath="path"          Width="*"           MinWidth="200" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Local Version" Binding="{Binding [local_version]}" SortMemberPath="local_version" Width="SizeToCells" MinWidth="90"  IsReadOnly="True"/>
+                <DataGridTextColumn Header="Status"        Binding="{Binding [status]}"        SortMemberPath="status"        Width="SizeToCells" MinWidth="80"  IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Row 2: Download button -->
+        <Button Grid.Row="2" x:Name="downloadbtn"
+                Content="↓ Download selected   /   🗑 Delete local-only selected"
+                Height="34" Margin="0,6,0,0"
+                FontWeight="Bold" Background="#FFC0E8A0"/>
+
+        <!-- Row 3: Progress bar (hidden until download starts) -->
+        <ProgressBar Grid.Row="3" x:Name="progressbar"
+                     Height="18" Margin="0,6,0,0"
+                     Minimum="0" Value="0"
+                     Visibility="Collapsed"/>
+
+        <!-- Row 4: Status labels -->
+        <StackPanel Grid.Row="4" Margin="0,4,0,0">
+            <Label x:Name="error"   Content="" Foreground="#FFCC0000" FontWeight="Bold" Padding="2"/>
+            <Label x:Name="success" Content="" Foreground="#FF006600" Padding="2"/>
+        </StackPanel>
+    </Grid>
+</Window>

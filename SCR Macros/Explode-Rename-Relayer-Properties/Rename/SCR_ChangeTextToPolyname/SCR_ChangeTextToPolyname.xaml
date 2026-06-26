@@ -1,0 +1,58 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="245.277" d:DesignHeight="420"  >
+
+    <Label Content="Change texts to name of surrounding polyline"/>
+    <Label Content="Select polylines"/>
+    <Wpf:MemberSelection x:Name="objs" Height="30" Margin="0"/>
+
+    <Expander x:Name="expander_createnewtext" BorderThickness="2,2,2,2" Margin="0,4,0,0" IsExpanded="False" Background="#FFCBECC2" BorderBrush="#FF337C27">
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="createnewtext" IsChecked="False" VerticalAlignment="Center" GroupName="group1"/>
+                <Label Content="Create text from line attributes" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=createnewtext}" Margin="4,2,4,4">
+            <Label Content="Attribute template"/>
+            <ComboBox x:Name="findattr" IsEditable="True" Height="23">
+                <ComboBoxItem Content="{}{lot}\n{plan}"/>
+                <ComboBoxItem Content="{}{feat_name}"/>
+                <ComboBoxItem Content="{}Lot: {lot}\nPlan: {plan}"/>
+            </ComboBox>
+            <TextBlock TextWrapping="Wrap" Foreground="#FF555555">place attribute names in {}<LineBreak/>add Linefeed with \n<LineBreak/><LineBreak/>i.e. Lot: {lot}\nPlan: {plan} creates something similar to this</TextBlock>
+            <TextBlock TextWrapping="Wrap" Foreground="#FF555555">Lot: 11<LineBreak/>Plan: RP93490</TextBlock>
+            <UniformGrid Columns="2" Margin="0,4,0,0">
+                <Label Content="Text style" VerticalAlignment="Center"/>
+                <Wpf:TextStylePicker x:Name="textstylepicker" Margin="0,2,0,0"/>
+            </UniformGrid>
+        </StackPanel>
+    </Expander>
+
+    <Expander x:Name="expander_changeexistingtext" BorderThickness="2,2,2,2" Margin="0,4,0,0" IsExpanded="True" Background="#FFDABB83" BorderBrush="#FFCD8025">
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="changeexistingtext" IsChecked="True" VerticalAlignment="Center" GroupName="group1"/>
+                <Label Content="Change text found inside polyline" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=changeexistingtext}" Margin="4,2,4,4">
+            <Label Content="Rename text"/>
+            <RadioButton x:Name="namemode_layer" Content="To layer name" IsChecked="False" GroupName="namemode"/>
+            <RadioButton x:Name="namemode_line" Content="To line name" IsChecked="True" GroupName="namemode"/>
+            <RadioButton x:Name="namemode_original" Content="Use original" IsChecked="False" GroupName="namemode"/>
+            <CheckBox x:Name="checkBox_relayer" Content="Change layer to line layer" Height="25" IsChecked="False" Margin="0,4,0,0"/>
+            <CheckBox x:Name="optimizetextsize" Content="Optimize text size to fit inside polyline" Height="25" IsChecked="False"/>
+            <CheckBox x:Name="optimizetextposition" Content="Optimize text position inside polyline" Height="25" IsChecked="False"/>
+            <Label Content="Add additional prefix"/>
+            <TextBox x:Name="textBox1" Height="23" TextWrapping="Wrap" Text=""/>
+            <Label Content="Add additional suffix"/>
+            <TextBox x:Name="textBox2" Height="23" TextWrapping="Wrap" Text=""/>
+        </StackPanel>
+    </Expander>
+
+    <TextBlock x:Name="error" Text="" TextWrapping="Wrap" Margin="0,4,0,0" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+</StackPanel>

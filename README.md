@@ -13,6 +13,19 @@ The country I'm living in, and TBC internally, use the metric system. I've added
 With TBC V5.90 the Ironpython version was changed from 2.7 to 3.4. That syntax change made it necessary to have two separate repositories.
 
 # Installation
+
+## Via Installer (only suitable for V5.91 and newer)
+
+- Download the file `SCR_Install.py` and place it into the folder `C:\ProgramData\Trimble\MacroCommands3`
+- Start TBC — it will show a new temporary tab "SCR Macro Installer"
+- Run the macro `SCR_Install` from it and select which macros you want
+- If you choose to download the help it will download all media files (~240 MB)
+  - That way you can investigate what every macro does before downloading it
+- If you choose to install a macro, the installer will delete itself when finished
+- In its stead, `SCR_MacroUpdate` will take care of future updates
+
+## Manual Installation
+
 The size of the repository results mainly from the animated GIF's in the Help folder.
 
 The collection of files included in the ZIP archive must be extracted into the following folder.

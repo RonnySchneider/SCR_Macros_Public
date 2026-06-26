@@ -1,0 +1,82 @@
+        <h3><a id="SCR_DTMSlopeColored"></a> <span id="SCR_DTMSlopeColored"
+
+            class="header3">SCR_DTMSlopeColored</span> </h3>
+          <ul>
+			  <li>the macro folder contains a sample CSV and Surface Color Mapping file</li>
+			  <li>highlight the areas of a DTM based on the triangle slope</li>
+			  <li>4 ways to do it<br>
+			  <ul>
+				  
+				  
+				  <img alt="" height="24" src="Media/SCR_DTMSlopeColored-0.png" width="288" border="1">
+				  
+				  <li>create a new DTM with flat triangles, but their elevation representing the slope of the originals
+				  <br><img alt="" height="222" src="Media/SCR_DTMSlopeColored-1.png" width="134" border="1"><br>
+				  <ul>
+					  <li>Pro:<br>
+					  <ul>
+						  <li>working just with DTM data, in theory no large overhead</li>
+						  <li>you can use the normal Surface Color Mapping</li>
+					  </ul>
+					  </li>
+					  <li>Con:<br>
+					  <ul>
+						  <li>visual representation makes mostly sense in 2DPlanView</li>
+						  <li>since we need near vertical steps the original triangles need to be shrunk and the triangulation process will create extra, near vertical ones; that leads to a </li>
+						  <li>lot more triangles in the resulting surface and maybe performance issues</li>
+						  <li>biggest con is that TBC’s Color Mapping algorithm isn’t 100% accurate, in the following example mapping is set to start with color blue at exactly 30.0, but </li>
+						  <li>the surface with less than that is already blue<br><br>
+						  <img alt="" height="180" src="Media/SCR_DTMSlopeColored-2.png" width="218" border="1"><br></li>
+					  </ul>
+					  </li>
+				  </ul>
+				  </li>
+				  <li>recolor the DTM triangle itself, is done by applying a material to each triangle<br>
+				  <ul>
+					  <li>Pro: low overhead and quick when only a few different materials are used, but that leads to hard color steps</li>
+					  <li>Con: if smooth colors are needed then a lot of materials with different colors need to be created, MSI manager and drawing might become slow<br>
+					  </li>
+				  </ul>
+				  </li>
+			  </li>
+				  <br>
+				  <li>create closed and filled Linestrings<br>
+				  <ul>
+					  <li>Pro: overhead stays the same no matter of using hard steps or interpolated colors</li>
+					  <li>Con:<br>
+					  <ul>
+						  <li>Linestrings have a large overhead; double up linework where triangles touch each other</li>
+						  <li>3D view can get pretty slow when used on large surfaces<br>
+						  </li>
+					  </ul>
+					  </li>
+				  </ul>
+				  </li>
+				  <li>create IFC Faces<br>
+				  <ul>
+					  <li>Pro: lower overhead than Linestrings; and it also stays the same no matter of using hard steps or interpolated colors</li>
+					  <li>Con:<br>
+					  <ul>
+						  <li>no real way to export those manually created IFC objects<br>
+						  </li>
+						  <li>3D view can get pretty slow when used on large surfaces<br>
+						  </li>
+					  </ul>
+					  </li>
+				  </ul>
+				  </li>
+			  </ul>
+			  <li>when using a CSV as input the format needs to be as follows, the header line must be included (but is information only)<br><em>
+			  <span class="auto-style3">Slope[%],R,G,B</span><br class="auto-style3">
+			  <span class="auto-style3">0,0,255,0</span><br class="auto-style3">
+			  <span class="auto-style3">5,255,190,0</span></em><br>
+			  </li>
+			  <li>in case you use a CSV for recoloring a DTM with Materials a new category and materials will be created in the MSI Manager</li>
+			  <li>when using the MSI Manager you need a Material Category, with materials where the name is the slope value (numbers only), and the color must be set accordingly<br><br>
+			  <img alt="" height="316" src="Media/SCR_DTMSlopeColored-3.jpg" width="397" border="1"><br></li>
+			  <li><span class="auto-style2">as soon as the triangle slope is greater than the slope value in the CSV/Material that color is set</span></li>
+			  <li>to get rid of the set materials the best way I have found so far is<br><br>
+			  <img alt="" height="93" src="Media/SCR_DTMSlopeColored-4.jpg" width="237" border="1"><img alt="" height="266" src="Media/SCR_DTMSlopeColored-5.jpg" width="356" border="1"><br></li>
+			  <li>if the surface rebuild is set to “By User” you’ll have to manually trigger it, otherwise this resetting of the texture won’t show on the screen<br></li>
+		  </ul>
+		  

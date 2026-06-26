@@ -1,0 +1,24 @@
+        <h3><a id="SCR_DTMShot"></a> <span id="SCR_DTMShot"
+            class="header3">SCR_DTMShot</span> </h3>
+		  <ul>
+			  <li>similar to what TBC provides with “Surface Intersect”, but it doesn’t ask for angles, simply 2 points (i.e. snapped along a line)</li>
+			  <li>can now also extend lines, just click near the end you want to extend</li>
+			  <li>works now with projected surfaces and IFC objects</li>
+			  <br>
+    			<video controls="controls" width="800">
+				<source src="./Media/SCR_DTMShot.mp4" type="video/mp4">Your browser does not support the video tag.</video>
+				<br><br>
+			  <li>it's best to use "extend/trim" only if you know that the line is too short, OR the intersection will be on the last segment</li>
+			  <ul>
+				<li>otherwise it's better to use the new "break" option and manually delete the unwanted segments</li>
+				<li><span class="auto-style2">in case the line is too long it could be that there are multiple segments after the intersection</span></li>
+				<li><span class="auto-style2">in this case the trim will not work, because the intersection point is not on the last segment</span></li>
+			  </ul>
+			  <li>added an option to break the line at all surface intersections; in this case it ignores the side of the line you clicked</li>
+			  <br><img alt="" src="Media/SCR_DTMShot-1.png" border="1">
+				<br></li>
+
+			  <li>added mode to use a user-defined plane</li>
+			  <li>added mode to select multiple lines via rectangle/polygon selection; the lines are extended at the end where the selection crosses</li>
+		  </ul>
+

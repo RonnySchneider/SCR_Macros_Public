@@ -1,0 +1,51 @@
+        <h3><a id="SCR_AnalyzeCloudAlongLine"></a> <span id="SCR_AnalyzeCloudAlongLine" class="header3">SCR_AnalyzeCloudAlongLine</span> </h3>
+          <ul>
+			  <li>manually select a bunch of lines (and normal CAD/Survey points if necessary)</li>
+			  <li>the point cloud just needs to be visible on screen</li>
+			  <li>you must either be in Plan or Cutting Plane View and PolygonSelect enabled</li>
+			  <li>the macro will fake mouse gestures to select slivers of the point cloud</li>
+			  <li>to be on the safe side this selection will be 50 % bigger</li>
+			  <li>in a second step those selected points will be properly filtered to the defined Left/Right Offset</li>
+			  <li>there are two modes<br><ul>
+				  <li>compute best fit 3D Polylines into the selected points<br>
+					<img alt="" height="236" src="Media/SCR_AnalyzeCloudAlongLine-1.gif" width="385" border="1"><br>
+					<ul>
+						<li>works best on clean clouds, without outliers</li>
+						<li>this is using a built in TBC function</li>
+						<li>the output will always be a chorded polyline</li>
+						<li>the chording tolerance <img alt="" height="34" src="Media/SCR_AnalyzeCloudAlongLine-2.png" width="300" border="1"> defines how closely that polyline follows the computed polynomial function<br></li>
+					</ul>
+				  </li>
+				  <li>compute average and/or median points at given intervals and areas around the line<br>
+					<ul>
+						<li>the macro computes locations along each selected line</li>
+						<li>it then selects a rectangle of points around those locations (it does not check for overlaps with neighboring selections, usually that is preferred anyway)</li>
+						<li>in Cutting Plane View the <img alt="" height="28" src="Media/SCR_AnalyzeCloudAlongLine-3.png" width="302" border="1"> means above/below the line and is translated into a pure elevation difference, there is no correction applied if the cutting plane view is tilted and not vertical</li>
+						<li>average is the plain average</li>
+						<li>for the median it compiles 3 lists with the Eastings/Northings/Elevations, sorts each of them independently and uses the value at the middle of each for </li>
+						<li>the resulting point</li>
+						<li>if the cloud contains a lot of outliers, i.e. small rocks/debris/dirt, it is possible to use a TargetDTM (no projected surface) to prefilter the points</li>
+						<li>Hint: run the macro multiple times<br>
+						<ul>
+							<li>don’t use a DTM in the first step but use large combinevalues</li>
+							<li>create a first rough approximated surface from the resulting points</li>
+							<li>in a second run, with smaller combinevalues, you can now filter +/ along this rough DTM to ignore most of the outliers</li>
+							<li>of course, the cleaner the cloud is from the beginning the better the overall result will be<br></li>
+						</ul>
+						</li>
+					</ul>
+				  </li>
+			  </ul>
+
+			  <li>Example with a more or less horizontal deck scan cloud, last image shows the new surface created from median points<br><br>
+			  <img alt="" height="350" src="Media/SCR_AnalyzeCloudAlongLine-6.png" border="1"><img alt="" height="350" src="Media/SCR_AnalyzeCloudAlongLine-5.png" border="1"><img alt="" height="350" src="Media/SCR_AnalyzeCloudAlongLine-4.png" border="1"><br>
+			  </li>
+			  <li>vertical wall example in Cutting Plane View<br><br>
+			  <img alt="" height="350" src="Media/SCR_AnalyzeCloudAlongLine-8.png" border="1"><img alt="" height="350" src="Media/SCR_AnalyzeCloudAlongLine-7.png" border="1"><br>
+			  </li>
+			  <li>resulting points used to create projected surface and added 
+			  <a href="#SCR_ProjectedSurfaceContour" class="class2">contour lines</a><br><br>
+			  <img alt="" height="350" src="Media/SCR_AnalyzeCloudAlongLine-10.png" border="1"><img alt="" height="350" src="Media/SCR_AnalyzeCloudAlongLine-9.png" border="1"><br>
+			  <br></li>
+		  </ul>
+

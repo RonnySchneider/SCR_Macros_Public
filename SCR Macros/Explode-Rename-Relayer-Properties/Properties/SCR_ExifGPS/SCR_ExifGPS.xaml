@@ -1,0 +1,125 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="600">
+
+    <Expander x:Name="expander_retrievegps" BorderThickness="2,2,2,2" IsExpanded="True" Background="#FFCBECC2" BorderBrush="#FF337C27">
+
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="retrievegps" IsChecked="True" VerticalAlignment="Center" GroupName="group1" Checked="radiochange_Click"/>
+                <Label Content="Retrieve GPS location from image EXIF data" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
+            </WrapPanel>
+
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=retrievegps}">
+
+            <Button x:Name="openbutton" Content="Select image folder" Height="42" HorizontalContentAlignment="Center" Click="openbutton_Click" />
+            <Label>
+                <TextBlock x:Name="openfilename" IsEnabled="False" Text=""/>
+            </Label>
+            <Label Content="Select alignment for chainage computation" Visibility="Hidden" Height="0"/>
+            <Wpf:SelectEntity x:Name="linepicker1" Visibility="Hidden" Height="0"/>
+
+            <RadioButton Content="Use fixed point layer for all images" x:Name="usefixedlayer" IsChecked="True" VerticalAlignment="Center" GroupName="group2"/>
+                <StackPanel IsEnabled="{Binding IsChecked, ElementName=usefixedlayer}">
+                    <Label Content="Select output point layer:"/>
+                    <Wpf:LayerPicker x:Name="layerpicker"/>
+                </StackPanel>
+            <RadioButton Content="Use separate point layer for each folder" x:Name="usefolderaslayer" IsChecked="False" VerticalAlignment="Center" GroupName="group2"/>
+
+            <CheckBox x:Name="writechainagetofile" Visibility="Hidden" Height="0"  Content="Write chainage to file (untick if you just need the points on the screen" IsChecked="False"/>
+        </StackPanel>
+    </Expander>
+
+    <Expander x:Name="expander_copyfiles" BorderThickness="2,2,2,2" IsExpanded="False" Background="#FFDABB83" BorderBrush="#FFCD8025">
+
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="copyfiles" IsChecked="False" VerticalAlignment="Center" GroupName="group1" Checked="radiochange_Click"/>
+                <Label Content="Copy files of selected points to" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
+            </WrapPanel>
+
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=copyfiles}">
+
+            <Button x:Name="copybutton" Content="Select image folder" Height="42" HorizontalContentAlignment="Center" Click="copybutton_Click"/>
+            <Label>
+                <TextBlock x:Name="copytargetfolder" IsEnabled="False" Text=""/>
+            </Label>
+            <Wpf:MemberSelection x:Name="objs1" Height="30" Margin="0" UseLocalSelection="True" UpdateTextOnSelectionChange="False" PreviewGotKeyboardFocus="Selection_PreviewGotFocus" ValueChanged="Selection_ValueChanged"/>
+
+            <Border Background="#FFCBECC2" BorderBrush="#FF337C27" BorderThickness="1">
+                <StackPanel>
+                <Wpf:LayerPicker x:Name="layerpickergood"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="7*"/>
+                    </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" x:Name="goodlayercountlabel" Content=""/>
+                        <Button Grid.Column="1" x:Name="relayertogoodbutton" Content="Relayer to good layer" Click="relayerbutton_Click" />
+                </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#FF8585" BorderBrush="#FF0000" BorderThickness="1">
+                <StackPanel>
+                    <Wpf:LayerPicker x:Name="layerpickerbad"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="7*"/>
+                        </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" x:Name="badlayercountlabel" Content=""/>
+                            <Button Grid.Column="1" x:Name="relayertobadbutton" Content="Relayer to bad layer" Click="relayerbutton_Click" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+
+        </StackPanel>
+    </Expander>
+
+    <Expander x:Name="expander_checkduplicates" BorderThickness="2,2,2,2" IsExpanded="False" Background="#FFD8E8FF" BorderBrush="#FF2860C0">
+
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="checkduplicates" IsChecked="False" VerticalAlignment="Center" GroupName="group1" Checked="radiochange_Click"/>
+                <Label Content="Check Duplicates" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=checkduplicates}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" x:Name="duplicatetolerancelabel" Content="Tolerance:" VerticalAlignment="Center"/>
+                <RadioButton Grid.Column="1" x:Name="dup2d" Content="2D" IsChecked="True" GroupName="group3" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                <RadioButton Grid.Column="2" x:Name="dup3d" Content="3D" IsChecked="False" GroupName="group3" VerticalAlignment="Center" Margin="0,2,8,2"/>
+                <Wpf:DistanceEdit Grid.Column="3" x:Name="duplicatetolerance" Distance="5.00" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+            </Grid>
+            <UniformGrid Columns="2">
+                <RadioButton x:Name="checkperlayer" Content="Check per layer" IsChecked="True" GroupName="group4" VerticalAlignment="Center" Margin="0,2,0,2"/>
+                <RadioButton x:Name="checkwithinselection" Content="Check within selection" IsChecked="False" GroupName="group4" VerticalAlignment="Center" Margin="0,2,0,2"/>
+            </UniformGrid>
+            <Wpf:MemberSelection x:Name="objs2" Height="30" Margin="0" UseLocalSelection="True" UpdateTextOnSelectionChange="False" PreviewGotKeyboardFocus="Selection_PreviewGotFocus"/>
+            <StackPanel  IsEnabled="{Binding IsChecked, ElementName=checkperlayer}">
+                <Label Content="you can quick-select Layers by selecting Points&#xA;only the Layer matters in this mode&#xA;not which points you selected" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                <UniformGrid Columns="2">
+                    <Label Content="Pre-filter list&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="ticklistfilter" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                </UniformGrid>
+                <wfi:WindowsFormsHost x:Name="layerlisthost" Height="200"/>
+            </StackPanel>
+        </StackPanel>
+    </Expander>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+</StackPanel> 

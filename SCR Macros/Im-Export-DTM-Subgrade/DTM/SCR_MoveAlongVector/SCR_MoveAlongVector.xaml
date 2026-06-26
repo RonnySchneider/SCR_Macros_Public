@@ -1,0 +1,46 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="529.456" >
+    <Label Content="move objects along vector"/>
+    <RadioButton x:Name="alongvector" Content="along 2 point vector" GroupName="vectororplane" VerticalAlignment="Center" VerticalContentAlignment="Center" IsChecked="True" Checked="planeorvectorChanged" Unchecked="planeorvectorChanged"/>
+    <Label Content="Vertex 1:"/>
+    <Wpf:CoordinateEdit x:Name="coordCtl1" ShowElevationIf3D="True" AutoTab="True"/>
+    <Label Content="Vertex 2:"/>
+    <Wpf:CoordinateEdit x:Name="coordCtl2" ShowElevationIf3D="True" AutoTab="True"/>
+    <RadioButton x:Name="fromplane" Content="along the normal-vector of 3 point plane" GroupName="vectororplane" VerticalAlignment="Center" VerticalContentAlignment="Center" Checked="planeorvectorChanged" Unchecked="planeorvectorChanged"/>
+    <StackPanel IsEnabled="{Binding IsChecked, ElementName=fromplane}">
+        <!--<StackPanel Visibility="{Binding IsChecked, ElementName=fromplane}">-->
+            <Label Content="best to define in clockwise manner&#xA;the normal vector will then face upwards&#xA;and a positive offset is then upwards as well"/>
+        <!--</StackPanel>-->
+        <Label Content="Vertex 3:"/>
+        <Wpf:CoordinateEdit x:Name="coordCtl3" ShowElevationIf3D="True" AutoTab="True"/>
+    </StackPanel>
+
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+        <StackPanel>
+            <RadioButton x:Name="fixedoffset" Content="distance along vector ggggg" GroupName="group1" IsChecked="True"/>
+            <StackPanel IsEnabled="{Binding IsChecked, ElementName=fixedoffset}">
+                <!--<UniformGrid Columns="2">
+                    <Label Content="Offset from Plane" VerticalAlignment="Center" VerticalContentAlignment="Center"/>-->
+                    <Wpf:DistanceEdit x:Name="offset"/>
+                <!--</UniformGrid>-->
+            </StackPanel>
+        </StackPanel>
+    </Border>
+
+    <StackPanel>
+        <RadioButton x:Name="touchsurface" Content="move until it touches the selected Surface&#xA;('forwards' along the vector, define it accordingly)" GroupName="group1" IsChecked="False"/>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=touchsurface}">
+            <Label Content="works currently only for linestrings" FontWeight="Bold" Foreground="Red"/> 
+            <Wpf:ComboBoxEntityPicker x:Name="touchsurfacepicker" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        </StackPanel>
+    </StackPanel>
+
+    <Wpf:MemberSelection x:Name="objs" Height="30" Margin="0"/>
+    <CheckBox x:Name="returntocoordCtl1" Content="return to first Coordinate-Picker once Macro is done&#xA;otherwise the focus stays in the Object-Picker"/>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+    
+</StackPanel> 

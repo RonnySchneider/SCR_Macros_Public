@@ -1,0 +1,27 @@
+        <h3><a id="SCR_DTMMerge"></a> <span id="SCR_DTMMerge"
+
+            class="header3">SCR_DTMMerge</span> </h3>
+          <ul>
+			  <li>combine two surfaces</li>
+			  <li><span class="auto-style2">data from surface B will replace data from surface A</span><br class="auto-style2"></li>
+			  <li><span class="auto-style2">currently any applied boundaries are ignored</span></li>
+			  <li>it creates a new surface with the data from surface A</li>
+			  <li>offsets the edge breakline of Surface B the defined amount outwards</li>
+			  <li>removes everything from the new surface that falls within that offset line</li>
+			  <li>adds the content of surface B and retriangulates the resulting step</li>
+			  <li>works better than TBC’s DTM combine and merge<br>
+			  <img alt="" src="Media/SCR_DTMMerge-1.png" height="189" width="212" border="1">
+			  <img alt="" src="Media/SCR_DTMMerge-2.png" height="189" width="266" border="1">
+			  <img alt="" src="Media/SCR_DTMMerge-3.png" height="189" width="278" border="1"> <br>
+			  </li><br>
+			  <li><span class="auto-style2">if the two surfaces don’t overlap they will be combined, BUT the algorithm is determining this by using the edge breaklines both surfaces provide</span></li>
+			  <li><span class="auto-style2">they do not necessarily hug the visible triangulation, hence the surface might be falsely considered as inside the other when surface B takes precedence</span><br><br>
+			  <img alt="" src="Media/SCR_DTMMerge-4.jpg" height="307" width="816" border="1">
+			  <br></li>
+			  <li>in this example, surface A = the circle and surface B = large surface, the circle would disappear since it’s considered to be overwritten by surface B</li>
+			  <li>if you swap it around, surface A = large surface and surface B = the circle, it will work since now the circle is considered higher priority</li>
+			  <li>added option for manually entering a surface name</li>
+			  <li>added option to overwrite an existing surface; i.e. if it's already tied to a volume computation you don't have to edit/fix that one</li>
+			<br>
+		  </ul>
+		  

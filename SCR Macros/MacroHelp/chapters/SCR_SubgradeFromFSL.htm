@@ -1,0 +1,21 @@
+        <h3><a id="SCR_SubgradeFromFSL"></a> <span id="SCR_SubgradeFromFSL"
+
+            class="header3">SCR_SubgradeFromFSL</span> </h3>
+          <ul>
+			  <li>this macro takes a given DTM and computes cross sections at intervals
+        along the selected Alignment</li>
+			  <li>it can drop those lines a chosen amount, and extend them until they
+        intersect the DTM again</li>
+			  <li><span class="auto-style2">be careful where you choose the offset locations: between the two
+        offsets the linework matches all grade changes of the DTM, afterwards it
+        uses the DTM grade at the offset location to extrapolate until it hits
+        the DTM</span><br><br>
+			  <img alt="" src="Media/SCR_SubgradeFromFSL.png" width="800" border="1"><br>
+			  <br>TIP: drop it only a very small amount, i.e. 0.000001 m, use the builtin
+        “Project cleanup” to connect the line segments, use
+        	  <a href="#SCR_LinePerpVertOffset" class="class2">SCR_LinePerpVertOffset</a> to offset them perpendicular and create a new
+        surface that is offset perpendicular to the source DTM; 
+			  <span class="auto-style2">of course that
+        will only work perfectly on dam like surfaces that run parallel to the
+        alignment, with no side road tie-ins </span> <br></li>
+		  </ul>

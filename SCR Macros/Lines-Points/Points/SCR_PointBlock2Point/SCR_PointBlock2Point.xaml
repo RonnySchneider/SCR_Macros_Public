@@ -1,0 +1,66 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="800">
+    <Label Content="select CAD-Point or Blocks"/>
+    <Wpf:MemberSelection x:Name="objs" Height="30" Margin="0"/>
+    <Label Content="select Point Output-Layer:"/>
+    <Wpf:LayerPicker x:Name="layerpicker"/>
+
+    <UniformGrid Columns="2">
+        <Label Content="Point Name Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="prefix" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+        <Label Content="Point Name Suffix" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="suffix" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+    </UniformGrid>
+    <Label Content="new Code, leave empty for Point Code" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    <TextBox x:Name="newcode" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
+
+
+
+
+    <StackPanel>
+        <GroupBox>
+            <GroupBox.Header>
+                <RadioButton x:Name="datainblocks" Content="Data is in Block" GroupName="isblock" VerticalAlignment="Center" VerticalContentAlignment="Center" IsChecked="True" />
+            </GroupBox.Header>
+            <StackPanel IsEnabled="{Binding IsChecked, ElementName=datainblocks}">
+                <Label Content="Name-Layer:"/>
+                <Wpf:LayerPicker x:Name="namelayerpicker"/>
+                <Label Content="Elevation-Layer:"/>
+                <Wpf:LayerPicker x:Name="elevlayerpicker"/>
+                <Label Content="Attribute-Layer:"/>
+                <Wpf:LayerPicker x:Name="attrlayerpicker"/>
+
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+
+    <StackPanel>
+        <GroupBox Background="#FF97B9D9">
+            <GroupBox.Header>
+                <RadioButton x:Name="dataintexts" Content="Data is in single Text Entities" GroupName="isblock" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="White"/>
+            </GroupBox.Header>
+            <StackPanel IsEnabled="{Binding IsChecked, ElementName=dataintexts}">
+                <Label Content="Sample CAD-Point"/>
+                <Wpf:SelectEntity x:Name="samplepoint"/>
+                <Label Content="Sample Point Number Text"/>
+                <Wpf:SelectEntity x:Name="samplepointnumber"/>
+                <CheckBox x:Name="useelevationfromtext" IsChecked="True" Content="use Elevation from Text, otherwise from CAD-Point"/>
+                <StackPanel IsEnabled="{Binding IsChecked, ElementName=useelevationfromtext}">
+                    <Label Content="Sample Point Elevation Text (leave empty for Point Elevation)"/>
+                    <Wpf:SelectEntity x:Name="samplepointelevation"/>
+                </StackPanel>
+                <Label Content="Sample Point Attribute Text"/>
+                <Wpf:SelectEntity x:Name="samplepointattribute"/>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+
+</StackPanel> 

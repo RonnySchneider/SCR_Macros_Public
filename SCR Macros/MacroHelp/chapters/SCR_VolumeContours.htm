@@ -1,0 +1,26 @@
+        <h3><a id="SCR_VolumeContours"></a> <span id="SCR_VolumeContours"
+
+            class="header3">SCR_VolumeContours</span> </h3>
+          <ul>
+			  <li>can be used to compute the RL where a Basin contains a certain amount of
+        water or with the contours at volume intervals you can i.e. simulate
+        flooding</li>
+			  <li>the TBC built-in function to compute all this starts to return only total
+        volumes if I go below a certain slice thickness, 0.0001 m / 0.000329 ft, 
+			  which is surprisingly smaller than the earthworks report can do, 
+			  which starts to return totals if I go below 0.001 m</li>
+			  <li>keep in mind that even with 0.0001 m slices the volume on large surfaces
+        changes too much to compute a 100% accurate result</li>
+			  <li>the result/contour
+        is created once the slice sum is &gt;= the target or the interval<br>
+			  <br>
+			  <img alt="" src="Media/SCR_VolumeContours.jpg" width="800" border="1"><br>
+			  <br>also, as a Sidenote:<br>The TBC earthworks report into Excel seems to be super inefficient. On
+        my tiny test surface with 10 triangles, 10 m height and slice thickness
+        0.001 m I can't even press the stop watch quickly enough with my macro,
+        but the report into Excel takes 6 minutes for those 10000 lines. HTML
+        report is much quicker, about 3 seconds, but wouldn't give you all the
+        slice volume decimals.<br><br></li>
+		  </ul>
+
+

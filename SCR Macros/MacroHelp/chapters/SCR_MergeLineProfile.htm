@@ -1,0 +1,23 @@
+        <h3 id="SCR_MergeLineProfile" class="header3"><a id="SCR_MergeLineProfile"></a>SCR_MergeLineProfile</h3>
+          <ul>
+			  <li>lets you combine the horizontal component of one line (Line 1) with the vertical profile of another (Line 2)</li>
+			  <li>the vertical profile can also be a 2DLine in Planview, in that case you’ll have to define the origin (Chainage 0.0 and Elevation 0.0; ChainageAxis is assumed parallel to Easting and ElevationAxis parallel to Northing)</li>
+			  <li>in case the length of Line 1 doesn’t match the length of Line 2 you can compute the Scale to stretch/shrink it accordingly</li>
+			  <li>the vertical scale will work independently of the horizontal scale</li>
+			  <li>you can also draw the vertical profile to the plan view (with variable scales and direction)</li>
+			  <li>in either case, if a scale other than 1.0 is applied the macro needs to chord the profile first, otherwise any curvature in the profile could be compromised, you can’t just simply stretch an arc or spline; it will use the bigger one of the scales to recalculate the chording tolerances<br><br>
+			  <video controls="controls" width="800">
+			  <source src="./Media/SCR_MergeLineProfile.mp4" type="video/mp4">Your browser does not support the video tag.</video><br></li>
+			  <li>added smoothing function
+				<ul>
+				  <li>for a basic 2D-Polyline you may have seen the “smoothing” in the properties pane</li>
+				  <li>after some tinkering I found out what it is doing, it creates a parabola between the segment midpoints</li>
+				  <li>BUT, the result can be rather coarse, and it’s not available for 3D stringlines</li>
+				  <li>hence the macro, it’ll do the same for the horizontal and/or vertical profile of a stringline</li>
+				  <li>it ignores any existing curves, it just looks at the nodes/kinks in the line; basically IP based</li>
+				  <li>a stringline doesn’t know the element parabola, only alignments do, for now the resulting parabola is chorded before drawn</li>
+				  <li>since the resulting horizontal alignment will be shorter than the original, the vertical profile needs to be scaled in chainage direction to match the new length, hence the macro needs to chord it as well in order to do that<br></li>
+				</ul>
+			  </li>
+			  <li>added an option to change all segments of a line to either smooth or straight<br></li>
+		  </ul>

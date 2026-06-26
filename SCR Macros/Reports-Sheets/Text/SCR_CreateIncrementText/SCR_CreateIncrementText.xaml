@@ -1,0 +1,117 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="872.093" >
+
+    <StackPanel>
+        <Border BorderBrush="#FF7D7D7D" BorderThickness="1" >
+            <StackPanel>
+                <Label Content="Prefix" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                <TextBox x:Name="prefix" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="3,0,3,0"/>
+            </StackPanel>
+        </Border>
+        <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FFFFEDCC">
+            <StackPanel>
+                <UniformGrid Columns="2">
+                    <Label Content="Start number" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:NumericEdit x:Name="startnumber" Value="1"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+        <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+            <StackPanel>
+                <UniformGrid Columns="2">
+                    <Label Content="Increment" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:NumericEdit x:Name="increment" Value="1"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+        <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FFFFEDCC">
+            <StackPanel>
+                <Label Content="Number length - fill with leading zeros" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                <Wpf:NumericEdit x:Name="numberlength" Value="2"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+
+
+    <Expander x:Name="expander_change" BorderThickness="2,2,2,2" IsExpanded="True" Background="#FFCBECC2" BorderBrush="#FF337C27">
+
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="changemode" IsChecked="True" VerticalAlignment="Center" GroupName="group1"/>
+                <Label Content="Change existing text" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=changemode}">
+            <Label Content="Select text"/>
+            <Wpf:MemberSelection x:Name="objs"/>
+            <RadioButton x:Name="creationorder" Content="Change in order of creation" IsChecked="True" VerticalAlignment="Center" GroupName="group2"/>
+            <RadioButton x:Name="selectionorder" Content="Change in order of selection" IsChecked="False" VerticalAlignment="Center" GroupName="group2"/>
+            <RadioButton x:Name="contentorder" Content="Change in order of content" IsChecked="False" VerticalAlignment="Center" GroupName="group2"/>
+            <CheckBox x:Name="reverseorder" Content="Reverse order" IsChecked="False" VerticalAlignment="Center"/>
+        </StackPanel>
+    </Expander>
+
+    <Expander x:Name="expander_new" BorderThickness="2,2,2,2" IsExpanded="False" Background="#FFDABB83" BorderBrush="#FFCD8025">
+
+        <Expander.Header>
+            <WrapPanel>
+                <RadioButton x:Name="newmode" IsChecked="False" VerticalAlignment="Center" GroupName="group1"/>
+                <Label Content="Create new text" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
+            </WrapPanel>
+
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=newmode}">
+            <Label Content="Select output layer:"/>
+            <Wpf:LayerPicker x:Name="layerpicker"/>
+            <GroupBox Header="Number settings">
+                <StackPanel>
+                    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FFFFEDCC">
+                        <StackPanel>
+                            <UniformGrid Columns="2">
+                                <Label x:Name="labeltextheight" Content="Text height" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <Wpf:DistanceEdit x:Name="textheight"/>
+                                <Label x:Name="labelx" Content="Offset 'X' direction" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <Wpf:DistanceEdit x:Name="textoffsetx"/>
+                                <Label x:Name="labely"  Content="Offset 'Y' direction" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <Wpf:DistanceEdit x:Name="textoffsety"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Location and orientation">
+                <StackPanel>
+                    <CheckBox x:Name="usefixedbearing" Content="Use fixed bearing" IsChecked="True" Checked="usefixedbearingChanged" Unchecked="usefixedbearingChanged" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+
+                    <Label Content="Define bearing to compute to"/>
+                    <Wpf:BearingEdit x:Name="bearingpicker" IsEnabled="True"/>
+                    <Border BorderBrush="#FF7D7D7D" BorderThickness="1">
+                        <StackPanel>
+                            <Label Content="Select P1" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Wpf:CoordinateEdit x:Name="coordpick1"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FFFFEDCC">
+                        <StackPanel>
+                            <Label Content="Select P2 for orientation" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#FFE4CFA8"/>
+                            <Wpf:CoordinateEdit x:Name="coordpick2" IsEnabled="False"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </Expander>
+    
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+
+
+
+
+</StackPanel> 
+    

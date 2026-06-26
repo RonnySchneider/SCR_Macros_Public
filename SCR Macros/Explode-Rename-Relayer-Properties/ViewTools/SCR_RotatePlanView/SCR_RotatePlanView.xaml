@@ -1,0 +1,99 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="835.002">
+
+    <Wpf:BearingEdit x:Name="bearing" IsEnabled="True" Margin="0"/>
+    <UniformGrid Columns="2">
+        <Button x:Name="ccw90" Content="&#x21b6; 90&#x00b0;" Click="ccw90_Click"/>
+        <Button x:Name="cw90" Content="90&#x00b0; &#x21b7;" Click="cw90_Click"/>
+    </UniformGrid>
+
+
+    <GroupBox>
+        <GroupBox.Header>
+            <CheckBox x:Name="usealignment" Content="use Alignment" Checked="usealignmentChanged" Unchecked="usealignmentChanged" IsChecked="False"/>
+        </GroupBox.Header>
+        <Border x:Name="alignmentbox" IsEnabled="False" BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+            <StackPanel>
+                <Wpf:SelectEntity x:Name="linepicker1"/>
+                <UniformGrid Columns="2">
+                    <Label Content="Choose Chainage:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Wpf:StationEdit x:Name="station" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0" AllowEnterAsInputKey="True"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+    </GroupBox>
+    <GroupBox Header="Saved Settings - can be named in first field&#x0a;select Save Field, set Bearing above, click save">
+        <StackPanel>
+            <GroupBox>
+                <GroupBox.Header>
+                    <RadioButton x:Name="radio1" Content="Save 1" GroupName="Saves" IsChecked="True"/>
+                </GroupBox.Header>
+                <Border IsEnabled="{Binding IsChecked, ElementName=radio1}">
+                    <UniformGrid Columns="2">
+                        <TextBox x:Name="save1_text" Text="Save 1"/>
+                        <Wpf:BearingEdit x:Name="save1_bearing"/>
+                    </UniformGrid>
+                </Border>
+            </GroupBox>
+            <GroupBox>
+                <GroupBox.Header>
+                    <RadioButton x:Name="radio2" Content="Save 2" GroupName="Saves"/>
+                </GroupBox.Header>
+                <Border IsEnabled="{Binding IsChecked, ElementName=radio2}">
+                    <UniformGrid Columns="2">
+                        <TextBox x:Name="save2_text" Text="Save 2"/>
+                        <Wpf:BearingEdit x:Name="save2_bearing"/>
+                    </UniformGrid>
+                </Border>
+            </GroupBox>
+            <GroupBox>
+                <GroupBox.Header>
+                    <RadioButton x:Name="radio3" Content="Save 3" GroupName="Saves"/>
+                </GroupBox.Header>
+                <Border IsEnabled="{Binding IsChecked, ElementName=radio3}">
+                    <UniformGrid Columns="2">
+                        <TextBox x:Name="save3_text" Text="Save 3"/>
+                        <Wpf:BearingEdit x:Name="save3_bearing"/>
+                    </UniformGrid>
+                </Border>
+            </GroupBox>
+            <GroupBox>
+                <GroupBox.Header>
+                    <RadioButton x:Name="radio4" Content="Save 4" GroupName="Saves"/>
+                </GroupBox.Header>
+                <Border IsEnabled="{Binding IsChecked, ElementName=radio4}">
+                    <UniformGrid Columns="2">
+                        <TextBox x:Name="save4_text" Text="Save 4"/>
+                        <Wpf:BearingEdit x:Name="save4_bearing"/>
+                    </UniformGrid>
+                </Border>
+            </GroupBox>
+            <GroupBox>
+                <GroupBox.Header>
+                    <RadioButton x:Name="radio5" Content="Save 5" GroupName="Saves"/>
+                </GroupBox.Header>
+                <Border IsEnabled="{Binding IsChecked, ElementName=radio5}">
+                    <UniformGrid Columns="2">
+                        <TextBox x:Name="save5_text" Text="Save 5"/>
+                        <Wpf:BearingEdit x:Name="save5_bearing"/>
+                    </UniformGrid>
+                </Border>
+            </GroupBox>
+            <UniformGrid Columns="2">
+                <Button x:Name="save" Content="Save" Click="save_Click"/>
+                <Button x:Name="restore" Content="Restore/Set" Click="restore_Click"/>
+            </UniformGrid>
+
+        </StackPanel>
+    </GroupBox>
+
+    <Button x:Name="resetnorth" Content="Reset to North" Click="reset_Click"/>
+    
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+
+
+</StackPanel> 

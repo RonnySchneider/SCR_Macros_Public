@@ -1,0 +1,16 @@
+        <h3 id="SCR_FindPlotframe" class="header3"><a id="SCR_FindPlotframe"></a>SCR_FindPlotframe</h3>
+          <ul>
+			  <li>purpose of this macro is to make it easier for the engineers to find all the drawings around a specific coordinate</li>
+			  <li>prerequisite is a collection of all the project drawing plotframes as linestrings with the drawing number as name</li>
+			  <li>the macro loops through all closed linestrings in the project and reports their names</li>
+			  <li>since the engineers usually don’t have a TBC license the macro also offers to export all selected closed linestrings as coordinate list into a CSV file “FrameCoordinates.csv” in the users “Download” folder</li>
+			  <li>the macro folder contains an ExcelFile with embedded macro that can be copied to any place, i.e. Sharepoint</li>
+			  <li>if you copy the content of the TBCExport .csv into the second sheet of that ExcelFile, the engineers can search for drawings on their own without the need of a TBC license, i.e. entering a coordinate they have looked up in Propeller</li>
+			  <li>the ExcelMacro also offers to widen the search around the entered coordinate<br>
+			  <ul>
+				  <li>i.e. if you enter a search coordinate of 10, 10 and a search distance of 10 it will search in 1 m steps the square between 0,0 and 20, 20<br><br>
+				  </li>
+			  </ul>
+			  </li>
+		  </ul>
+

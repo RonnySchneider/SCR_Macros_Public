@@ -1,0 +1,96 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="600">
+
+    <!--<Label Content="Name:" />
+    <Wpf:NameEdit x:Name="nameCtlHigh" AutoTabExtVisible="True"/>-->
+    <Label Content="!!! BETA version - still in development !!!" Background="Red"/>
+
+    <Expander x:Name="expander_drawMin" BorderThickness="2,2,2,2" IsExpanded="True" Background="#FFFF9090" BorderBrush="Red">
+        <Expander.Header>
+            <WrapPanel>
+                <CheckBox x:Name="drawMin" IsChecked="True" Content="draw Min-Line"/>
+                <Button x:Name="btnNewMin" Content="New" Margin="6,0,0,0" IsEnabled="{Binding IsChecked, ElementName=drawMin}"/>
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=drawMin}">
+            <UniformGrid Columns="2">
+                <Label Content="Min-Line Layer:"/>
+                <Wpf:LayerPicker x:Name="layerPickerMin"/>
+                <Label Content="Min-Line Colour:"/>
+                <Wpf:ColorPicker x:Name="colourPickerMin" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            </UniformGrid>
+        </StackPanel>
+    </Expander>
+
+    <Expander x:Name="expander_drawMax" BorderThickness="2,2,2,2" IsExpanded="True" Background="#FFCBECC2" BorderBrush="#FF337C27">
+        <Expander.Header>
+            <WrapPanel>
+                <CheckBox x:Name="drawMax" IsChecked="True" Content="draw Max-Line"/>
+                <Button x:Name="btnNewMax" Content="New" Margin="6,0,0,0" IsEnabled="{Binding IsChecked, ElementName=drawMax}"/>
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=drawMax}">
+            <UniformGrid Columns="2">
+                <Label Content="Max-Line Layer:"/>
+                <Wpf:LayerPicker x:Name="layerPickerMax"/>
+                <Label Content="Max-Line Colour:"/>
+                <Wpf:ColorPicker x:Name="colourPickerMax" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            </UniformGrid>
+        </StackPanel>
+    </Expander>
+
+    <Expander x:Name="expander_drawGutter" BorderThickness="2,2,2,2" IsExpanded="True" Background="#FFB8D7F5" BorderBrush="#FF2060B0" Visibility="Collapsed">
+        <Expander.Header>
+            <WrapPanel>
+                <CheckBox x:Name="drawGutter" IsChecked="False" Content="draw Gutter-Line"/>
+                <Button x:Name="btnNewGutter" Content="New" Margin="6,0,0,0" IsEnabled="{Binding IsChecked, ElementName=drawGutter}"/>
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=drawGutter}">
+            <UniformGrid Columns="2">
+                <Label Content="Gutter-Line Layer:"/>
+                <Wpf:LayerPicker x:Name="layerPickerGutter"/>
+                <Label Content="Gutter-Line Colour:"/>
+                <Wpf:ColorPicker x:Name="colourPickerGutter" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            </UniformGrid>
+        </StackPanel>
+    </Expander>
+
+    <Border Background="#FFDABB83" BorderBrush="#FFCD8025">
+        <StackPanel>
+            <Label Content="Search Shape and Size:"/>
+            <RadioButton x:Name="circleSelect" Content="Sphere" IsChecked="False" VerticalAlignment="Center" GroupName="group1"/>
+            <RadioButton x:Name="squareSelect" Content="Square" IsChecked="True" VerticalAlignment="Center" GroupName="group1"/>
+            <UniformGrid Columns="2" IsEnabled="{Binding IsChecked, ElementName=squareSelect}">
+                <Wpf:BearingEdit x:Name="pickerBearing" VerticalContentAlignment="Center"/>
+                <Button x:Name="btnResetBearing" Content="Reset" VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
+                <Label Content="Radius:"/>
+                <Wpf:DistanceEdit x:Name="apertureRadius" Distance="0.25"/>
+                <Label Content="Height (+/- from Cursor):" IsEnabled="{Binding IsChecked, ElementName=squareSelect}"/>
+                <Wpf:DistanceEdit x:Name="apertureHeight" Distance="3" IsEnabled="{Binding IsChecked, ElementName=squareSelect}"/>
+            </UniformGrid>
+            <Label Content="Indicator Outline Colours:"/>
+            <UniformGrid Columns="2">
+                <Label Content="Search Aperture:"/>
+                <Wpf:ColorPicker x:Name="colourPickerAperture" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                <!--<Label Content="Prefilter Outline:"/>
+                <Wpf:ColorPicker x:Name="colourPickerPrefilter" VerticalAlignment="Center" VerticalContentAlignment="Center"/>-->
+            </UniformGrid>
+        </StackPanel>
+    </Border>
+
+    <Label Content="Coordinate:"/>
+    <Wpf:CoordinateEdit x:Name="coordCtl" AutoTab="False" />
+
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+    <Label x:Name="debug" Content="" Background="#00000000" FontWeight="Bold" Foreground="Magenta"/>
+    <Label x:Name="debug2" Content="" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+
+</StackPanel>

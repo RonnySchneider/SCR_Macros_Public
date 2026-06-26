@@ -1,0 +1,23 @@
+        <h3><a id="SCR_ExifGPS"></a> <span id="SCR_ExifGPS" class="header3">SCR_ExifGPS</span> </h3>
+          <ul>
+			  <li>intention of the macro is it to make it easy to select just a certain amount of images of a drone flight, i.e. if only a certain amount can be uploaded/processed at a given time, or cost of processing tokens</li>
+			  <li>it is advisable to run the macro in an empty project, no need to set a coordinate system, but doesn't hurt either</li>
+			  <!-- <li><span class="auto-style1">run it on a local drive, it is very slow over the network</span></li> -->
+			  <li>the macro will scan the selected folder recursively</li>
+			  <li>it will extract the WGS coordinate that is saved in the image, convert it according to the TBC project settings into a local Easting/Northing coordinate and show the positions on the screen</li>
+			  <li>if an image doesn't have a geotag at all, it will be placed on a separate layer at location 0,0,0; that way you can at least see the image name(s)</li>
+			  <li>if the RTK-tag is lower than 50 (RTK fixed solution) the point is placed on a separate layer</li>
+			  <li>it saves the image's path into the "Description 1" field, which is then used for the copy process</li>
+			  <li>the RTK-tag is saved into the "Description 2" field</li>
+			  <li>in the copy section of the macro you can quickly relayer/separate points/images</li>
+			  <li>and once that is done you can copy the selected points/images to a temporary location before uploading them to Propeller<br></li>
+			  <br>
+			<video controls="controls" width="800">
+			<source src="./Media/SCR_ExifGPS.mp4" type="video/mp4">Your browser does not support the video tag.</video>
+			<br><br></li>
+
+			  <li>added mode to create a layer per image folder</li>
+			  <li>added duplicate image check mode</li>
+		  </ul>
+
+

@@ -1,0 +1,22 @@
+        <h3 id=”SCR_SimpleCADPoint” class="header3"><a id="SCR_SimpleCADPoint"></a>SCR_SimpleCADPoint</h3>
+          <ul>
+			  <li>often a simple CADPoint is enough as construction point, no need to create named points all the time</li>
+			  <li>you can still use all the right-click commands like BearingDistance etc.<br>
+			  <br>
+			  <video controls="controls" width="800">
+			  <source src="./Media/SCR_SimpleCADPoint1.mp4" type="video/mp4">Your browser does not support the video tag.</video> <br><br></li>
+
+			  <li>option for QuickMidPoint might be handy on circular IFC objects<br></li>
+			  <video controls="controls" width="800">
+			  <source src="./Media/SCR_SimpleCADPoint2.mp4" type="video/mp4">Your browser does not support the video tag.</video> <br><br></li>
+
+			  <li>added option to create points along a line but picking elevation from offset points<br></li>
+				<ul>
+				  <li>if you have a thin spread scan and you want to use <a class="class2" href="#SCR_AnalyzeCloudAlongLine">SCR_AnalyzeCloudAlongLine</a> to create a best fit hog line<br></li>
+				  <li>by creating those points directly on i.e. the CL it won't throw the best fit line of course if the scan points are arbitrarely spread around the CL<br></li>
+				  <li>you probably want to pick points at nearly the same offsets left and right to average out an eventual cross fall in the cloud points<br></li>
+				</ul>
+			  <video controls="controls" width="800">
+			  <source src="./Media/SCR_SimpleCADPoint3.mp4" type="video/mp4">Your browser does not support the video tag.</video> <br></li>
+		  </ul>
+

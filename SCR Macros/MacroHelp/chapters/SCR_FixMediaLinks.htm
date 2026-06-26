@@ -1,0 +1,10 @@
+        <h3><a id="SCR_FixMediaLinks"></a> <span id="SCR_FixMediaLinks" class="header3">SCR_FixMediaLinks</span> </h3>
+          <ul>
+			  <li>if the field crew attaches images to their pickup points they can be shown in TBC, but after importing the JOBfile the image link TBC uses is relative to the TBC project folder</li>
+			  <li>if you export the points via VCL into a different, i.e. master underground services project, the link won’t work anymore, the link is now relative to this project, that doesn’t have the images</li>
+			  <li>the solution is to make the relative link an absolute link to the actual position of the image in the day jobs folder</li>
+			  <li>the macro searches all subfolders of the selected root folder and tries to find a match with the original image link file name</li>
+			  <li>the more you can narrow down that root folder, the quicker it will succeed</li>
+			  <li>Update:<br>you can now also define a target folder where all images will be copied to, i.e. if you want to hand them over with a VCL file</li>
+		  </ul><br>
+

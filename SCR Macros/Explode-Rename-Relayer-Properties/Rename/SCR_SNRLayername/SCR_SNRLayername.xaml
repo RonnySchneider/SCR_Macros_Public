@@ -1,0 +1,46 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+       xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
+       xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+       mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="245.277" d:DesignHeight="800"  >
+    <Label Content="Search and replace in layer names"/>
+
+    <Expander x:Name="expander_selectlayers" BorderThickness="2,2,2,2" IsExpanded="True">
+        <Expander.Header>
+            <WrapPanel>
+                <CheckBox x:Name="selectlayers" Content="Only for certain layers" IsChecked="True" />
+            </WrapPanel>
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsChecked, ElementName=selectlayers}">
+            <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                <StackPanel>
+                    <UniformGrid Columns="2">
+                        <Label Content="Pre-filter list&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                        <TextBox x:Name="ticklistfilter" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    </UniformGrid>
+                    <wfi:WindowsFormsHost x:Name="layerlisthost" Height="300"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Expander>
+    <Label Content="Search string"/>
+    <TextBox x:Name="searchtext" Height="23" TextWrapping="Wrap" Text=""/>
+    <Label Content="Replace string"/>
+    <TextBox x:Name="replacetext" Height="23" TextWrapping="Wrap" Text=""/>
+
+
+    <CheckBox x:Name="createcopies" Content="Create layers with new name, instead of rename&#xA;Properties of the old layer will be copied" IsChecked="False" />
+    <CheckBox x:Name="copyobjects" Content="Copy the objects on those layers&#xA;to the new ones" IsChecked="False" />
+    <CheckBox x:Name="renamegroup" Content="Use old layer group as source and apply renaming on it&#xA;and create/find new group with that new name" IsChecked="False" IsEnabled="{Binding IsChecked, ElementName=createcopies}"/>
+    <!--<StackPanel  IsEnabled="{Binding IsChecked, ElementName=createcopies}">
+        --><!--<Wpf:MemberSelection x:Name="objs" Height="30" Margin="0"/>--><!--
+    </StackPanel>-->
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+</StackPanel> 

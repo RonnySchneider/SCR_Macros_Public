@@ -1,0 +1,29 @@
+        <h3><a id="SCR_SaveRestoreLabelPositions"></a> <span id="SCR_SaveRestoreLabelPositions" class="header3">SCR_SaveRestoreLabelPositions</span> </h3>
+          <ul>
+			  <li>for easy/quick preperation of a new control file for Propeller<br>
+			  </li>
+			  <li>instead of moving labels and leaders around each time from scratch it will restore the ones it knows and highlights the ones that need attention<br><br>
+			  <video controls="controls" width="800">
+			  <source src="./Media/SCR_SaveRestoreLabelPositions.mp4" type="video/mp4">Your browser does not support the video tag.</video>
+			   <br></li>
+			  <li>Here the TBC process:<br>
+			  <ul>
+				  <li>open old TBC project from here Z:\2718 Survey Control\2718.0 ## Control registers ##</li>
+				  <li>delete old labels and points</li>
+				  <li>import the new control CSV</li>
+				  <li>process feature codes</li>
+				  <li>label points with "ANNO Point Labels"</li>
+				  <li>run macro "SaveRestoreLabelPositions" restore positions of labels and leaders that have been processed before</li>
+				  <li>check for new/magenta labels</li>
+				  <li>after moving magenta labels, change color to ByLayer and rerun macro to save positions</li>
+				  <li>select all labels and explode them twice with CAD &gt; Explode<br>
+				  </li>
+				  <li>select all Leaders and use macro 
+				  <a href="#SCR_ExplodeCADLeader" class="class2">Explode CAD Leaders</a> only do that AFTER the labels were exploded</li>
+				  <li>select all texts and use macro <a href="#SCR_ExplodeTextToLines" class="class2">Explode Text to Linework</a><br><br>
+				  </li>
+			  </ul>
+			  </li>
+		  </ul>
+
+

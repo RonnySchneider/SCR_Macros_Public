@@ -1,0 +1,126 @@
+﻿<Window Background="#FFF3F3F7"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
+        Title="SCR_ViewFilter" MinHeight="600" MinWidth="600"
+        mc:Ignorable="d">
+
+    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!--0 - Project Name -->
+                <RowDefinition Height="Auto"/> <!--1- View Filter Name -->
+                <RowDefinition Height="*"/> <!--2- Filters + Lists-->
+                <RowDefinition Height="Auto"/> <!--3- Start Button -->
+                <RowDefinition Height="Auto"/> <!--4- Debug1 -->
+                <RowDefinition Height="Auto"/> <!--5- Debug2 -->
+            </Grid.RowDefinitions>
+
+            <Label x:Name="labelproject" Content="Project: " Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+            <Label x:Name="labelviewfilter" Content="View Filter: " Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+            
+            <Grid x:Name="filterandlists" Grid.Row="2" Grid.Column="0" IsEnabled="False">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/> <!--0-->
+                    <ColumnDefinition Width="5"/> <!--1-->
+                    <ColumnDefinition Width="Auto"/> <!--2--> 
+                    <ColumnDefinition Width="5"/> <!--3-->
+                    <ColumnDefinition Width="Auto"/> <!--4--> 
+                    <ColumnDefinition Width="5"/> <!--5-->
+                    <ColumnDefinition Width="Auto"/> <!--6--> 
+                    <ColumnDefinition Width="5"/> <!--7--> 
+                    <ColumnDefinition Width="0"/> <!--8 - Fake and empty, to make the last splitter work--> 
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <!--<RowDefinition Height="5"/>-->
+                </Grid.RowDefinitions>
+                <GridSplitter Grid.Row="0" Grid.Column="1" Grid.RowSpan="1" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <GridSplitter Grid.Row="0" Grid.Column="3" Grid.RowSpan="1" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <GridSplitter Grid.Row="0" Grid.Column="5" Grid.RowSpan="1" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <GridSplitter Grid.Row="0" Grid.Column="7" Grid.RowSpan="1" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+                <!--<GridSplitter Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="8" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
+
+                <Grid x:Name="gridcolumn1" Grid.Row="0" Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!--0- Filters-->
+                        <RowDefinition Height="*"/> <!--1- Lists-->
+                    </Grid.RowDefinitions>
+                    <UniformGrid Grid.Row="0" Grid.Column="0" Columns="2">
+                        <Label Content="Pre-Filter Layer-List&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    <!--the space in "Text" here makes sure that the set of ticks is triggered upon startup-->
+                        <TextBox x:Name="layerfilter1" Text=" " VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    </UniformGrid>
+                    <Wpf:CheckedListBoxEntityPicker  Grid.Row="1" Grid.Column="0" x:Name="layerticklist1" Background="#FFF3F3F7"/>
+                </Grid>
+
+                <Grid x:Name="gridcolumn2" Grid.Row="0" Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <UniformGrid Grid.Row="0" Grid.Column="2" Columns="2">
+                        <Label Content="Pre-Filter Layer-List&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    <!--the space in "Text" here makes sure that the set of ticks is triggered upon startup-->
+                        <TextBox x:Name="layerfilter2" Text=" " VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    </UniformGrid>
+                    <Wpf:CheckedListBoxEntityPicker  Grid.Row="1" Grid.Column="2" x:Name="layerticklist2" Background="#FFF3F3F7"/>
+                </Grid>
+
+                <Grid x:Name="gridcolumn3" Grid.Row="0" Grid.Column="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <UniformGrid Grid.Row="0" Grid.Column="4" Columns="2">
+                        <Label Content="Pre-Filter Surface-List&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    <!--the space in "Text" here makes sure that the set of ticks is triggered upon startup-->
+                        <TextBox x:Name="surfacefilter1" Text=" " VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    </UniformGrid>
+                    <Wpf:CheckedListBoxEntityPicker  Grid.Row="1" Grid.Column="4" x:Name="surfaceticklist1" Background="#FFF3F3F7"/>
+                </Grid>
+
+                <Grid x:Name="gridcolumn4" Grid.Row="0" Grid.Column="6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <UniformGrid Grid.Row="0" Grid.Column="6" Columns="2">
+                        <Label Content="Pre-Filter Surface-List&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    <!--the space in "Text" here makes sure that the set of ticks is triggered upon startup-->
+                        <TextBox x:Name="surfacefilter2" Text=" " VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    </UniformGrid>
+                    <Wpf:CheckedListBoxEntityPicker  Grid.Row="1" Grid.Column="6" x:Name="surfaceticklist2" Background="#FFF3F3F7"/>
+                </Grid>
+            </Grid>
+
+            <Button x:Name="buttongetstarted" Content="update checkboxes - should not be necessary anymore" Grid.Row="3" Grid.Column="0" FontSize="16" FontWeight="Bold" FontStyle="Italic" Foreground="Red"/>
+
+            <Label x:Name="debug" Content="" Grid.Row="4" Grid.Column="0" Background="#00000000" FontWeight="Bold" Foreground="Magenta"/>
+            <Label x:Name="debug2" Content="" Grid.Row="5" Grid.Column="0" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+
+        </Grid>
+
+    </Border>
+
+
+
+</Window>
