@@ -83,7 +83,7 @@
 
         <!-- Row 2: Download button -->
         <Button Grid.Row="2" x:Name="downloadbtn"
-                Content="↓ Download selected   /   🗑 Delete local-only selected"
+                Content="↓  Download selected   –   ⚠ ticked 'Local only' files will be deleted"
                 Height="34" Margin="0,6,0,0"
                 FontWeight="Bold" Background="#FFC0E8A0"/>
 

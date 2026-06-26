@@ -71,6 +71,12 @@ _XAML = """<Window Background="#FFF3F3F7"
                 <DataTrigger Binding="{Binding [status]}" Value="New">
                     <Setter Property="Background" Value="#FFD4E8FF"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="Local is newer">
+                    <Setter Property="Background" Value="#FFECE0FF"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="Modified">
+                    <Setter Property="Background" Value="#FFE8E8E8"/>
+                </DataTrigger>
                 <DataTrigger Binding="{Binding [status]}" Value="Local only">
                     <Setter Property="Background" Value="#FFFFD8B0"/>
                 </DataTrigger>
@@ -124,7 +130,7 @@ _XAML = """<Window Background="#FFF3F3F7"
         </DataGrid>
 
         <Button Grid.Row="2" x:Name="downloadbtn"
-                Content="&#x2193; Download selected   /   🗑 Delete local-only selected"
+                Content="&#x2193;  Download selected   –   ⚠ ticked &#x27;Local only&#x27; files will be deleted"
                 Height="34" Margin="0,6,0,0"
                 FontWeight="Bold" Background="#FFC0E8A0"/>
 
@@ -158,7 +164,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version     = 1.10
+        cmdData.Version     = 1.11
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo   = r""
 
@@ -243,6 +249,24 @@ class SCR_MacroUpdateDialog(Window):
         except:
             return "-"
 
+    def _fetch_remote_version(self, repo_path):
+        try:
+            prefix = self._repo_subfolder.strip("/")
+            repo_path_prefix = prefix + "/" if prefix else ""
+            raw_url = "https://raw.githubusercontent.com/{}/{}/HEAD/{}".format(
+                self._repo_owner, self._repo_name, repo_path_prefix + repo_path)
+            req = HttpWebRequest.Create(raw_url)
+            req.Method    = "GET"
+            req.UserAgent = "SCR-MacroUpdate/2.0"
+            req.Timeout   = 10000
+            resp = req.GetResponse()
+            with StreamReader(resp.GetResponseStream()) as rdr:
+                txt = rdr.ReadToEnd()
+            m = re.search(r'cmdData\.Version\s*=\s*([\d.]+)', txt)
+            return m.group(1) if m else "-"
+        except:
+            return "-"
+
     def _make_table(self):
         dt = DataTable("files")
         dt.Columns.Add("download",      System.Type.GetType("System.Boolean"))
@@ -310,9 +334,20 @@ class SCR_MacroUpdateDialog(Window):
                 status    = "Up to date"
                 do_dl     = False
             else:
-                local_ver = self._extract_version(local_path)
-                status    = "Update available"
-                do_dl     = True
+                local_ver  = self._extract_version(local_path)
+                remote_ver = self._fetch_remote_version(path)
+                try:
+                    lv = float(local_ver)  if local_ver  != "-" else 0.0
+                    rv = float(remote_ver) if remote_ver != "-" else 0.0
+                except ValueError:
+                    lv = rv = 0.0
+                if rv > lv:
+                    status = "Update available"
+                elif lv > rv:
+                    status = "Local is newer"
+                else:
+                    status = "Modified"
+                do_dl = False
 
             if path.split("/")[-1].lower() in _HELPER_FILENAMES:
                 local_ver = "mandatory on macro update"
@@ -350,7 +385,7 @@ class SCR_MacroUpdateDialog(Window):
                 do_dl  = False
             else:
                 status = "Update available"
-                do_dl  = True
+                do_dl  = False
             row = dt.NewRow()
             folder_prefix = folder + "/" if folder else ""
             file_count = sum(1 for i in tree_items

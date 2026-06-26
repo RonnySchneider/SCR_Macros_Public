@@ -63,6 +63,12 @@ _XAML = """<Window Background="#FFF3F3F7"
                 <DataTrigger Binding="{Binding [status]}" Value="New">
                     <Setter Property="Background" Value="#FFD4E8FF"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="Local is newer">
+                    <Setter Property="Background" Value="#FFECE0FF"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding [status]}" Value="Modified">
+                    <Setter Property="Background" Value="#FFE8E8E8"/>
+                </DataTrigger>
                 <DataTrigger Binding="{Binding [status]}" Value="Error">
                     <Setter Property="Background" Value="#FFFFCCCC"/>
                 </DataTrigger>
@@ -149,7 +155,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version     = 1.01
+        cmdData.Version     = 1.02
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo   = r""
 
@@ -251,6 +257,24 @@ class SCR_InstallDialog(Window):
         except:
             return "-"
 
+    def _fetch_remote_version(self, repo_path):
+        try:
+            prefix = self._repo_subfolder.strip("/")
+            repo_path_prefix = prefix + "/" if prefix else ""
+            raw_url = "https://raw.githubusercontent.com/{}/{}/HEAD/{}".format(
+                self._repo_owner, self._repo_name, repo_path_prefix + repo_path)
+            req = HttpWebRequest.Create(raw_url)
+            req.Method    = "GET"
+            req.UserAgent = "SCR-Install/1.0"
+            req.Timeout   = 10000
+            resp = req.GetResponse()
+            with StreamReader(resp.GetResponseStream()) as rdr:
+                txt = rdr.ReadToEnd()
+            m = re.search(r'cmdData\.Version\s*=\s*([\d.]+)', txt)
+            return m.group(1) if m else "-"
+        except:
+            return "-"
+
     def _make_table(self):
         dt = DataTable("files")
         dt.Columns.Add("download",      System.Type.GetType("System.Boolean"))
@@ -316,9 +340,20 @@ class SCR_InstallDialog(Window):
                 status    = "Up to date"
                 do_dl     = False
             else:
-                local_ver = self._extract_version(local_path)
-                status    = "Update available"
-                do_dl     = True
+                local_ver  = self._extract_version(local_path)
+                remote_ver = self._fetch_remote_version(path)
+                try:
+                    lv = float(local_ver)  if local_ver  != "-" else 0.0
+                    rv = float(remote_ver) if remote_ver != "-" else 0.0
+                except ValueError:
+                    lv = rv = 0.0
+                if rv > lv:
+                    status = "Update available"
+                elif lv > rv:
+                    status = "Local is newer"
+                else:
+                    status = "Modified"
+                do_dl = False
 
             if path.split("/")[-1].lower() in _HELPER_FILENAMES or path.split("/")[-1].lower() == _SYNC_FILENAME:
                 local_ver = "mandatory on macro install"
@@ -356,7 +391,7 @@ class SCR_InstallDialog(Window):
                 do_dl  = False
             else:
                 status = "Update available"
-                do_dl  = True
+                do_dl  = False
             row = dt.NewRow()
             folder_prefix = folder + "/" if folder else ""
             file_count = sum(1 for i in tree_items
