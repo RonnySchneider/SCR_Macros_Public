@@ -3,6 +3,7 @@ import clr
 import copy
 import csv
 from datetime import datetime, timedelta
+import io
 from io import StringIO
 import importlib
 import json
@@ -20,7 +21,7 @@ import time
 from timeit import default_timer as timer
 import uuid
 import webbrowser
-#import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET
 
 clr.AddReference("IronPython.Wpf")
 import wpf
@@ -193,7 +194,7 @@ except:
     from Trimble.Vce.Geometry.PolySeg.Segment import FergusonSpline
 
 
-from Trimble.Vce.Geometry.Region import Region, RegionBuilder
+from Trimble.Vce.Geometry.Region import HoleProcessingOptions, Region, RegionBuilder
 
 from Trimble.Vce.Graphics import FillStyle, GraphicMarkerTypes, LeftMouseModeType, TrimbleColorCodeValues
 

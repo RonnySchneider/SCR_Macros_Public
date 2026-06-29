@@ -22,6 +22,7 @@
 
     <Label Content="Line Point A:"/>
     <Wpf:CoordinateEdit x:Name="coordCtl1" ShowElevationIf3D="True" AutoTab="True"/>
+    <Button x:Name="btnSwap" Content="⇅  swap" HorizontalAlignment="Center" Margin="0,2,0,2" Padding="8,2"/>
     <Label Content="Line Point B:"/>
     <Wpf:CoordinateEdit x:Name="coordCtl2" ShowElevationIf3D="True" AutoTab="True"/>
     <Label Content="Offset Point:"/>

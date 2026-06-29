@@ -43,7 +43,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Vector Station/Offset"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.08
+        cmdData.Version = 1.09
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -96,6 +96,10 @@ class SCR_PointFromVectorOffsetStation(StackPanel): # this inherits from the WPF
  
         self.coordpick1.ShowElevationIf3D = True
         self.coordpick2.ShowElevationIf3D = True
+        self.btnSwap.Click += self.SwapClicked
+        self.coordpick1.ValueChanged += self.CoordChanged
+        self.coordpick2.ValueChanged += self.CoordChanged
+        self._overlay_guid = Guid.NewGuid()
 
         self.pointnamestart.NumberOfDecimals = 0
         self.pointnameincrement.NumberOfDecimals = 0
@@ -115,6 +119,54 @@ class SCR_PointFromVectorOffsetStation(StackPanel): # this inherits from the WPF
 
     def SaveOptions(self):
         SCROptions.SaveMacroOptions(self, "SCR_PointFromVectorOffsetStation", _OPTIONS)
+
+    def Dispose(self, cmd, disposing):
+        TrimbleOffice.TheOffice.MainWindow.AppViewManager.RemoveOverlayGeometry(self._overlay_guid)
+
+    def SwapClicked(self, sender, e):
+        c1 = self.coordpick1.Coordinate
+        c2 = self.coordpick2.Coordinate
+        wv = self.currentProject[Project.FixedSerial.WorldView]
+        csd = wv.CoordinateSystemDefinition
+        self.coordpick1.SetCoordinate(c2, self.currentProject, csd)
+        self.coordpick2.SetCoordinate(c1, self.currentProject, csd)
+        self._update_overlay()
+
+    def CoordChanged(self, ctrl, e):
+        self._update_overlay()
+        if ctrl is self.coordpick1:
+            Keyboard.Focus(self.coordpick2)
+
+    def _update_overlay(self):
+        p1 = self.coordpick1.Coordinate
+        p2 = self.coordpick2.Coordinate
+        if p1 is None or p2 is None:
+            self._clear_overlay()
+            return
+        self._draw_overlay(p1, p2)
+
+    def _clear_overlay(self):
+        TrimbleOffice.TheOffice.MainWindow.AppViewManager.RemoveOverlayGeometry(self._overlay_guid)
+
+    def _draw_overlay(self, p1, p2):
+        bag = OverlayBag(self._overlay_guid)
+        blue = Color.DodgerBlue.ToArgb()
+        bag.AddPolyline(Array[Point3D]([p1, p2]), blue, 2)
+        bag.AddMarker(p1, GraphicMarkerTypes.HollowCircle_IndependentColor, blue, "A", 0, 0.0, 1.0)
+        bag.AddMarker(p2, GraphicMarkerTypes.HollowCircle_IndependentColor, blue, "B", 0, 0.0, 1.0)
+
+        mid = Point3D((p1.X + p2.X) * 0.5, (p1.Y + p2.Y) * 0.5, (p1.Z + p2.Z) * 0.5)
+        perp = Vector3D(p1, p2)
+        perp.Z = 0.0
+        perp.Rotate90(Side.Right)
+        perp.Length = Vector3D(p1, p2).Length2D * 0.25
+        right_pt = mid + perp
+        left_pt  = mid - perp
+        bag.AddMarker(right_pt, GraphicMarkerTypes.None_IndependentColor, blue, "+", 0, 0.0, 2.0)
+        bag.AddMarker(left_pt,  GraphicMarkerTypes.None_IndependentColor, blue, "-", 0, 0.0, 2.0)
+
+        views = Array[Guid]([DisplayWindow.HoopsPlanViewGUID, DisplayWindow.Hoops3DViewGUID])
+        TrimbleOffice.TheOffice.MainWindow.AppViewManager.AddOverlayGeometry(views, bag)
 
     def CancelClicked(self, cmd, args):
         cmd.CloseUICommand ()

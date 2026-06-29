@@ -41,7 +41,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Measure Distance/Offset"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.16
+        cmdData.Version = 1.17
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -78,6 +78,7 @@ class SCR_MeasureOffsetDistance(StackPanel): # this inherits from the WPF StackP
         #self.coordCtl2.ValueChanged += self.Coord2Changed
         self.coordCtl3.ValueChanged += self.Coord3Changed
         self.coordCtl3.AutoTab = False
+        self.btnSwap.Click += self.SwapClicked
         # get the units for linear distance
         self.lunits = self.currentProject.Units.Linear
         # we don't want the units to be included (so we make copy and turn that off). Otherwise get something like "12.50 ft"
@@ -89,6 +90,8 @@ class SCR_MeasureOffsetDistance(StackPanel): # this inherits from the WPF StackP
         self.textdhlabel.Content = "vertical dh to Line [" + linearsuffix + "]"
 
         self.coordCtl1.ValueChanged += self.Coord1Changed
+        self.coordCtl2.ValueChanged += self.Coord2Changed
+        self._overlay_guid = Guid.NewGuid()
 
         self.textdecimals.MinValue = 0 # otherwise the volume computation fails
         self.textdecimals.NumberOfDecimals = 0
@@ -124,28 +127,47 @@ class SCR_MeasureOffsetDistance(StackPanel): # this inherits from the WPF StackP
     def SaveOptions(self):
         SCROptions.SaveMacroOptions(self, "SCR_MeasureOffsetDistance", _OPTIONS)
 
+    def SwapClicked(self, sender, e):
+        c1 = self.coordCtl1.Coordinate
+        c2 = self.coordCtl2.Coordinate
+        wv = self.currentProject[Project.FixedSerial.WorldView]
+        csd = wv.CoordinateSystemDefinition
+        self.coordCtl1.SetCoordinate(c2, self.currentProject, csd)
+        self.coordCtl2.SetCoordinate(c1, self.currentProject, csd)
+        self.OkClicked(None, None)
+        Keyboard.Focus(self.coordCtl3)
+
     def Coord1Changed(self, ctrl, e):
         self.coordCtl2.CursorStyle = CursorStyle.CrossHair | CursorStyle.RubberLine
         if self.coordCtl1.ResultCoordinateSystem:
             self.coordCtl2.AnchorPoint = MousePosition(self.coordCtl1.ClickWindow, self.coordCtl1.Coordinate, self.coordCtl1.ResultCoordinateSystem)
         else:
             self.coordCtl2.AnchorPoint = None
+        self.OkClicked(None, None)
+        Keyboard.Focus(self.coordCtl2)
+
+    def Coord2Changed(self, ctrl, e):
+        self.OkClicked(None, None)
+        Keyboard.Focus(self.coordCtl3)
 
     def Coord3Changed(self, ctrl, e):
-        if e.Cause == InputMethod.Mouse:     
-            self.OkClicked(None, None)
+        self.OkClicked(None, None)
         Keyboard.Focus(self.coordCtl3)
 
     def OkClicked(self, cmd, e):
         Keyboard.Focus(self.okBtn)
-        self.error.Content=''
+        self.error.Content = ''
+        self._clear_overlay()
 
-        wv = self.currentProject [Project.FixedSerial.WorldView]
+        wv = self.currentProject[Project.FixedSerial.WorldView]
 
-        p1 = self.coordCtl1.Coordinate      
-        p2 = self.coordCtl2.Coordinate      
-        p3 = self.coordCtl3.Coordinate      
-        
+        p1 = self.coordCtl1.Coordinate
+        p2 = self.coordCtl2.Coordinate
+        p3 = self.coordCtl3.Coordinate
+
+        if p1 is None or p2 is None or p3 is None:
+            return
+
         UIEvents.RaiseBeforeDataProcessing(self, UIEventArgs())
         self.currentProject.TransactionManager.AddBeginMark(CommandGranularity.Command, self.Caption)
 
@@ -177,6 +199,8 @@ class SCR_MeasureOffsetDistance(StackPanel): # this inherits from the WPF StackP
                 self.resultdh.Text = self.lunits.Format(pointhog , self.lfp)
                 
        
+                self._draw_overlay(p1, p2, p3, outPointOnCL.Value)
+
                 if self.drawtext.IsChecked and (self.includedist.IsChecked or self.includeos.IsChecked or  self.includedh.IsChecked):
                     t = wv.Add(clr.GetClrType(MText))
                     t.AlignmentPoint = p3
@@ -206,6 +230,24 @@ class SCR_MeasureOffsetDistance(StackPanel): # this inherits from the WPF StackP
 
 
         self.SaveOptions()           
+
+    def Dispose(self, cmd, disposing):
+        TrimbleOffice.TheOffice.MainWindow.AppViewManager.RemoveOverlayGeometry(self._overlay_guid)
+
+    def _clear_overlay(self):
+        TrimbleOffice.TheOffice.MainWindow.AppViewManager.RemoveOverlayGeometry(self._overlay_guid)
+
+    def _draw_overlay(self, p1, p2, p3, point_on_line):
+        bag = OverlayBag(self._overlay_guid)
+        blue  = Color.DodgerBlue.ToArgb()
+        green = Color.Lime.ToArgb()
+        bag.AddPolyline(Array[Point3D]([p1, p2]), blue, 2)
+        bag.AddMarker(p1, GraphicMarkerTypes.HollowCircle_IndependentColor, blue, "A", 0, 0.0, 1.0)
+        bag.AddMarker(p2, GraphicMarkerTypes.HollowCircle_IndependentColor, blue, "B", 0, 0.0, 1.0)
+        bag.AddPolyline(Array[Point3D]([point_on_line, p3]), green, 2)
+        bag.AddMarker(p3, GraphicMarkerTypes.HollowCircle_IndependentColor, green, "Offset", 0, 0.0, 1.0)
+        views = Array[Guid]([DisplayWindow.HoopsPlanViewGUID, DisplayWindow.Hoops3DViewGUID])
+        TrimbleOffice.TheOffice.MainWindow.AppViewManager.AddOverlayGeometry(views, bag)
 
     def addtotextstring(self, t, addstring):
         if len(t) > 0:

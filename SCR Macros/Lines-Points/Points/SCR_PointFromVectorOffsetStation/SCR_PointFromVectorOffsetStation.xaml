@@ -14,6 +14,7 @@
                     <Wpf:CoordinateEdit x:Name="coordpick1"/>
                 </StackPanel>
             </Border>
+            <Button x:Name="btnSwap" Content="⇅  swap" HorizontalAlignment="Center" Margin="0,2,0,2" Padding="8,2"/>
             <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
                 <StackPanel>
                     <Label Content="Pick 2nd Point" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
