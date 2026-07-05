@@ -1,0 +1,4609 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--VPath Custom Vehicle File: 18/12/2019 12:27:02-->
+<VehiclesFile>
+  <Parameters>
+    <DKP>Distance between the prime mover centre line and the front axle king pin.</DKP>
+    <DT>Distance between the king pin and the outside edge of the front tyre.</DT>
+    <MSA>Maximum steering angle.</MSA>
+    <FO>Front overhang of vehicle unit, i.e. distance from the front axle (or articulation point) to the front of the body.</FO>
+    <W>Half the width of the vehicle unit.</W>
+    <TR>Distance from the vehicle centre line to the outside edge of the tyres on the rear axle group.</TR>
+    <LR>Distance from the front axle (or articulation point) to the rear of the body.</LR>
+    <LT>Distance from the front axle (or articulation point) to the trailer attachment point. May be given as zero for the last vehicle unit.</LT>
+    <LA>Distance from the front axle (or articulation point) to the first (leading) rear axle of the vehicle unit.</LA>
+    <DA1>Distance between the first and second rear axles (give as zero if only one rear axle).</DA1>
+    <DA2>Distance between the second and third rear axles (give as zero if only one or two rear axles).</DA2>
+    <DA3>Distance between the third and fourth rear axles (give as zero if only one, two or three rear axles).</DA3>
+    <TS1>Total stiffness of tyres used on the first rear axle in kg/rad.</TS1>
+    <TS2>Total stiffness of tyres used on the second rear axle in kg/rad (give as zero if only one rear axle).</TS2>
+    <TS3>Total stiffness of tyres used on the third rear axle in kg/rad (give as zero if only one or two rear axles).</TS3>
+    <TS4>Total stiffness of tyres used on the fourth rear axle in kg/rad (give as zero if only one, two or three rear axles).</TS4>
+    <AL1>Axle load for the first rear axle in kg.</AL1>
+    <AL2>Axle load for the second rear axle in kg (give as zero if only one rear axle).</AL2>
+    <AL3>Axle load for the third rear axle in kg (give as zero if only one or two rear axles).</AL3>
+    <AL4>Axle load for the fourth rear axle in kg (give as zero if only one, two or three rear axles).</AL4>
+    <MTA>Maximum trailer angle to avoid jack knifing.</MTA>
+    <FTC>Count of all tyres for front axle</FTC>
+    <FTD>Tyre diameter for front axle.</FTD>
+    <FTW>Tyre width for front axle.</FTW>
+    <FTS>Spacing between tyres for front axle.</FTS>
+    <ATC1>Count of all tyres for first rear axle.</ATC1>
+    <ATD1>Diameter of all tyres for first rear axle.</ATD1>
+    <ATW1>Width of all tyres for first rear axle.</ATW1>
+    <ATS1>Spacing between tyres for first rear axle.</ATS1>
+    <ATC2>Count of all tyres for second rear axle.</ATC2>
+    <ATD2>Diameter of all tyres for second rear axle.</ATD2>
+    <ATW2>Width of all tyres for second rear axle.</ATW2>
+    <ATS2>Spacing between tyres for second rear axle.</ATS2>
+    <ATC3>Count of all tyres for third rear axle.</ATC3>
+    <ATD3>Diameter of all tyres for third rear axle.</ATD3>
+    <ATW3>Width of all tyres for third rear axle.</ATW3>
+    <ATS3>Spacing between tyres for third rear axle.</ATS3>
+    <ATC4>Count of all tyres for third rear axle.</ATC4>
+    <ATD4>Diameter of all tyres for third rear axle.</ATD4>
+    <ATW4>Width of all tyres for third rear axle.</ATW4>
+    <ATS4>Spacing between tyres for third rear axle.</ATS4>
+  </Parameters>
+  <Vehicle_Definitions>
+    <Vehicle Name="AB-TRIPLE - EXAMPLE 1" Category="AB Triples">
+      <Description>36.5m AB Triple - Example 1</Description>
+      <NO>5</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.185</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.7</LR>
+        <LT>3.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.7</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.5</LR>
+        <LT>9.4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.03</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>70</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>6.1</LR>
+        <LT>4.8</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.8</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.37</LR>
+        <LT>8.67</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.87</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.5</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>8.495</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.5</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="A-DOUBLE - 26m MAXLESS" Category="A Doubles">
+      <Description>BLU LOGISTICS 26m MAXLESS COMBINATION</Description>
+      <NO>4</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.545</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.385</LR>
+        <LT>3.535</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.37</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.635</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>8.487</LR>
+        <LT>8.481</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.038</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.924</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>6.04</LR>
+        <LT>4.27</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.57</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.5</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.081</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>8.161</LR>
+        <LT>8.201</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.577</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.924</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="A-DOUBLE - 29.91M" Category="A Doubles">
+      <Description>A Double Container Skel. Combination</Description>
+      <NO>4</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.235</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.2</LR>
+        <LT>3.975</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.64</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.32</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.43</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.77</LR>
+        <LT>10.77</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.6</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.5</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.5</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>4.39</LR>
+        <LT>3.16</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">2.44</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.43</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.77</LR>
+        <LT>10.77</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.6</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.5</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.5</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="A-DOUBLE - ALUM TANKER" Category="A Doubles">
+      <Description>ROAD TRAIN Type 1 - (A-DOUBLE) ALUM TANKER - ATE</Description>
+      <NO>4</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.532</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.485</LR>
+        <LT>3.785</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.37</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.65</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.01</LR>
+        <LT>9.71</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.22</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.25</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>6.745</LR>
+        <LT>4.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.275</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.35</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10</LR>
+        <LT>9.69</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.25</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="B-DOUBLE - 19M - GENERAL ACCESS" Category="B Doubles">
+      <Description>19m General Access B-Double</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.395</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.52</LR>
+        <LT>3.87</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.42</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.32</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.46</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>7.62</LR>
+        <LT>5.846</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.56</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.38</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>3000</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.8</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>7.889</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.687</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.38</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="B-DOUBLE - 25M - 34 PALLET" Category="B Doubles">
+      <Description>25m long 34 pallet B-Double</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.05</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.5</LR>
+        <LT>3.7</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.17</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.28</LR>
+        <LT>8.03</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.78</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>3000</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.15</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.22</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>2500</AL2>
+        <AL3>2500</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="B-DOUBLE - 25M - 36 PALLET" Category="B Doubles">
+      <Description>25m long 36 pallet B-Double</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.92</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.2</LR>
+        <LT>3.315</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.09</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.835</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.8</LR>
+        <LT>8.545</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.295</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>3000</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.15</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.22</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>2500</AL2>
+        <AL3>2500</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="B-DOUBLE - 26M - 2012 NON-TM" Category="B Doubles">
+      <Description>AUSTROADS B-double (26m) - 2012 All units single axle</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.75</LR>
+        <LT>4.5</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.5</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.95</LR>
+        <LT>8.05</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.05</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.45</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.05</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">9.15</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="B-DOUBLE - 26M - 34 PALLET" Category="B Doubles">
+      <Description>Proposed 26m long 34 pallet B-Double (Bonneted PM)</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.35</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.95</LR>
+        <LT>4.15</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.85</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.17</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.53</LR>
+        <LT>8.28</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.03</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>3000</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.15</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.22</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>2500</AL2>
+        <AL3>2500</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="B-DOUBLE - 27.3M - 34 PALLET" Category="B Doubles">
+      <Description>Proposed 27.3m long 34 pallet B-Double (Bonneted PM)</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.7</LR>
+        <LT>4.9</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.6</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.17</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.55</LR>
+        <LT>8.3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.05</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>3000</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.17</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.2</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>2500</AL2>
+        <AL3>2500</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="B-DOUBLE - Mackay" Category="B Doubles">
+      <Description>Side tip sugarcane B-Double with</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.55</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>4.993</LR>
+        <LT>3.893</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.593</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.43</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.715</LR>
+        <LT>8.4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.43</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>11.03</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>2500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="B-TRIPLE - 33.86M" Category="B Triples">
+      <Description>33.86m long B-triple</Description>
+      <NO>4</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.1</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.5</LR>
+        <LT>3.8</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3200</AL1>
+        <AL2>3200</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.3</LR>
+        <LT>9.65</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3200</AL1>
+        <AL2>3200</AL2>
+        <AL3>3200</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.3</LR>
+        <LT>9.65</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3200</AL1>
+        <AL2>3200</AL2>
+        <AL3>3200</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.3</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2700</AL1>
+        <AL2>2700</AL2>
+        <AL3>2700</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="B-TRIPLE - 36.5M" Category="B Triples">
+      <Description>QT 36.5m LONG B-TRIPLE</Description>
+      <NO>4</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.3</LR>
+        <LT>4.4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3200</AL1>
+        <AL2>3200</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.6</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.3</LR>
+        <LT>9.65</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3200</AL1>
+        <AL2>3200</AL2>
+        <AL3>3200</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>14.1</LR>
+        <LT>9.65</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3200</AL1>
+        <AL2>3200</AL2>
+        <AL3>3200</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.3</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2700</AL1>
+        <AL2>2700</AL2>
+        <AL3>2700</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="BUS - 13.4M - CONTROLLED ACCESS - GOODWIN" Category="Buses">
+      <Description>Goodwins 13.4m LONG RIGID BUS FOR CONTROLLED ACCESS ROUTES</Description>
+      <NO>1</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">2.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>11.1</LR>
+        <LT>11.1</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.07</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.33</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>20000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>4500</AL1>
+        <AL2>4500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="BUS - 13.5M" Category="Buses">
+      <Description>Typical 13.5m long rigid bus</Description>
+      <NO>1</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.5</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.9</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>6000</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="BUS - 14.0M - CONTROLLED ACCESS" Category="Buses">
+      <Description>14.0m LONG RIGID BUS FOR CONTROLLED ACCESS ROUTES</Description>
+      <NO>1</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">2.6</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>11.4</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>20000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>4500</AL1>
+        <AL2>4500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="BUS - ARTICULATED - VOLVO" Category="Buses">
+      <Description>17.7m VOLVO ARTICULATED BUS WITHOUT REAR STEERING</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">2.36</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>7.35</LR>
+        <LT>7.35</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.31</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>6600</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>7.99</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.19</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>25000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3800</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="BUS - BCC 14.5M RIGID - REAR SELF STEER" Category="Buses">
+      <Description>BCC Long rigid bus (14.5m) with Rear Self Steer Axle</Description>
+      <NO>1</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">2.6</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>11.9</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.75</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>20000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>4500</AL1>
+        <AL2>4500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CAR - AS2890.1 85 PERCENTILE" Category="Cars and Vans">
+      <Description>AS2890.1 85% percentile car (B85)</Description>
+      <NO>1</NO>
+      <DKP>0.7</DKP>
+      <DT>0.185</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.7</DKP>
+        <DT>0.185</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.82</FO>
+        <W>0.93</W>
+        <TR>0.885</TR>
+        <LR>3.92</LR>
+        <LT>3.98</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">2.82</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>750</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CAR - AS2890.1 99.8 PERCENTILE" Category="Cars and Vans">
+      <Description>B99-CAR as per AS2890.1 (99.8 percentile 'car')</Description>
+      <NO>1</NO>
+      <DKP>0.7</DKP>
+      <DT>0.185</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.7</DKP>
+        <DT>0.185</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.996</FO>
+        <W>0.98</W>
+        <TR>0.885</TR>
+        <LR>4.373</LR>
+        <LT>4.44</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">3.073</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>850</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CAR - AS2890.1:2004 85 PERCENTILE" Category="Cars and Vans">
+      <Description>AS2890.1:2004 B85 (85th percentile) car</Description>
+      <NO>1</NO>
+      <DKP>0.755</DKP>
+      <DT>0.13</DT>
+      <MSA>40</MSA>
+      <unit>
+        <DKP>0.755</DKP>
+        <DT>0.13</DT>
+        <MSA>40</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.75</FO>
+        <W>0.935</W>
+        <TR>0.885</TR>
+        <LR>3.9</LR>
+        <LT>4.05</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">2.8</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>750</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CAR - AS2890.1:2004 99.8 PERCENTILE" Category="Cars and Vans">
+      <Description>B99-CAR for AS2890.1:2004 (99.8 percentile 'car')</Description>
+      <NO>1</NO>
+      <DKP>0.8</DKP>
+      <DT>0.12</DT>
+      <MSA>40</MSA>
+      <unit>
+        <DKP>0.8</DKP>
+        <DT>0.12</DT>
+        <MSA>40</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.8</FO>
+        <W>0.97</W>
+        <TR>0.92</TR>
+        <LR>4.2</LR>
+        <LT>4.3</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">3.05</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>850</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CAR - B85 - NEW" Category="Cars and Vans">
+      <Description>New AS2890.1 B85 car</Description>
+      <NO>1</NO>
+      <DKP>0.755</DKP>
+      <DT>0.13</DT>
+      <MSA>40</MSA>
+      <unit>
+        <DKP>0.755</DKP>
+        <DT>0.13</DT>
+        <MSA>40</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.75</FO>
+        <W>0.935</W>
+        <TR>0.885</TR>
+        <LR>3.9</LR>
+        <LT>4.05</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">2.8</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>750</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CAR - B99 - NEW" Category="Cars and Vans">
+      <Description>Proposed new B99-CAR for AS2890.1 (99.8 percentile 'car')</Description>
+      <NO>1</NO>
+      <DKP>0.81</DKP>
+      <DT>0.185</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.81</DKP>
+        <DT>0.185</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.8</FO>
+        <W>0.97</W>
+        <TR>0.945</TR>
+        <LR>4.2</LR>
+        <LT>4.31</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">3.073</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>850</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CAR - B99 - NEW ALT2" Category="Cars and Vans">
+      <Description>Possible new B99-CAR as per AS2890.1 (99.8 % 'car') Alt 2</Description>
+      <NO>1</NO>
+      <DKP>0.81</DKP>
+      <DT>0.185</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.81</DKP>
+        <DT>0.185</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.75</FO>
+        <W>0.97</W>
+        <TR>0.945</TR>
+        <LR>4.18</LR>
+        <LT>4.29</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">3.073</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>850</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CAR AND CARAVAN - AUSTROAD PRE 1995" Category="Cars and Vans">
+      <Description>AUSTROADS PRE 1995 CAR + 8M OVERALL (25' NOMINAL) CARAVAN</Description>
+      <NO>2</NO>
+      <DKP>0.585</DKP>
+      <DT>0.2</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.585</DKP>
+        <DT>0.2</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.86</FO>
+        <W>0.965</W>
+        <TR>0.785</TR>
+        <LR>4.3</LR>
+        <LT>4.1</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">3.05</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>850</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">-1.9</FO>
+        <W>1.2</W>
+        <TR>1.2</TR>
+        <LR>8</LR>
+        <LT>0</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">4.1</LA>
+        <DA1 ATC2="1" ATD2="0.700" ATW2="0.200" ATS2="0.100">0.85</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>12000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>715</AL1>
+        <AL2>715</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CAT-777F MINING TRUCK" Category="Mining - Off Highway">
+      <Description>Caterpillar 777F Off-Highway Truck</Description>
+      <NO>1</NO>
+      <DKP>1.625</DKP>
+      <DT>0.8</DT>
+      <MSA>30.5</MSA>
+      <unit>
+        <DKP>1.625</DKP>
+        <DT>0.8</DT>
+        <MSA>30.5</MSA>
+        <FO FTC="1" FTD="2.680" FTW="0.800" FTS="0.000">2.728</FO>
+        <W>3.247</W>
+        <TR>2.611</TR>
+        <LR>7.622</LR>
+        <LT>4.56</LT>
+        <LA ATC1="2" ATD1="2.680" ATW1="0.800" ATS1="0.100">4.56</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>335000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>35435</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CHRYSLER VOYAGER LWB" Category="Cars and Vans">
+      <Description>Chrysler Voyager LWB; FOH &amp; W modified for rounding of front</Description>
+      <NO>1</NO>
+      <DKP>0.8</DKP>
+      <DT>0.125</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.8</DKP>
+        <DT>0.125</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.64</FO>
+        <W>0.905</W>
+        <TR>0.975</TR>
+        <LR>4.16</LR>
+        <LT>4.29</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">3.03</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>800</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="COMMODORE-VN WAGON" Category="Cars and Vans">
+      <Description>VN - VS Series Commodore Wagon</Description>
+      <NO>1</NO>
+      <DKP>0.521</DKP>
+      <DT>0.205</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.521</DKP>
+        <DT>0.205</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.946</FO>
+        <W>0.897</W>
+        <TR>0.739</TR>
+        <LR>3.95</LR>
+        <LT>4.01</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">2.822</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>650</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="CRANE - TWIN-STEER" Category="Cranes">
+      <Description>Twin steer crane</Description>
+      <NO>1</NO>
+      <DKP>0.925</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.925</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">4.22</FO>
+        <W>0.225</W>
+        <TR>1.3</TR>
+        <LR>-1.42</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.69</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.31</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="DRILLING RIG" Category="Single Unit Trucks">
+      <Description>K550 Drilling Rig</Description>
+      <NO>1</NO>
+      <DKP>0.9</DKP>
+      <DT>0.395</DT>
+      <MSA>40</MSA>
+      <unit>
+        <DKP>0.9</DKP>
+        <DT>0.395</DT>
+        <MSA>40</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">2.565</FO>
+        <W>1.321</W>
+        <TR>1.295</TR>
+        <LR>10.845</LR>
+        <LT>10.845</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.172</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.372</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.372</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>50000</TS2>
+        <TS3>50000</TS3>
+        <TS4>0</TS4>
+        <AL1>8000</AL1>
+        <AL2>8000</AL2>
+        <AL3>8000</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="FAIRLANE-AU" Category="Cars and Vans">
+      <Description>Ford AU Fairlane; FOH and W modified for rounding of front</Description>
+      <NO>1</NO>
+      <DKP>0.77</DKP>
+      <DT>0.13</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.77</DKP>
+        <DT>0.13</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.79</FO>
+        <W>0.85</W>
+        <TR>0.936</TR>
+        <LR>4.12</LR>
+        <LT>4.28</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">2.919</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>850</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="FALCON-AU" Category="Cars and Vans">
+      <Description>Ford AU Falcon car; FOH and W modified for rounding of front</Description>
+      <NO>1</NO>
+      <DKP>0.77</DKP>
+      <DT>0.13</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.77</DKP>
+        <DT>0.13</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.75</FO>
+        <W>0.81</W>
+        <TR>0.935</TR>
+        <LR>3.89</LR>
+        <LT>4.05</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">2.793</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>750</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="FALCON-AU-UTE" Category="Cars and Vans">
+      <Description>Ford AU falcon ute; FOH and W modified for rounding of front</Description>
+      <NO>1</NO>
+      <DKP>0.77</DKP>
+      <DT>0.13</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.77</DKP>
+        <DT>0.13</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.75</FO>
+        <W>0.81</W>
+        <TR>0.935</TR>
+        <LR>4.16</LR>
+        <LT>4.22</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">3.096</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>750</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="FALCON-XD SEDAN" Category="Cars and Vans">
+      <Description>XD Falcon sedan / AS2890.1 85% percentile car (B85)</Description>
+      <NO>1</NO>
+      <DKP>0.7</DKP>
+      <DT>0.185</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.7</DKP>
+        <DT>0.185</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.82</FO>
+        <W>0.93</W>
+        <TR>0.885</TR>
+        <LR>3.92</LR>
+        <LT>3.98</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">2.82</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>750</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="FCL-19M-CONTAINER" Category="Truck and Trailers">
+      <Description>Proposed F.C.L. 19m PM&amp;Semi for 16.64m containers</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.38</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>4.4</LR>
+        <LT>2.44</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">2.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.43</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>15.2</LR>
+        <LT>15.2</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">9.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2200</AL1>
+        <AL2>2200</AL2>
+        <AL3>2200</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="FIRE PUMP - HEAVY" Category="Single Unit Trucks">
+      <Description>Standard Urban Pumper Tanker - Heavy</Description>
+      <NO>1</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.6</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>8.2</LR>
+        <LT>8.2</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.6</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>6000</AL1>
+        <AL2>6000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="FIRE TRUCK" Category="Single Unit Trucks">
+      <Description>Fire truck 18_2_2011</Description>
+      <NO>1</NO>
+      <DKP>0.935</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.935</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.57</FO>
+        <W>1.225</W>
+        <TR>1.225</TR>
+        <LR>9.465</LR>
+        <LT>9.465</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.9</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.35</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>20000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LANDCRUISER 60" Category="Cars and Vans">
+      <Description>Toyota Landcruiser 60 Series</Description>
+      <NO>1</NO>
+      <DKP>0.65</DKP>
+      <DT>0.2</DT>
+      <MSA>31</MSA>
+      <unit>
+        <DKP>0.65</DKP>
+        <DT>0.2</DT>
+        <MSA>31</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.8</FO>
+        <W>0.9</W>
+        <TR>0.85</TR>
+        <LR>4.025</LR>
+        <LT>4.11</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">2.73</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>30000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>1100</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LANDCRUISER 100" Category="Cars and Vans">
+      <Description>Toyota Landcruiser 100; FOH &amp; W modified for rounding of front</Description>
+      <NO>1</NO>
+      <DKP>0.8</DKP>
+      <DT>0.135</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.8</DKP>
+        <DT>0.135</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.78</FO>
+        <W>0.87</W>
+        <TR>0.97</TR>
+        <LR>3.92</LR>
+        <LT>4.06</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">2.85</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>18000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>1000</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOAD PLATFORM - 22M COMMETTO" Category="Low Loaders">
+      <Description>Towed 22m long Commetto load platform</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.65</LR>
+        <LT>6.75</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.65</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>99</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0.1</W>
+        <TR>2.135</TR>
+        <LR>3</LR>
+        <LT>3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>2.44</W>
+        <TR>2.44</TR>
+        <LR>22.1</LR>
+        <LT>22.2</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">10.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.8</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>50000</TS3>
+        <TS4>50000</TS4>
+        <AL1>7000</AL1>
+        <AL2>7000</AL2>
+        <AL3>7000</AL3>
+        <AL4>7000</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - 36M SUPER T TRANSPORT - 52M OVERALL LENGTH" Category="Low Loaders">
+      <Description>36m Super T girder transporter - 52m long overall length</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6</LR>
+        <LT>4.2</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.8</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>4000</AL1>
+        <AL2>4000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>99</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.8</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>15.6</LR>
+        <LT>10.7</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">11</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.8</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.8</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>50000</TS3>
+        <TS4>0</TS4>
+        <AL1>8000</AL1>
+        <AL2>8000</AL2>
+        <AL3>8000</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>35.7</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">29.9</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.2</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">2.4</DA2>
+        <DA3 ATC4="2" ATD4="1.000" ATW4="0.300" ATS4="0.100">1.2</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>50000</TS3>
+        <TS4>50000</TS4>
+        <AL1>8000</AL1>
+        <AL2>8000</AL2>
+        <AL3>8000</AL3>
+        <AL4>8000</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - DRAKE 12AXLE" Category="Low Loaders">
+      <Description>Drake 12 line steerable lowloader in closed position</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>6</LR>
+        <LT>3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>1.6</W>
+        <TR>1.6</TR>
+        <LR>29.74</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">15.37</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.83</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - DRAKE 12AXLE (2)" Category="Low Loaders">
+      <Description>Drake 12 line steerable lowloader in widened position</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>6</LR>
+        <LT>3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>2.44</W>
+        <TR>2.44</TR>
+        <LR>29.74</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">15.37</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.83</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - DRAKE 12AXLE CLOSED" Category="Low Loaders">
+      <Description>Drake 12 line steerable lowloader in closed position</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>6</LR>
+        <LT>3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>1.6</W>
+        <TR>1.6</TR>
+        <LR>29.74</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">15.37</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.83</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - DRAKE 12AXLE OPEN" Category="Low Loaders">
+      <Description>Drake 12 line steerable lowloader in widened position</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>6</LR>
+        <LT>3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>2.44</W>
+        <TR>2.44</TR>
+        <LR>29.74</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">15.37</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.83</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - DRAKE 16AXLE CLOSED" Category="Low Loaders">
+      <Description>Drake 16 line steerable lowloader in closed position</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.635</TR>
+        <LR>4.56</LR>
+        <LT>3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>1.635</W>
+        <TR>1.635</TR>
+        <LR>31.945</LR>
+        <LT>-0.085</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">15.285</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.83</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - DRAKE 16AXLE OPEN" Category="Low Loaders">
+      <Description>Drake 16 line steerable lowloader in open position</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.635</TR>
+        <LR>4.56</LR>
+        <LT>3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>2.475</W>
+        <TR>2.475</TR>
+        <LR>31.945</LR>
+        <LT>-0.085</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">15.285</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.83</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - DESIGN" Category="Low Loaders">
+      <Description>MR 26.8m DESIGN LOWLOADER FOR OVER-DIMENSION VEHICLE ROUTES</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>99</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>2.135</TR>
+        <LR>6</LR>
+        <LT>4.8</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>2.135</W>
+        <TR>2.135</TR>
+        <LR>17.88</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">11.9</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.22</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">2.44</DA2>
+        <DA3 ATC4="2" ATD4="1.000" ATW4="0.300" ATS4="0.100">1.22</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>50000</TS3>
+        <TS4>50000</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>5000</AL3>
+        <AL4>5000</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - MACALEESE" Category="Low Loaders">
+      <Description>MacAleese Transport Lowloader with Drake 14 row steerable platform</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>99</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>2.135</TR>
+        <LR>6</LR>
+        <LT>4.8</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>2.44</W>
+        <TR>2.44</TR>
+        <LR>33.325</LR>
+        <LT>20</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">19.085</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.83</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - PORT MOTORWAY" Category="Low Loaders">
+      <Description>PORT M'WAY LOWLOADER used by Skelton Trucking</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>7.05</LR>
+        <LT>5.6</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.05</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>99</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>2.135</TR>
+        <LR>5.7</LR>
+        <LT>2.94</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.97</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>2.135</W>
+        <TR>2.135</TR>
+        <LR>18.289</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">12.244</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.22</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">2.44</DA2>
+        <DA3 ATC4="2" ATD4="1.000" ATW4="0.300" ATS4="0.100">1.22</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>50000</TS3>
+        <TS4>50000</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>5000</AL3>
+        <AL4>5000</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="MAXTRANS - 49.79M - BAB-Quad" Category="Road Trains">
+      <Description>Maxitrans trailer 49.79m - BAB-Quad (Do not use for production work - the vehicle parameters have not been verified)</Description>
+      <NO>6</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.6</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>4.67</LR>
+        <LT>3.52</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">2.67</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.7</LR>
+        <LT>7.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.5</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.21</LR>
+        <LT>12.21</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.65</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>2750</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6</LR>
+        <LT>4.5</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.8</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.7</LR>
+        <LT>7.95</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.5</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.21</LR>
+        <LT>12.21</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.65</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>2750</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="MB 140 VAN" Category="Cars and Vans">
+      <Description>Merceded Benz MB140 van</Description>
+      <NO>1</NO>
+      <DKP>0.7</DKP>
+      <DT>0.16</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.7</DKP>
+        <DT>0.16</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">1.3</FO>
+        <W>0.9</W>
+        <TR>0.928</TR>
+        <LR>3.98</LR>
+        <LT>4.04</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">2.68</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>800</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="MOBILITY SCOOTER - MED" Category="Mobility">
+      <Description>Medium size mobility scooter</Description>
+      <NO>1</NO>
+      <DKP>0.2</DKP>
+      <DT>0.105</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.2</DKP>
+        <DT>0.105</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.330" FTW="0.100" FTS="0.000">0.13</FO>
+        <W>0.32</W>
+        <TR>0.32</TR>
+        <LR>1.07</LR>
+        <LT>1.07</LT>
+        <LA ATC1="1" ATD1="0.330" ATW1="0.100" ATS1="0.100">0.925</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>60</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="MOBILITY SCOOTER - LGE" Category="Mobility">
+      <Description>Large size mobility scooter</Description>
+      <NO>1</NO>
+      <DKP>0.218</DKP>
+      <DT>0.13</DT>
+      <MSA>40</MSA>
+      <unit>
+        <DKP>0.218</DKP>
+        <DT>0.13</DT>
+        <MSA>40</MSA>
+        <FO FTC="1" FTD="0.330" FTW="0.100" FTS="0.000">0.155</FO>
+        <W>0.34</W>
+        <TR>0.34</TR>
+        <LR>1.07</LR>
+        <LT>1.07</LT>
+        <LA ATC1="1" ATD1="0.330" ATW1="0.100" ATS1="0.100">1.02</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>60</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="NAASRA_17m_SEMI" Category="Semi-Trailers">
+      <Description>NAASRA 17m SEMI-TRAILER</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.7</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>90</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.2</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>11.3</LR>
+        <LT>11.13</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>1900</AL1>
+        <AL2>1900</AL2>
+        <AL3>1900</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="PBS - TRUCK AND DOG" Category="Truck and Trailers">
+      <Description>PBS truck and dog trailer (PBS - Performance Based Standards)</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.2</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.3</LR>
+        <LT>5.3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>30000</TS1>
+        <TS2>30000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2000</AL1>
+        <AL2>2000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>5.3</LR>
+        <LT>4.06</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3800</AL1>
+        <AL2>3800</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>80</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.2</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>8.8</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.8</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3800</AL1>
+        <AL2>3800</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="PBS - TRUCK AND DOG 2" Category="Truck and Trailers">
+      <Description>PBS truck and dog trailer 2 (PBS - Performance Based Standards)</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.8</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.3</LR>
+        <LT>5.3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>30000</TS1>
+        <TS2>30000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2000</AL1>
+        <AL2>2000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>5.3</LR>
+        <LT>4.06</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3800</AL1>
+        <AL2>3800</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>80</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.2</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>8.8</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.8</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3800</AL1>
+        <AL2>3800</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="ROAD TRAIN - TYPE 1 - 12.5m TRUCK AND TRAILER" Category="Road Trains">
+      <Description>Type 1 Rd train: 12.5m Single unit truck + dog trailer</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">2.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.1</LR>
+        <LT>10.1</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.135</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>20000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>6.3</LR>
+        <LT>5</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.4</LR>
+        <LT>12.4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="ROAD TRAIN - TYPE 3 - ABB QUAD" Category="Road Trains">
+      <Description>D&amp;B Collins Road Train 52.27m - ABB-Quad</Description>
+      <NO>7</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.01</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>7.5</LR>
+        <LT>6.2</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.5</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.1</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.292</LR>
+        <LT>9.3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.105</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.237</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.237</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.522</LR>
+        <LT>4.863</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.585</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.237</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.237</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>2750</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.5</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>8.695</LR>
+        <LT>8.7</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.532</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.237</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.237</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.722</LR>
+        <LT>4.863</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.585</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.237</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.237</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.984</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.191</LR>
+        <LT>8</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.054</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.237</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.237</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>2750</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.2</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.437</LR>
+        <LT>9.4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.105</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.237</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.237</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>2750</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="ROAD TRAIN - WARREGO" Category="Road Trains">
+      <Description>Warrego Hwy 30m TYPE 1 ROAD TRAIN</Description>
+      <NO>4</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.45</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.7</LR>
+        <LT>5</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.15</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.2</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>8</LR>
+        <LT>7.9</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.6</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.3</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>6.1</LR>
+        <LT>4.8</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.2</LR>
+        <LT>10.1</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.8</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.3</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - 15.3M" Category="Semi-Trailers">
+      <Description>15.3m MEDIUM COMBINATION VEHICLE (SEMI-TRAILER)</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.1</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5</LR>
+        <LT>3.4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10.8</LR>
+        <LT>10.8</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2200</AL1>
+        <AL2>2200</AL2>
+        <AL3>2200</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - 17M" Category="Semi-Trailers">
+      <Description>17m SEMI-TRAILER</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.4</LR>
+        <LT>4.59</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.2</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>11.3</LR>
+        <LT>11.13</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>1900</AL1>
+        <AL2>1900</AL2>
+        <AL3>1900</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - 19M - ROAD USER SYSTEMS" Category="Semi-Trailers">
+      <Description>Road User Systems 19m baseline PM&amp;Semi</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.34</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.2</LR>
+        <LT>4.457</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.24</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.32</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>13.2</LR>
+        <LT>13.2</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.2</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.3</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2200</AL1>
+        <AL2>2200</AL2>
+        <AL3>2200</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - CP 25M" Category="Semi-Trailers">
+      <Description>Austroads 25m long MCV</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.6</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.7</LR>
+        <LT>5</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.7</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.5</W>
+        <TR>1.5</TR>
+        <LR>18.4</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">12.5</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>2500</AL2>
+        <AL3>2500</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - DECK UNITS - 15M" Category="Semi-Trailers">
+      <Description>PM&amp;Semi for 15m deck units</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.44</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.375</LR>
+        <LT>3.7</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.35</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>7500</AL1>
+        <AL2>7500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.43</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>13.2</LR>
+        <LT>13.1</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>6000</AL1>
+        <AL2>6000</AL2>
+        <AL3>6000</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - DECK UNITS - 25M" Category="Semi-Trailers">
+      <Description>Extendable semi for 25m deck units. S-steer 3rd axle on PM ignored</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.6</LR>
+        <LT>5.6</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.5</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>6000</AL1>
+        <AL2>6000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>23.6</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">19.63</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>6000</AL1>
+        <AL2>6000</AL2>
+        <AL3>6000</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - DECK UNITS - 25M - PRIME SELF STEER 3rd AXLE" Category="Semi-Trailers">
+      <Description>Extendable semi for 25m deck units. Self steer 3rd axle on PM</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.6</LR>
+        <LT>5.6</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.5</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>6000</AL1>
+        <AL2>6000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.4</FO>
+        <W>0.5</W>
+        <TR>1.25</TR>
+        <LR>2.2</LR>
+        <LT>0.1</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">1.6</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>6000</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>23.6</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">19.63</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>6000</AL1>
+        <AL2>6000</AL2>
+        <AL3>6000</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - DECK UNITS - 25M - EXTENDABLE" Category="Semi-Trailers">
+      <Description>extendable PM with selfsteer 3rd axel &amp; semi for 25m deck unit</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.6</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.8</LR>
+        <LT>4.1</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.5</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.2</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>10</LR>
+        <LT>8</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.6</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>3000</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.2</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>11.3</LR>
+        <LT>0</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.3</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>2500</AL2>
+        <AL3>2500</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - MACK" Category="Semi-Trailers">
+      <Description>AUSTROADS 19m MEDIUM COMBINATION VEHICLE (SEMI-TRAILER)</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>7</LR>
+        <LT>5.3</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3600</AL1>
+        <AL2>3600</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.3</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.4</LR>
+        <LT>12.4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2200</AL1>
+        <AL2>2200</AL2>
+        <AL3>2200</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - NZTA 2007" Category="Semi-Trailers">
+      <Description>New Zealand 2007 18m long Design SEMI-TRAILER</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.9</LR>
+        <LT>4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.7</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.6</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.6</LR>
+        <LT>12.6</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.75</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2200</AL1>
+        <AL2>2200</AL2>
+        <AL3>2200</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - NZTA 2007-8.5" Category="Semi-Trailers">
+      <Description>New Zealand 2007 18m long with qual axle trailer with 2 self steer</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>5.9</LR>
+        <LT>4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.7</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.6</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.6</LR>
+        <LT>12.65</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.85</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.3</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2200</AL1>
+        <AL2>2200</AL2>
+        <AL3>2200</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - PROPOSED 19.0M" Category="Semi-Trailers">
+      <Description>Proposed new Austroads 19m PM&amp;Semi-trailer</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.1</LR>
+        <LT>4.4</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>13.2</LR>
+        <LT>13.2</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">8.1</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2200</AL1>
+        <AL2>2200</AL2>
+        <AL3>2200</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SERVICE TRUCK - CHERRY PICKER" Category="Single Unit Trucks">
+      <Description>Small 2.5t service truck with trailer mounter cherry picker</Description>
+      <NO>2</NO>
+      <DKP>0.63</DKP>
+      <DT>0.18</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.63</DKP>
+        <DT>0.18</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.02</FO>
+        <W>1.09</W>
+        <TR>0.785</TR>
+        <LR>3.58</LR>
+        <LT>3.68</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">2.49</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>850</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">-0.8</FO>
+        <W>0.7</W>
+        <TR>0.85</TR>
+        <LR>8</LR>
+        <LT>4.5</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.5</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>12000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>715</AL1>
+        <AL2>715</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SERVICE TRUCK - 9M TRUCK - 25M TOWER" Category="Single Unit Trucks">
+      <Description>9m long service truck with 25m tower</Description>
+      <NO>1</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">2.5</FO>
+        <W>0.8</W>
+        <TR>1.25</TR>
+        <LR>7.5</LR>
+        <LT>7.6</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.2</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="STATESMAN-WH" Category="Cars and Vans">
+      <Description>WH Series Holden Statesman; FOH &amp; W reflect rounded front</Description>
+      <NO>1</NO>
+      <DKP>0.78</DKP>
+      <DT>0.11</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.78</DKP>
+        <DT>0.11</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.8</FO>
+        <W>0.78</W>
+        <TR>0.924</TR>
+        <LR>4.14</LR>
+        <LT>4.3</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">2.934</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>12000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>650</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="TOJO AND TRAILER" Category="Truck and Trailers">
+      <Description>Tojo + trailer</Description>
+      <NO>2</NO>
+      <DKP>0.65</DKP>
+      <DT>0.2</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.65</DKP>
+        <DT>0.2</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.8</FO>
+        <W>0.9</W>
+        <TR>0.85</TR>
+        <LR>4.025</LR>
+        <LT>4.11</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">2.73</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>30000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>1100</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="0.700" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>0.9</TR>
+        <LR>3.5</LR>
+        <LT>0</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.000">2.35</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>500</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>30000</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="TRANSIT MWB" Category="Cars and Vans">
+      <Description>Ford Transit Van; 'Mid' wheelbase model; front cnr rounded</Description>
+      <NO>1</NO>
+      <DKP>0.77</DKP>
+      <DT>0.17</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.77</DKP>
+        <DT>0.17</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.775</FO>
+        <W>0.875</W>
+        <TR>0.987</TR>
+        <LR>4.29</LR>
+        <LT>4.36</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">3.3</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>16000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>950</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="TRANSIT LWB" Category="Cars and Vans">
+      <Description>Ford Transit Van; Long wheelbase model; front cnr rounded</Description>
+      <NO>1</NO>
+      <DKP>0.77</DKP>
+      <DT>0.17</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.77</DKP>
+        <DT>0.17</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="0.700" FTW="0.200" FTS="0.000">0.775</FO>
+        <W>0.875</W>
+        <TR>0.987</TR>
+        <LR>4.74</LR>
+        <LT>4.81</LT>
+        <LA ATC1="1" ATD1="0.700" ATW1="0.200" ATS1="0.100">3.75</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>16000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>950</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="TRUCK - RIGID 10.76M - MAX REAR OVERHANG" Category="Single Unit Trucks">
+      <Description>10.76m rigid truck with max rear overhang</Description>
+      <NO>1</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.9</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.86</LR>
+        <LT>9.815</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.16</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2500</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="TRUCK AND TRAILER" Category="Truck and Trailers">
+      <Description>TRUCK + TRAILER, 19m OVERALL LENGTH</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.2</LR>
+        <LT>6.15</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.45</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>30000</TS1>
+        <TS2>30000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2000</AL1>
+        <AL2>2000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>3.3</LR>
+        <LT>2.45</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">2.5</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3800</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>80</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>7.85</LR>
+        <LT>7.8</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">6.5</LA>
+        <DA1 ATC2="0" ATD2="0.000" ATW2="0.000" ATS2="0.000">0</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>0</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3800</AL1>
+        <AL2>0</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="LOW LOADER - 21M - 3.7M WIDE - KENWORTH K200" Category="Low Loaders">
+      <Description>LOW LOADER - 21M - KENWORTH K200</Description>
+      <NO>2</NO>
+      <DKP>0.91</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.91</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.955</FO>
+        <W>1.2</W>
+        <TR>1.2</TR>
+        <LR>5.252</LR>
+        <LT>3.901</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">3.24</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.321</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>5500</AL1>
+        <AL2>5500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>99</MTA>
+      </unit>
+      <unit>
+        <FO FTC="0" FTD="0.000" FTW="0.000" FTS="0.000">-1.5</FO>
+        <W>1.85</W>
+        <TR>1.85</TR>
+        <LR>16.267</LR>
+        <LT>16.267</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">10.475</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.22</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">2.44</DA2>
+        <DA3 ATC4="2" ATD4="1.000" ATW4="0.300" ATS4="0.100">1.22</DA3>
+        <TS1>50000</TS1>
+        <TS2>50000</TS2>
+        <TS3>50000</TS3>
+        <TS4>50000</TS4>
+        <AL1>5000</AL1>
+        <AL2>5000</AL2>
+        <AL3>5000</AL3>
+        <AL4>5000</AL4>
+        <MTA>0</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - TRI SEMI &amp; TAG - DESIRABLE" Category="Semi-Trailers">
+      <Description>Split-Tri Semi-Trailer &amp; 2 Axle Tag Trailer (2-1-2)</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.100">1.335</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.35</LR>
+        <LT>4.75</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.29</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.32</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="0" FTD="0.000" FTW="0.000" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.015</LR>
+        <LT>12.015</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.205</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="1" ATD3="1.000" ATW3="0.300" ATS3="0.000">2.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>2800</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="0" FTD="0.000" FTW="0.000" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>7.9</LR>
+        <LT>5.84</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.94</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.8</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - TRI SEMI &amp; TAG - ABS MIN" Category="Semi-Trailers">
+      <Description>Split-Tri Semi-Trailer &amp; 2 Axle Tag Trailer (2-1-2)</Description>
+      <NO>3</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>50</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>50</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.335</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.35</LR>
+        <LT>4.75</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.29</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.32</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3500</AL1>
+        <AL2>3500</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+      <unit>
+        <FO FTC="0" FTD="0.000" FTW="0.000" FTS="0.000">1.4</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>12.015</LR>
+        <LT>12.015</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.205</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="1" ATD3="1.000" ATW3="0.300" ATS3="0.000">2.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>2800</AL1>
+        <AL2>2800</AL2>
+        <AL3>0.1</AL3>
+        <AL4>0</AL4>
+        <MTA>75</MTA>
+      </unit>
+      <unit>
+        <FO FTC="0" FTD="0.000" FTW="0.000" FTS="0.000">0</FO>
+        <W>0</W>
+        <TR>1.25</TR>
+        <LR>7.9</LR>
+        <LT>5.84</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.94</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.8</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>2750</AL1>
+        <AL2>2750</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>100</MTA>
+      </unit>
+    </Vehicle>
+  </Vehicle_Definitions>
+</VehiclesFile>

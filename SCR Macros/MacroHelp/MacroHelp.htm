@@ -121,6 +121,14 @@
 			color: #FFFFFF;
 			background-color: #FF0000;
 		}
+		.notebox {
+			border: 1px solid #E8A33D;
+			background-color: #FFF8E6;
+			border-radius: 4px;
+			padding: 8px 12px;
+			margin: 8px 0;
+			display: inline-block;
+		}
 	</style>
   </head>
   <body>
@@ -128,6 +136,10 @@
       <div id ="macrohelp" style="padding-left: 2%; padding-right: 2%;position: absolute; height: 100%; width: 76%; z-index: 2; left: 20%; top: 0px; list-style-type: none; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; white-space: normal; font-size: medium; overflow-y: scroll;">
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
+
+          <li>01/07/2026 – <a class="class2" href="#SCR_VPath">SCR_VPath</a> – moved to production</li>
+          <li>30/06/2026 – <a class="class2" href="#SCR_MeasureOffsetDistance">SCR_MeasureOffsetDistance</a> and <a class="class2" href="#SCR_PointFromVectorOffsetStation">SCR_PointFromVectorOffsetStation</a> – added highlighting and input swap</li>
+          <li>26/06/2026 – renamed SCR_MacroSync to SCR_MacroUpdate and changed code to pull directly from GitHub</li>
 
           <li>21/06/2026 – <a class="class2" href="#SCR_PointcloudExtractor">SCR_PointcloudExtractor</a> – moved to production</li>
 
@@ -466,13 +478,29 @@
         </ul>
         <br>
         <h1 id="Installation" class="header1">Installation and Updating</h1>
+        <div class="notebox">starting with V5.90, TBC applies write protection to “C:\ProgramData\Trimble\MacroCommands3” during installation;<br>
+			to prevent compilation errors during first TBC startup or when macros create temporary CSV files, complete these steps:
 			<ul>
-				<li>in order to use the macros for the first time you need to copy the macro folders manually into “C:\ProgramData\Trimble\MacroCommands\SCR Macros”</li>
-				<li>the name of that subfolder does now matter and must be “SCR Macros”</li>
-				<li>afterwards you need to restart TBC</li>
-				<li>up to TBC V5.81 &gt; C:\ProgramData\Trimble\MacroCommands\SCR Macros</li>
-				<li>from TBC V5.9 onwards &gt; C:\ProgramData\Trimble\MacroCommands<span class="auto-style1">3</span>\SCR Macros</li>
-				<li>TBC V5.90 will change to a newer Python version with slightly changed syntax, hence all macros need to be altered, and TBC will look for them in “C:\ProgramData\Trimble\MacroCommands<span class="auto-style1">3</span>\SCR Macros”</li>
+				<li>right-click the folder &gt; Properties &gt; Security Tab</li>
+				<li>grant Users write rights or full control</li>
+			</ul>
+		</div>
+        <h2 id="InstallationViaInstaller" class="header2">Via Installer (V5.91 and Newer)</h2>
+			<ul>
+				<li>download <span class="auto-style3">SCR_Install.py</span> and place it in “C:\ProgramData\Trimble\MacroCommands3”</li>
+				<li>launch TBC, which displays a temporary “SCR Macro Installer” tab</li>
+				<li>execute the <span class="auto-style3">SCR_Install</span> macro and select the desired macros</li>
+				<li>optionally download the help files (~240 MB) to preview macro functionality</li>
+				<li>the installer self-deletes upon completion; <span class="auto-style3">SCR_MacroUpdate</span> handles subsequent updates</li>
+		  </ul>
+        <h2 id="InstallationManual" class="header2">Manual Installation</h2>
+			<ul>
+				<li>extract the repository files to the appropriate folder based on your TBC version</li>
+				<li>“C:\ProgramData” is typically hidden; copy and paste the path directly into your file explorer address bar</li>
+				<li>through version V5.81 &gt; C:\ProgramData\Trimble\MacroCommands\SCR Macros<br><br>
+				<img alt="" src="Media/SCR_Install-1.png" border="1"><br><br></li>
+				<li>V5.90 onwards &gt; C:\ProgramData\Trimble\MacroCommands<span class="auto-style1">3</span>\SCR Macros<br><br>
+				<img alt="" src="Media/SCR_Install-2.png" border="1"><br><br></li>
 		  </ul>
 
         
@@ -1902,6 +1930,97 @@
 			  <source src="./Media/SCR_SweepShape.mp4" type="video/mp4">Your browser does not support the video tag.</video><br></li>
 		  </ul>
 
+        <h3 id="SCR_VPath" class="header3"><a id="SCR_VPath"></a>SCR_VPath</h3>
+          <ul>
+			  <li>mimics the software VPath from the Department of Transport and Main Roads (TMR) – <a href="https://www.tmr.qld.gov.au/business-industry/commercial-services/software/vehicle-path" class="class2" target="_blank">https://www.tmr.qld.gov.au/business-industry/commercial-services/software/vehicle-path</a></li>
+			  <li>uses an independent algorithm, developed with the help of Claude Code</li>
+			  <li>reads TMR's original vehicle definition file, “Vehicles_custom.xml”
+				  <ul>
+					  <li>a copy is included in the macro folder and is read at startup</li>
+					  <li>currently the file path is hardcoded</li>
+					  <li>either edit that file manually in a text editor, or use the TMR software to create a modified version and replace it</li>
+					  <li>at the top of the XML file you’ll find descriptions of what each label does</li>
+					  <li>self-steering rear axles are not entered and are basically ignored</li>
+				  </ul>
+			  </li><br>
+			  <li>the results aren’t 100% identical, but tests so far have shown differences of less than 50 mm
+				  <ul>
+					  <li>the smaller the chosen step size, the closer it usually gets, but 0.5 m should be enough</li>
+					  <li>according to TMR's VPath documentation, they compute with 1 m intervals</li>
+				  </ul>
+			  </li><br>
+			  <li>this simulation currently ignores tire stiffness and axle load</li>
+			  <li>it checks the turning radius against the following table (from the TMR help)<br><br>
+				  <table border="1" cellpadding="6" cellspacing="0" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; text-align: center;">
+					<tr>
+					  <th>Vehicle</th>
+					  <th>Absolute</th>
+					  <th>Desirable</th>
+					</tr>
+					<tr>
+					  <td>DESIGN SEMITRAILER</td>
+					  <td>12.5</td>
+					  <td>15</td>
+					</tr>
+					<tr>
+					  <td>DESIGN TRUCK/BUS</td>
+					  <td>12.5</td>
+					  <td>15</td>
+					</tr>
+					<tr>
+					  <td>DESIGN CAR</td>
+					  <td>7.5</td>
+					  <td>10*</td>
+					</tr>
+					<tr>
+					  <td>DESIGN LOW LOADER</td>
+					  <td>15</td>
+					  <td>20</td>
+					</tr>
+					<tr>
+					  <td>23m B-DOUBLE</td>
+					  <td>15</td>
+					  <td>20</td>
+					</tr>
+					<tr>
+					  <td>33m TYPE 1 ROAD TRAIN</td>
+					  <td>15</td>
+					  <td>20</td>
+					</tr>
+					<tr>
+					  <td>49m TYPE 2 ROAD TRAIN</td>
+					  <td>15</td>
+					  <td>20</td>
+					</tr>
+					<tr>
+					  <td>12.2m TOURIST BUS</td>
+					  <td>12.5</td>
+					  <td>15</td>
+					</tr>
+					<tr>
+					  <td>ARTICULATED BUS</td>
+					  <td>10.6</td>
+					  <td>15</td>
+					</tr>
+					<tr>
+					  <td>TRUCK AND TRAILER</td>
+					  <td>12.5</td>
+					  <td>15</td>
+					</tr>
+					<tr>
+					  <td>CAR AND CARAVAN</td>
+					  <td>7.5</td>
+					  <td>10</td>
+					</tr>
+				  </table>
+				  <span style="font-size: smaller;">* Also suits small delivery vans</span><br>
+			  </li><br>
+			  <li>in a TBC version that has the new “Unlock from Command Pane” feature <img alt="" src="Media/SCR_VPath-1.png" border="1" style="vertical-align: text-bottom;"> you can keep the macro open and drag the line grips around while the overlay updates automatically</li>
+			  <li>once satisfied with the overlay, you can switch to draw mode and create permanent linework<br><br>
+				  <video controls="controls" width="800">
+				  <source src="./Media/SCR_VPath-2.mp4" type="video/mp4">Your browser does not support the video tag.</video><br></li>
+		  </ul>
+
         <h2 id="Points" class="header2">Points</h2>
         <h3 id="SCR_AutoConnectPoints" class="header3"><a id="SCR_AutoConnectPoints"></a>SCR_AutoConnectPoints</h3>
           <ul>
@@ -2207,6 +2326,7 @@
                   <li><a href="#SCR_MultiOffset">SCR_MultiOffset</a></li>
                   <li><a href="#SCR_PowerlineSway">SCR_PowerlineSway</a></li>
                   <li><a href="#SCR_SweepShape">SCR_SweepShape</a></li>
+                  <li><a href="#SCR_VPath">SCR_VPath</a></li>
                 </ul>
               </li>
               <li><a href="#Points">Points</a>

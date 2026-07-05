@@ -1,0 +1,95 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+       xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
+       mc:Ignorable="d" HorizontalAlignment="Stretch" Margin="4"
+       d:DesignWidth="360" d:DesignHeight="340">
+
+    <Label Content="Vehicle:"/>
+    <ComboBox x:Name="vehiclepicker" MaxDropDownHeight="300" Margin="0,0,0,8"/>
+
+    <Label Content="Input Line:"/>
+    <Wpf:SelectEntity x:Name="linepicker" Margin="0,0,0,2"/>
+    <CheckBox x:Name="reverse_line" Content="Reverse line direction" IsChecked="False" Margin="0,0,0,8"/>
+
+    <Label Content="Side of path:"/>
+    <ComboBox x:Name="sidepicker" SelectedIndex="0" Margin="0,0,0,8">
+        <ComboBoxItem Content="Left"/>
+        <ComboBoxItem Content="Center"/>
+        <ComboBoxItem Content="Right"/>
+    </ComboBox>
+
+    <UniformGrid Columns="2" Margin="0,0,0,4" Visibility="Collapsed">
+        <Label Content="Design Speed (km/h):" VerticalAlignment="Center"/>
+        <Wpf:NumericEdit x:Name="designspeed" Value="40" Margin="0,0,0,0"/>
+    </UniformGrid>
+
+    <UniformGrid Columns="2" Margin="0,0,0,4" Visibility="Collapsed">
+        <Label Content="Friction Coefficient:" VerticalAlignment="Center"/>
+        <Wpf:NumericEdit x:Name="friction" Value="0.30" Margin="0,0,0,0"/>
+    </UniformGrid>
+
+    <UniformGrid Columns="2" Margin="0,0,0,8">
+        <Label Content="Simulation Step (m):" VerticalAlignment="Center"/>
+        <Wpf:NumericEdit x:Name="stepwidth" Value="0.05" Margin="0,0,0,0"/>
+    </UniformGrid>
+
+    <CheckBox x:Name="tp_buffer" Content="Apply TP Buffer (steering transition between reverse curves)" IsChecked="False" Margin="0,0,0,4"/>
+    <CheckBox x:Name="first_last_only" Content="Draw lines for first and last unit only" IsChecked="False" Margin="0,0,0,8"/>
+
+    <DockPanel Margin="0,0,0,2">
+        <Wpf:ColorPicker x:Name="color_front_corners" DockPanel.Dock="Right"/>
+        <CheckBox x:Name="draw_front_corners" Content="Draw body front corner sweep lines" IsChecked="True" VerticalAlignment="Center"/>
+    </DockPanel>
+    <DockPanel Margin="0,0,0,2">
+        <Wpf:ColorPicker x:Name="color_mid_sweep" DockPanel.Dock="Right"/>
+        <CheckBox x:Name="draw_mid_sweep" Content="Draw body middle sweep lines" IsChecked="True" VerticalAlignment="Center"/>
+    </DockPanel>
+    <DockPanel Margin="0,0,0,2">
+        <Wpf:ColorPicker x:Name="color_rear_corners" DockPanel.Dock="Right"/>
+        <CheckBox x:Name="draw_rear_corners" Content="Draw body rear corner sweep lines" IsChecked="True" VerticalAlignment="Center"/>
+    </DockPanel>
+    <DockPanel Margin="0,0,0,2">
+        <Wpf:ColorPicker x:Name="color_rear_axle" DockPanel.Dock="Right"/>
+        <CheckBox x:Name="draw_rear_axle" Content="Draw rear axle sweep lines" IsChecked="True" VerticalAlignment="Center"/>
+    </DockPanel>
+    <DockPanel Margin="0,0,0,2">
+        <Wpf:ColorPicker x:Name="color_envelope" DockPanel.Dock="Right"/>
+        <CheckBox x:Name="draw_envelope" Content="Draw envelope" IsChecked="True" VerticalAlignment="Center"/>
+    </DockPanel>
+    <DockPanel Margin="0,2,0,2">
+        <Wpf:ColorPicker x:Name="color_outline" DockPanel.Dock="Right"/>
+        <Wpf:DistanceEdit x:Name="outline_interval" DockPanel.Dock="Right" Distance="5.0" Width="80"
+                          IsEnabled="{Binding IsChecked, ElementName=draw_outline, Mode=OneWay}"
+                          Margin="0,0,4,0"/>
+        <CheckBox x:Name="draw_outline" Content="Draw body outlines, interval:" IsChecked="False" VerticalAlignment="Center"/>
+    </DockPanel>
+
+    <Border BorderBrush="#FFAAAAAA" BorderThickness="1" CornerRadius="3" Padding="6,4" Margin="0,4,0,8">
+        <StackPanel>
+            <RadioButton x:Name="rb_layers"  Content="Create linework on Layers"    GroupName="output_mode" IsChecked="True"  Margin="0,0,0,2"/>
+            <UniformGrid Columns="2" Margin="16,0,0,4"
+                         IsEnabled="{Binding IsChecked, ElementName=rb_layers, Mode=OneWay}">
+                <Label Content="Layer-prefix / Layergroup:" VerticalAlignment="Center" Padding="0"/>
+                <TextBox x:Name="layer_prefix" Text="VPath 1" VerticalAlignment="Center"/>
+            </UniformGrid>
+            <RadioButton x:Name="rb_overlay" Content="Draw temporary view overlay"  GroupName="output_mode" IsChecked="False" Margin="0,0,0,2"/>
+            <CheckBox x:Name="auto_refresh_overlay" Content="Auto-refresh overlay" IsChecked="True"
+                      IsEnabled="{Binding IsChecked, ElementName=rb_overlay, Mode=OneWay}" Margin="16,0,0,2"/>
+            <DockPanel Margin="16,0,0,0"
+                       IsEnabled="{Binding IsChecked, ElementName=rb_overlay, Mode=OneWay}">
+                <TextBlock Text="Line width:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <TextBlock x:Name="linewidth_label" Text="1" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                <Slider x:Name="overlay_linewidth" Minimum="1" Maximum="3" Value="1"
+                        TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="1"
+                        VerticalAlignment="Center"/>
+            </DockPanel>
+        </StackPanel>
+    </Border>
+
+    <TextBlock x:Name="radius_info" TextWrapping="Wrap" Margin="0,4,0,0" FontFamily="Consolas" FontSize="11"/>
+    <TextBlock x:Name="error" Foreground="Red" TextWrapping="Wrap" Margin="0,2,0,0"/>
+
+</StackPanel>
