@@ -137,6 +137,7 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>23/08/2026 – <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – transfers local files to Civillo and revises an existing layer with them</li>
           <li>01/07/2026 – <a class="class2" href="#SCR_VPath">SCR_VPath</a> – moved to production</li>
           <li>30/06/2026 – <a class="class2" href="#SCR_MeasureOffsetDistance">SCR_MeasureOffsetDistance</a> and <a class="class2" href="#SCR_PointFromVectorOffsetStation">SCR_PointFromVectorOffsetStation</a> – added highlighting and input swap</li>
           <li>26/06/2026 – renamed SCR_MacroSync to SCR_MacroUpdate and changed code to pull directly from GitHub</li>
@@ -1361,6 +1362,30 @@
               <br><img alt="" src="Media/SCR_PointcloudExtractor-1.png" width="500" border="1"><br>
           </ul>
 
+        <h2 id="UpdateTransfer" class="header2">Update/Transfer</h2>
+        <h3 id="SCR_CloudRevise" class="header3"><a id="SCR_CloudRevise"></a>SCR_CloudRevise</h3>
+          <ul>
+              <li>a floating window that transfers local 12d/linestyle files to Civillo and revises an existing layer with them, so field crews always see the latest data</li>
+              <li>connects to Civillo through an API key/secret pair stored locally, entered once and reused on every run</li>
+              <li>pick an organization and project, then browse to a local file (and, optionally, a second file such as a linestyle) and pair it with an existing Civillo layer to revise</li>
+              <li>saved pairs show up as schedule entries that can be edited, enabled/disabled, or removed again</li>
+              <li>Run checks a SHA-256 hash of the first local file against the last synced hash and skips the upload if nothing changed, so repeated runs are cheap</li>
+              <li>editing a schedule entry through Apply clears its stored hash, so the next run always re-uploads even if only the second file was added, changed or removed</li>
+          </ul>
+
+        <h3 id="SCR_MacroUpdate" class="header3"><a id="SCR_MacroUpdate"></a>SCR_MacroUpdate</h3>
+          <ul>
+              <li>fetches the file tree of the public <a href="https://github.com/RonnySchneider/SCR_Macros_Public">SCR_Macros_Public</a> GitHub repository and compares it against your local SCR Macros folder</li>
+              <li>each macro is shown in a grid with its local version, and a status of New, Up to date, Update available, Local is newer, Modified, Incomplete, Local only or Deleted</li>
+              <li>version comparison reads <span class="auto-style3">cmdData.Version</span> from the local and remote .py file; file identity/changes are detected with a git-compatible blob SHA1 hash, so line-ending differences don't cause false positives</li>
+              <li>tick the macros to download (or Select All/Deselect All), then Download selected – files download in the background with a progress bar and can be cancelled mid-way</li>
+              <li>ticking any non-helper macro automatically also ticks the shared SCR_Imports.py/SCR_GlobalHelpers.py helper files, since macros depend on them</li>
+              <li><span style="color:#CC0000; font-weight:bold;">!! rows marked "Local only" are macros that exist locally but not in the repo – ticking them will delete that macro's folder instead of downloading anything !!</span></li>
+              <li>after a download, local folders that no longer exist in the repo and contain no .py file are silently removed (e.g. leftover resource files from a renamed/deleted macro)</li>
+              <li>this is the successor of SCR_MacroSync – it was renamed and switched from a private update server to pulling directly from GitHub</li>
+              <li>after downloading brand new macros you must restart TBC before they show up in the ribbon</li>
+          </ul>
+
         <h1 id="ReportsSheets" class="header1">ReportsSheets</h1>
         <h2 id="Reports" class="header2">Reports</h2>
         <h3><a id="SCR_ABReportElevationDifference"></a> <span id="SCR_ABReportElevationDifference"
@@ -2257,6 +2282,12 @@
                   <li><a href="#SCR_AnalyzeCloudAlongLine">SCR_AnalyzeCloudAlongLine</a></li>
                   <li><a href="#SCR_BestFitPlane">SCR_BestFitPlane</a></li>
                   <li><a href="#SCR_PointcloudExtractor">SCR_PointcloudExtractor</a></li>
+                </ul>
+              </li>
+              <li><a href="#UpdateTransfer">Update/Transfer</a>
+                <ul class="customListStyle">
+                  <li><a href="#SCR_CloudRevise">SCR_CloudRevise</a></li>
+                  <li><a href="#SCR_MacroUpdate">SCR_MacroUpdate</a></li>
                 </ul>
               </li>
             </ul>

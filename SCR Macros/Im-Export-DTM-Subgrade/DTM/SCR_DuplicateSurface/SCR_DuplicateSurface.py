@@ -35,7 +35,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Duplicate DTM"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.02
+        cmdData.Version = 1.04
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -114,7 +114,6 @@ class SCR_DuplicateSurface(StackPanel): # this inherits from the WPF StackPanel 
         self.error.Content=''
 
         wv = self.currentProject [Project.FixedSerial.WorldView]
-        dp = self.currentProject.CreateDuplicator()
 
         UIEvents.RaiseBeforeDataProcessing(self, UIEventArgs())
         self.currentProject.TransactionManager.AddBeginMark(CommandGranularity.Command, self.Caption)
@@ -122,9 +121,9 @@ class SCR_DuplicateSurface(StackPanel): # this inherits from the WPF StackPanel 
             with TransactMethodCall(self.currentProject.TransactionCollector) as failGuard:
 
                 for o in self.objs:
-                    
+
                     newsurface = None
-                    
+
                     if isinstance(o, clr.GetClrType(CompositeSurface)):
 
                         newsurface = o.GetSite().Add(CompositeSurface)
@@ -138,22 +137,22 @@ class SCR_DuplicateSurface(StackPanel): # this inherits from the WPF StackPanel 
 
                         newsurface = o.GetSite().Add(clr.GetClrType(Model3D))
                         newsurface.Name = Model3D.GetUniqueName(o.Name, None, o.GetSite())
-                        newsurface.Gem.CopyFrom(o.Gem)
-                        newsurface.Gem.CopySettingsFrom(o.Gem)
-                        #newsurface.CopyBody(self.currentProject.Concordance, self.currentProject.TransactionManager, o, dp)           
 
-                        #newsurfacebuilder = newsurface.GetGemBatchBuilder()
-                        #
-                        ## use a copy of the original surface data to create a new surface
-                        #tmpgem = o.GemCopy
-                        #tmpgem.External = False # make all data internal
-                        #tmpgem.IsLimited = False # recompute the min/max limits 
-                        #newsurface.Gem = tmpgem
-                        #
-                        #newsurfacebuilder = self.addModel3D(newsurfacebuilder, newsurface)
-                        #
-                        #newsurfacebuilder.Construction()
-                        #newsurfacebuilder.Commit()
+                        # rebuild the surface from the source surface's own vertices and breaklines
+                        # (rather than a raw Gem copy), so it's reconstructed from its original data
+                        builder = newsurface.GetGemBatchBuilder()
+                        builder = self.addModel3D(builder, o)
+                        builder.Construction()
+                        builder.Commit()
+
+                        # there's no direct getter for a surface's current Influences (source linework/points
+                        # it was built from) - only Add/Remove/Replace/IsInfluencedBy - so recover the list by
+                        # taking the entities this surface observes (GetIsObservedBy) and keeping only the
+                        # ones that are actually influences (IsInfluencedBy)
+                        observed = self.currentProject.Concordance.GetIsObservedBy(o.SerialNumber)
+                        influences = [e for e in observed if o.IsInfluencedBy(e.SerialNumber)]
+                        if influences:
+                            newsurface.AddInfluences(influences)
 
                     if newsurface:
 
@@ -179,7 +178,7 @@ class SCR_DuplicateSurface(StackPanel): # this inherits from the WPF StackPanel 
         self.SaveOptions()
 
     def addModel3D(self, builder, surface: Model3D):
-        
+
         mapVertices = {}
         nVertices = surface.NumberOfVertices
         nTri = surface.NumberOfTriangles
@@ -210,6 +209,6 @@ class SCR_DuplicateSurface(StackPanel): # this inherits from the WPF StackPanel 
                     if isOuter:
                         b = DTMSharpness.eSharpAndTextureBndy
                     builder.AddBreakline(Byte(b), mapVertices[iVertexA], mapVertices[iVertexB])
-        
+
         return builder
 

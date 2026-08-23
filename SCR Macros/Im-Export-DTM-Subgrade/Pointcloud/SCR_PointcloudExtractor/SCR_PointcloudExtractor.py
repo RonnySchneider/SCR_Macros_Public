@@ -333,8 +333,7 @@ class SCR_PointcloudExtractor(StackPanel): # this inherits from the WPF StackPan
 
                 elif isinstance(self.activeForm, clr.GetClrType(Hoops2dView)):
                     t = datetime.now() if self.BENCHMARKING else None
-    
-                    
+
                     apertureSize = InputSettings.PickAperture
                     pm = self.activeForm.View.ViewCache.SdeViewCache.PickingManager
                     pa = PickAperature(self.activeForm.View, SystemDrawingPoint(e.MousePosition.X - apertureSize, e.MousePosition.Y - apertureSize), SystemDrawingPoint(e.MousePosition.X + apertureSize, e.MousePosition.Y + apertureSize))

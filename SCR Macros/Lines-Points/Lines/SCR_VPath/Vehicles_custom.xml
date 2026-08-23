@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!--VPath Custom Vehicle File: 18/12/2019 12:27:02-->
+<!--VPath Custom Vehicle File: 07/08/2026 6:50:01-->
 <VehiclesFile>
   <Parameters>
     <DKP>Distance between the prime mover centre line and the front axle king pin.</DKP>
@@ -3036,7 +3036,7 @@
       </unit>
       <unit>
         <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
-        <W>0</W>
+        <W>1.25</W>
         <TR>1.25</TR>
         <LR>5.3</LR>
         <LT>4.06</LT>
@@ -3106,7 +3106,7 @@
       </unit>
       <unit>
         <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
-        <W>0</W>
+        <W>1.25</W>
         <TR>1.25</TR>
         <LR>5.3</LR>
         <LT>4.06</LT>
@@ -3543,6 +3543,56 @@
         <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">7.1</LA>
         <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.4</DA1>
         <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.4</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>40000</TS3>
+        <TS4>0</TS4>
+        <AL1>1900</AL1>
+        <AL2>1900</AL2>
+        <AL3>1900</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+    </Vehicle>
+    <Vehicle Name="SEMI - 16M ACS Water Truck" Category="Semi-Trailers">
+      <Description>17m SEMI-TRAILER</Description>
+      <NO>2</NO>
+      <DKP>0.96</DKP>
+      <DT>0.29</DT>
+      <MSA>45</MSA>
+      <unit>
+        <DKP>0.96</DKP>
+        <DT>0.29</DT>
+        <MSA>45</MSA>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">1.12</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>6.45</LR>
+        <LT>5.125</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">4.5</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="0" ATD3="0.000" ATW3="0.000" ATS3="0.000">0</DA2>
+        <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
+        <TS1>40000</TS1>
+        <TS2>40000</TS2>
+        <TS3>0</TS3>
+        <TS4>0</TS4>
+        <AL1>3000</AL1>
+        <AL2>3000</AL2>
+        <AL3>0</AL3>
+        <AL4>0</AL4>
+        <MTA>60</MTA>
+      </unit>
+      <unit>
+        <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0.73</FO>
+        <W>1.25</W>
+        <TR>1.25</TR>
+        <LR>9.5</LR>
+        <LT>7.15</LT>
+        <LA ATC1="2" ATD1="1.000" ATW1="0.300" ATS1="0.100">5.9</LA>
+        <DA1 ATC2="2" ATD2="1.000" ATW2="0.300" ATS2="0.100">1.25</DA1>
+        <DA2 ATC3="2" ATD3="1.000" ATW3="0.300" ATS3="0.100">1.25</DA2>
         <DA3 ATC4="0" ATD4="0.000" ATW4="0.000" ATS4="0.000">0</DA3>
         <TS1>40000</TS1>
         <TS2>40000</TS2>
@@ -4376,7 +4426,7 @@
       </unit>
       <unit>
         <FO FTC="1" FTD="1.000" FTW="0.300" FTS="0.000">0</FO>
-        <W>0</W>
+        <W>1.25</W>
         <TR>1.25</TR>
         <LR>3.3</LR>
         <LT>2.45</LT>

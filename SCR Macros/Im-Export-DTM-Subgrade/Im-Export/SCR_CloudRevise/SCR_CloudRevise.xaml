@@ -1,0 +1,51 @@
+<Window Background="#FFF3F3F7"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
+        Title="SCR_CloudRevise" Height="460" Width="300" MinHeight="200" MinWidth="220"
+        mc:Ignorable="d">
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- 0 - config path label -->
+            <RowDefinition Height="Auto"/> <!-- 1 - reload / org / project, one line -->
+            <RowDefinition Height="Auto"/> <!-- 2 - add/run buttons -->
+            <RowDefinition Height="*"/>    <!-- 3 - schedules list, stretches with window -->
+            <RowDefinition Height="Auto"/> <!-- 4 - error label -->
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="configPathLabel" Grid.Row="0" Text="" FontSize="13" Foreground="Gray" TextDecorations="Underline" Cursor="Hand" Margin="0,0,0,8"/>
+
+        <Grid Grid.Row="1" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/> <!-- reload button -->
+                <ColumnDefinition Width="Auto"/> <!-- org label -->
+                <ColumnDefinition Width="*"/>    <!-- org combo -->
+                <ColumnDefinition Width="Auto"/> <!-- project label -->
+                <ColumnDefinition Width="*"/>    <!-- project combo -->
+                <ColumnDefinition Width="Auto"/> <!-- help button -->
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="reloadOrgsBtn" Grid.Column="0" Content="&#x27F3;" FontSize="14" Width="22" Height="22" Padding="0" Margin="0,0,6,0" ToolTip="Reload Organizations"/>
+            <Label Grid.Column="1" Content="Organization" Padding="0,0,4,0" VerticalAlignment="Center"/>
+            <ComboBox x:Name="orgCombo" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,6,0"/>
+            <Label Grid.Column="3" Content="Project" Padding="0,0,4,0" VerticalAlignment="Center"/>
+            <ComboBox x:Name="projectCombo" Grid.Column="4" VerticalAlignment="Center" Margin="0,0,6,0"/>
+            <Button x:Name="helpBtn" Grid.Column="5" Content="Help" Height="22" Padding="6,0" ToolTip="Help"/>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,8">
+            <Button x:Name="addScheduleBtn" Content="Add" Width="70" Margin="0,0,4,0"/>
+            <Button x:Name="runSchedulesBtn" Content="Run" Width="70"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="schedulesPanel"/>
+        </ScrollViewer>
+
+        <Label x:Name="error" Grid.Row="4" Content="" FontWeight="Bold" Foreground="Red"/>
+
+    </Grid>
+</Window>

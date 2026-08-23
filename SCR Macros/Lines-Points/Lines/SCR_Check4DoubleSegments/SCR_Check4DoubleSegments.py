@@ -24,6 +24,7 @@ exec(open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\SCR_Imports.py").re
 _OPTIONS = {
     "layerpicker": 8, "hztol": 0.001, "vztol": 0.001,
     "highlightmode": True, "deletemode": False,
+    "usesourceselected": True, "usesourcelayer": False, "sourcelayerpicker": 8,
 }
 
 def Setup(cmdData, macroFileFolder):
@@ -40,7 +41,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Check4DoubleSegments"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.12
+        cmdData.Version = 1.13
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -111,6 +112,63 @@ class SCR_Check4DoubleSegments(StackPanel): # this inherits from the WPF StackPa
             return True
         return False
 
+    def GetSourceObjects(self):
+        if self.usesourcelayer.IsChecked:
+            layer_sn = self.sourcelayerpicker.SelectedSerialNumber
+            wlc = self.currentProject[Project.FixedSerial.LayerContainer]
+            wl = wlc[layer_sn]
+            members = wl.Members
+
+            result = []
+            count = members.Count
+            ProgressBar.TBC_ProgressBar.Title = "gathering line information"
+            time1 = datetime.now()
+            for i, sn in enumerate(members):
+                if (datetime.now() - time1).seconds > 1:
+                    if ProgressBar.TBC_ProgressBar.SetProgress(i * 100 // count):
+                        break
+                    time1 = datetime.now()
+                result.append(self.currentProject.Concordance[sn])
+            ProgressBar.TBC_ProgressBar.Title = ""
+            return result
+        else:
+            return list(self.objs)
+
+    def ComputeElementMidpoint(self, o, B, E):
+        # a straight-line average of B/E sits off the actual curve for arc/bezier/etc.
+        # elements, so locate the matching chord(s) in the full chorded PolySeg between
+        # B and E and interpolate at half their combined length instead
+        tol = 1e-4
+        polyseg = o.ComputePolySeg().ToWorld()
+        s = polyseg.FirstSegment
+        interval = []
+        collecting = False
+        while s is not None:
+            if not collecting and abs(s.BeginPoint.X - B.X) <= tol and abs(s.BeginPoint.Y - B.Y) <= tol:
+                collecting = True
+            if collecting:
+                interval.append(s)
+                if abs(s.EndPoint.X - E.X) <= tol and abs(s.EndPoint.Y - E.Y) <= tol:
+                    break
+            s = polyseg.Next(s)
+
+        if not interval:
+            return (B.X + E.X) / 2.0, (B.Y + E.Y) / 2.0
+
+        total_len = sum(seg.Length2D for seg in interval)
+        if total_len <= 0:
+            return (B.X + E.X) / 2.0, (B.Y + E.Y) / 2.0
+
+        half = total_len / 2.0
+        acc = 0.0
+        for n, seg in enumerate(interval):
+            L = seg.Length2D
+            if acc + L >= half or n == len(interval) - 1:
+                t = (half - acc) / L if L > 0 else 0.5
+                p = seg.ComputePoint(t)[1]
+                return p.X, p.Y
+            acc += L
+        return (B.X + E.X) / 2.0, (B.Y + E.Y) / 2.0
 
     def SetDefaultOptions(self):
         SCROptions.LoadMacroOptions(self, "SCR_Check4DoubleSegments", _OPTIONS, self.currentProject)
@@ -143,15 +201,16 @@ class SCR_Check4DoubleSegments(StackPanel): # this inherits from the WPF StackPa
 
                 if self.deletemode.IsChecked:
 
+                    sourceobjs = self.GetSourceObjects()
                     lineserials = []
                     time1 = datetime.now()
                     i1 = 0
                     ProgressBar.TBC_ProgressBar.Title = "preparing Lookup-Tables"
-                    for o in self.objs:
+                    for o in sourceobjs:
 
                         i1 += 1
                         if (datetime.now() - time1).seconds > 1:
-                            if ProgressBar.TBC_ProgressBar.SetProgress(i1 * 100 // self.objs.Count):
+                            if ProgressBar.TBC_ProgressBar.SetProgress(i1 * 100 // len(sourceobjs)):
                                 break
                             time1 = datetime.now()
 
@@ -249,47 +308,68 @@ class SCR_Check4DoubleSegments(StackPanel): # this inherits from the WPF StackPa
                             o.GetSite().Remove(o.SerialNumber)
                             deletecount += 1
 
-                    ProgressBar.TBC_ProgressBar.Title = "reinstating selection"
-                    # reinstate selection
-                    finalselection = []
-                    for i in range(0, lineserials.Count):
-                        if lineserials[i][3] == False: # not deleted
-                            finalselection.Add(lineserials[i][0])
-                    GlobalSelection.Items(self.currentProject).Set(finalselection)
+                    if not self.usesourcelayer.IsChecked:
+                        # only reinstate the selection when we started from the user's own
+                        # selection — in layer mode there was no prior selection to restore
+                        ProgressBar.TBC_ProgressBar.Title = "reinstating selection"
+                        finalselection = []
+                        for i in range(0, lineserials.Count):
+                            if lineserials[i][3] == False: # not deleted
+                                finalselection.Add(lineserials[i][0])
+                        GlobalSelection.Items(self.currentProject).Set(finalselection)
 
                     self.success.Content += '\ndeleted ' + str(deletecount) + ' lines'
 
                 elif self.highlightmode.IsChecked:
 
                     # pre-compute all segments into a flat list with coordinates as Python floats.
-                    # storing floats avoids repeated .NET Point3D property access inside the inner loop.
-                    # all_segs entries: (line_sn, seg_obj, bx, by, bz, ex, ey, ez)
+                    # segments come from the linestring's own elements (its actual vertices), not
+                    # the chorded PolySeg — a smoothed/curved line gets subdivided into thousands of
+                    # near-but-not-quite-identical PolySeg chords, which made two "duplicate" smoothed
+                    # lines fail to match segment-for-segment. Comparing the real elements is stable
+                    # regardless of how finely a curve happens to get chorded.
+                    # all_segs entries: (line_sn, elem_type, bx, by, bz, ex, ey, ez, is3d)
                     all_segs = []
                     seg_items = []  # (x, y, z, idx) for the octree
-                    for o in self.objs:
-                        if isinstance(o, self.lType):
-                            polyseg = o.ComputePolySeg().ToWorld()
+                    for o in self.GetSourceObjects():
+                        if isinstance(o, self.lType) and o.ElementCount >= 2:
+                            ec = o.ElementCount
                             polyseg_v = o.ComputeVerticalPolySeg()
-                            has_vertical = polyseg_v is not None  # check once per object, not per segment
-                            s = polyseg.FirstSegment
-                            while s is not None:
-                                B = s.BeginPoint
-                                E = s.EndPoint
-                                if has_vertical:
-                                    B.Z = polyseg_v.ComputeVerticalSlopeAndGrade(s.BeginStation)[1]
-                                    E.Z = polyseg_v.ComputeVerticalSlopeAndGrade(s.EndStation)[1]
+                            has_vertical = polyseg_v is not None  # check once per object, not per element
+
+                            elempts = []  # (Point3D, element .NET type)
+                            station = 0.0
+                            prevxy = None
+                            for i in range(ec):
+                                elem = o.GetElementInWCS(i)
+                                p = elem.Position
+                                if prevxy is not None:
+                                    station += math.sqrt((p.X - prevxy[0])**2 + (p.Y - prevxy[1])**2)
+                                prevxy = (p.X, p.Y)
+                                if not p.Is3D and has_vertical:
+                                    p.Z = polyseg_v.ComputeVerticalSlopeAndGrade(station)[1]
+                                elempts.append((p, type(elem)))
+
+                            for i in range(ec - 1):
+                                B = elempts[i][0]
+                                E, etype = elempts[i + 1]
                                 idx = len(all_segs)
-                                bx, by, bz = B.X, B.Y, B.Z
-                                ex, ey, ez = E.X, E.Y, E.Z
-                                all_segs.append((o.SerialNumber, s, bx, by, bz, ex, ey, ez))
+                                bx, by = B.X, B.Y
+                                ex, ey = E.X, E.Y
+                                # undefined elevation comes back as NaN, which poisons every distance
+                                # comparison it touches (NaN <= anything is always False) — sanitize to
+                                # 0.0 so the octree and Z-tolerance checks below stay well-defined;
+                                # is3d (from the real, un-sanitized flag) gates whether Z is trusted at all
+                                is3d = B.Is3D and E.Is3D
+                                bz = B.Z if B.Is3D else 0.0
+                                ez = E.Z if E.Is3D else 0.0
+                                all_segs.append((o.SerialNumber, etype, bx, by, bz, ex, ey, ez, is3d, o, B, E))
                                 seg_items.append((bx, by, bz, idx))
                                 seg_items.append((ex, ey, ez, idx))
-                                s = polyseg.Next(s)
 
                     # cache tolerances as Python floats — avoids repeated .NET property access in hot loops
                     hz = self.hztol.Distance
                     vz = self.vztol.Distance
-                    conservative_radius = math.sqrt(hz**2 + vz**2)
                     seg_tree = SCROctree()
                     seg_tree.build(seg_items)
 
@@ -302,17 +382,21 @@ class SCR_Check4DoubleSegments(StackPanel): # this inherits from the WPF StackPa
                                 break
                             time1 = datetime.now()
 
-                        sn1, s1, s1_bx, s1_by, s1_bz, s1_ex, s1_ey, s1_ez = all_segs[i1]
+                        sn1, etype1, s1_bx, s1_by, s1_bz, s1_ex, s1_ey, s1_ez, is3d1, o1, B1, E1 = all_segs[i1]
 
-                        near_B = set(seg_tree.find_within(s1_bx, s1_by, s1_bz, conservative_radius))
-                        near_E = set(seg_tree.find_within(s1_ex, s1_ey, s1_ez, conservative_radius))
+                        # 2D-only candidate search: a 2D duplicate can have wildly different (or
+                        # undefined/sanitized-to-0) elevation on either side, so filtering candidates
+                        # by a 3D radius would wrongly exclude those before the dup2d/dup3d checks below
+                        # ever get a chance to run
+                        near_B = set(seg_tree.find_within_2d(s1_bx, s1_by, hz))
+                        near_E = set(seg_tree.find_within_2d(s1_ex, s1_ey, hz))
                         candidates = (near_B & near_E) - {i1}
 
                         for i2 in candidates:
                             if i2 <= i1:
                                 continue
-                            sn2, s2, s2_bx, s2_by, s2_bz, s2_ex, s2_ey, s2_ez = all_segs[i2]
-                            if sn1 == sn2 or s1.Type != s2.Type:
+                            sn2, etype2, s2_bx, s2_by, s2_bz, s2_ex, s2_ey, s2_ez, is3d2, o2, B2, E2 = all_segs[i2]
+                            if sn1 == sn2 or etype1 != etype2:
                                 continue
 
                             # inline 2D distance — avoids creating 4 .NET Vector3D objects per candidate pair
@@ -324,8 +408,10 @@ class SCR_Check4DoubleSegments(StackPanel): # this inherits from the WPF StackPa
                             dup2d = orig_2d or flip_2d
                             dup3d = False
 
-                            if dup2d:
-                                # Z check only needed when 2D already matches
+                            if dup2d and is3d1 and is3d2:
+                                # Z check only meaningful when both segments actually carry an elevation;
+                                # otherwise leave the match as a 2D duplicate rather than falsely promoting
+                                # it to 3D by comparing undefined (default 0) elevations
                                 orig_z = (abs(s1_bz-s2_bz) <= vz and abs(s1_ez-s2_ez) <= vz)
                                 flip_z = (abs(s1_bz-s2_ez) <= vz and abs(s1_ez-s2_bz) <= vz)
                                 if orig_z or flip_z:
@@ -333,12 +419,11 @@ class SCR_Check4DoubleSegments(StackPanel): # this inherits from the WPF StackPa
                                     dup2d = False
 
                             if dup3d or dup2d:
-                                circle_radius = s1.Length2D / 4.0
+                                mx, my = self.ComputeElementMidpoint(o1, B1, E1)
+                                circle_radius = math.sqrt((s1_ex-s1_bx)**2 + (s1_ey-s1_by)**2) / 4.0
                                 newcircle = wv.Add(clr.GetClrType(CadCircle))
                                 newcircle.Layer = self.layerpicker.SelectedSerialNumber
-                                tt = s1.ComputePoint(0.5)[1]
-                                tt.Z = (s1_bz + s1_ez) / 2
-                                newcircle.CenterPoint = tt
+                                newcircle.CenterPoint = Point3D(mx, my, (s1_bz+s1_ez)/2)
                                 newcircle.Radius = circle_radius
                                 if dup3d:
                                     newcircle.Color = Color.Red

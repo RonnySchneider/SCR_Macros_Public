@@ -50,7 +50,11 @@
         <Wpf:DistanceEdit x:Name="vztol"/>
     </UniformGrid>
     
-    <Wpf:MemberSelection x:Name="objs" Height="30" Margin="0"/>
+    <RadioButton x:Name="usesourceselected" Content="selected objects" IsChecked="True" GroupName="sourcegroup" VerticalAlignment="Center"/>
+    <Wpf:MemberSelection x:Name="objs" Height="30" Margin="0" IsEnabled="{Binding IsChecked, ElementName=usesourceselected}"/>
+
+    <RadioButton x:Name="usesourcelayer" Content="all layer members" GroupName="sourcegroup" VerticalAlignment="Center"/>
+    <Wpf:LayerPicker x:Name="sourcelayerpicker" IsEnabled="{Binding IsChecked, ElementName=usesourcelayer}"/>
 
     <Label x:Name="error3Dduplicate" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
     <Label x:Name="error2Dduplicate" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Orange"/>

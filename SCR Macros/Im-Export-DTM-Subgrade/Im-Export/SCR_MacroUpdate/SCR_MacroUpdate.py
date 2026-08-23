@@ -15,6 +15,7 @@ import os
 import re
 import shutil
 import threading
+import webbrowser
 
 clr.AddReference("IronPython.Wpf")
 import wpf
@@ -95,10 +96,11 @@ _XAML = """<Window Background="#FFF3F3F7"
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <UniformGrid Grid.Row="0" Rows="1" Columns="3" Margin="0,0,0,6">
+        <UniformGrid Grid.Row="0" Rows="1" Columns="4" Margin="0,0,0,6">
             <Button x:Name="fetchbtn"       Content="&#x2193;  Fetch File List from GitHub" Height="30" Margin="0,0,4,0" FontWeight="Bold" Background="#FFBDE0FF"/>
             <Button x:Name="selectallbtn"   Content="Select All"   Height="30" Margin="2,0"/>
-            <Button x:Name="deselectallbtn" Content="Deselect All" Height="30" Margin="4,0,0,0"/>
+            <Button x:Name="deselectallbtn" Content="Deselect All" Height="30" Margin="2,0"/>
+            <Button x:Name="helpbtn"        Content="Help"         Height="30" Margin="4,0,0,0"/>
         </UniformGrid>
 
         <DataGrid Grid.Row="1" x:Name="datagrid"
@@ -157,12 +159,12 @@ def Setup(cmdData, macroFileFolder):
 
     try:
         cmdData.DefaultTabKey         = "SCR ImExport/DTM/Subgrade"
-        cmdData.DefaultTabGroupKey    = "Update"
-        cmdData.ShortCaption          = "Update SCR Macros from GitHub"
+        cmdData.DefaultTabGroupKey    = "Update/Transfer"
+        cmdData.ShortCaption          = "Update from GitHub"
         cmdData.DefaultRibbonToolSize = 3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version     = 1.13
+        cmdData.Version     = 1.14
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo   = r""
 
@@ -205,6 +207,7 @@ class SCR_MacroUpdateDialog(Window):
         self.fetchbtn.Click       += self._fetch_click
         self.selectallbtn.Click   += self._select_all
         self.deselectallbtn.Click += self._deselect_all
+        self.helpbtn.Click        += self._help_click
         self.downloadbtn.Click    += self._download_click
 
     # ── helpers ────────────────────────────────────────────────────────────
@@ -498,6 +501,9 @@ class SCR_MacroUpdateDialog(Window):
             self.success.Content = ""
         finally:
             self.fetchbtn.IsEnabled = True
+
+    def _help_click(self, sender, e):
+        webbrowser.open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\MacroHelp\MacroHelp.htm#SCR_MacroUpdate")
 
     def _select_all(self, sender, e):
         if self._dt is None:

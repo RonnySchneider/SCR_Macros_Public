@@ -3,6 +3,7 @@ import clr
 import copy
 import csv
 from datetime import datetime, timedelta
+import hashlib
 import io
 from io import StringIO
 import importlib
@@ -22,6 +23,7 @@ from timeit import default_timer as timer
 import uuid
 import webbrowser
 import xml.etree.ElementTree as ET
+import zipfile
 
 clr.AddReference("IronPython.Wpf")
 import wpf
@@ -32,18 +34,20 @@ from MetadataExtractor.Formats.Exif import ExifReader
 from MetadataExtractor.Formats.Jpeg import JpegMetadataReader, JpegSegmentReader
 
 import System
-from System import Action, Array, Byte, Double, Environment, Func, Guid, Int32, IntPtr, Math, Reflection, String, Tuple, Type, UInt16, UInt32
+from System import Action, Array, Byte, Convert, Double, Environment, Func, Guid, Int32, IntPtr, Math, Reflection, String, Tuple, Type, UInt16, UInt32
 from System.Collections.ObjectModel import ObservableCollection
 from System.IO import File, MemoryStream, StreamReader
-from System.Net import HttpStatusCode, HttpWebRequest, WebRequestMethods
+from System.Net import HttpStatusCode, HttpWebRequest, WebException, WebRequestMethods
 from System.Reflection import BindingFlags
 from System.Text import Encoding
-from System.Windows import Application, FontWeights, GridLength, GridUnitType, MessageBox, MessageBoxButton, MessageBoxResult, PresentationSource, Visibility, Window
-from System.Windows.Controls import ColumnDefinition, ComboBox, ComboBoxItem, DataGridTextColumn, Grid, GridViewColumn, ItemCollection, ListBox, ListBoxItem, ListView, \
-                                    ListViewItem, RowDefinition, StackPanel, TextBlock, TextBox, TreeView, TreeViewItem
+from System.Windows import Application, FontWeights, GridLength, GridUnitType, MessageBox, MessageBoxButton, MessageBoxResult, PresentationSource, SizeToContent, Thickness, Visibility, \
+                           Window
+from System.Windows.Controls import Button, CheckBox, ColumnDefinition, ComboBox, ComboBoxItem, DataGridTextColumn, Grid, GridViewColumn, ItemCollection, ListBox, ListBoxItem, \
+                                    ListView, ListViewItem, RowDefinition, StackPanel, TextBlock, TextBox, TreeView, TreeViewItem
 from System.Windows.Data import Binding
+from System.Windows.Documents import Run
 from System.Windows.Input import AccessKeyManager, Key, Keyboard, Mouse
-from System.Windows.Media import VisualTreeHelper
+from System.Windows.Media import Colors, SolidColorBrush, VisualTreeHelper
 from System.Windows.Media.Media3D import Point3D as SdePoint3D, Rect3D as SdeRect3D, Vector3D as SdeVector3D
 from System.Windows.Shapes import Rectangle
 from System.Windows.Threading import Dispatcher, DispatcherPriority
@@ -155,7 +159,11 @@ clr.AddReference ("Trimble.Vce.Data.IFC")
 from Trimble.VCE.Data.IFC import IfcExporter
 
 clr.AddReference ("Trimble.Vce.Data.RXL")
-from Trimble.Vce.Data.RXL import FileWriter as RxlFileWriter, RXLAlignmentExporter, Versions as RxlVersions
+from Trimble.Vce.Data.RXL import FileWriter as RxlFileWriter, RXLAlignmentExporter
+try: #until 2025.21?
+    from Trimble.Vce.Data.RXL import Versions as RxlVersions
+except: # from 2026.10
+    from Trimble.Vce.Interfaces.Sdk.Data.RXL import Versions as RxlVersions
 
 clr.AddReference ("Trimble.Vce.Data.SDE")
 from Trimble.Vce.Data.SDE import ColorizationState, GridScaledScan, Importer as SDEImporter
@@ -316,6 +324,12 @@ except:
 #from Sitech.Data.D12D import ProjectHeader as D12dProjectHeader
 
 exec(open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\SCR_GlobalHelpers.py").read())
+
+
+
+
+
+
 
 
 
