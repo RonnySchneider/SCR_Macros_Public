@@ -160,7 +160,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version     = 1.04
+        cmdData.Version     = 1.05
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo   = r""
 
