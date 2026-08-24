@@ -177,7 +177,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Cloud Revise"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.04
+        cmdData.Version = 1.05
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -471,72 +471,95 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
 
     def build_schedule_row(self, index):
         entry = self.schedules[index]
-
+    
         row = Grid()
-        row.Margin = Thickness(0, 0, 0, 4)
-
+        row.Margin = Thickness(0, 0, 0, 8)
+    
         colCheck = ColumnDefinition()
         colCheck.Width = GridLength(1, GridUnitType.Auto)
+    
         colText = ColumnDefinition()
         colText.Width = GridLength(1, GridUnitType.Star)
+    
         colEdit = ColumnDefinition()
         colEdit.Width = GridLength(1, GridUnitType.Auto)
+    
         colDelete = ColumnDefinition()
         colDelete.Width = GridLength(1, GridUnitType.Auto)
+    
         row.ColumnDefinitions.Add(colCheck)
         row.ColumnDefinitions.Add(colText)
         row.ColumnDefinitions.Add(colEdit)
         row.ColumnDefinitions.Add(colDelete)
-
+    
         chk = CheckBox()
         chk.IsChecked = bool(entry.get("enabled", True))
         Grid.SetColumn(chk, 0)
         chk.Checked += lambda s, e, i=index: self.schedule_enabled_toggled(i, True)
         chk.Unchecked += lambda s, e, i=index: self.schedule_enabled_toggled(i, False)
         row.Children.Add(chk)
-
+    
+        # Local paths
         local1Run = Run(entry.get("localPath1", ""))
         local1Run.Foreground = SolidColorBrush(Colors.DarkGreen)
-
-        arrowRun = Run("  ->  ")
-        arrowRun.Foreground = SolidColorBrush(Colors.Gray)
-
-        # split the folder path from the file/layer name so we can color them the same way the
-        # Add/Edit dialog's Civillo target list does (folder in black, name in steel blue)
+    
+        local2Run = Run(entry.get("localPath2", ""))
+        local2Run.Foreground = SolidColorBrush(Colors.Brown)
+    
+        # Split Civillo path into folder and name
         civilloPath = entry.get("civilloPath", "")
         slashIndex = civilloPath.rfind("/")
+    
         if slashIndex >= 0:
             civilloFolderText = civilloPath[:slashIndex + 1]
             civilloNameText = civilloPath[slashIndex + 1:]
         else:
             civilloFolderText = ""
             civilloNameText = civilloPath
-
+    
         civilloFolderRun = Run(civilloFolderText)
         civilloFolderRun.Foreground = SolidColorBrush(Colors.Black)
-
+    
         civilloNameRun = Run(civilloNameText)
         civilloNameRun.Foreground = SolidColorBrush(Colors.SteelBlue)
-
+    
+        # Text block
         text = TextBlock()
+        text.TextWrapping = TextWrapping.Wrap
+        text.Margin = Thickness(6, 0, 6, 0)
+    
+        # Local heading
+        localHeader = Run("Local")
+        localHeader.FontWeight = FontWeights.Bold
+        localHeader.FontStyle = FontStyles.Italic
+        text.Inlines.Add(localHeader)
+        text.Inlines.Add(LineBreak())
+    
+        # Local Path 1
         text.Inlines.Add(local1Run)
-
+    
+        # Local Path 2 (optional)
         if entry.get("localPath2", ""):
-            plusRun = Run(" + ")
-            plusRun.Foreground = SolidColorBrush(Colors.Gray)
-            text.Inlines.Add(plusRun)
-
-            local2Run = Run(entry.get("localPath2", ""))
-            local2Run.Foreground = SolidColorBrush(Colors.Brown)
+            text.Inlines.Add(LineBreak())
             text.Inlines.Add(local2Run)
-
-        text.Inlines.Add(arrowRun)
+    
+        # Spacer
+        text.Inlines.Add(LineBreak())
+    
+        # Civillo heading
+        civilloHeader = Run("Civillo")
+        civilloHeader.FontWeight = FontWeights.Bold
+        civilloHeader.FontStyle = FontStyles.Italic
+        text.Inlines.Add(civilloHeader)
+        text.Inlines.Add(LineBreak())
+    
+        # Civillo path
         text.Inlines.Add(civilloFolderRun)
         text.Inlines.Add(civilloNameRun)
-        text.Margin = Thickness(6, 0, 6, 0)
+    
         Grid.SetColumn(text, 1)
         row.Children.Add(text)
-
+    
         editBtn = Button()
         editBtn.Content = "Edit"
         editBtn.Width = 40
@@ -544,14 +567,14 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         Grid.SetColumn(editBtn, 2)
         editBtn.Click += lambda s, e, i=index: self.edit_schedule_clicked(i)
         row.Children.Add(editBtn)
-
+    
         delBtn = Button()
         delBtn.Content = "X"
         delBtn.Width = 24
         Grid.SetColumn(delBtn, 3)
         delBtn.Click += lambda s, e, i=index: self.delete_schedule_clicked(i)
         row.Children.Add(delBtn)
-
+    
         return row
 
     def schedule_enabled_toggled(self, index, value):
