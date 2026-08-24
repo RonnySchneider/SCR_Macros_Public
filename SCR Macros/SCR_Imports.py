@@ -40,12 +40,12 @@ from System.IO import File, MemoryStream, StreamReader
 from System.Net import HttpStatusCode, HttpWebRequest, WebException, WebRequestMethods
 from System.Reflection import BindingFlags
 from System.Text import Encoding
-from System.Windows import Application, FontWeights, GridLength, GridUnitType, MessageBox, MessageBoxButton, MessageBoxResult, PresentationSource, SizeToContent, Thickness, Visibility, \
-                           Window
+from System.Windows import Application, FontStyles, FontWeights, GridLength, GridUnitType, MessageBox, MessageBoxButton, MessageBoxResult, PresentationSource, SizeToContent, \
+                           TextWrapping, Thickness, Visibility, Window
 from System.Windows.Controls import Button, CheckBox, ColumnDefinition, ComboBox, ComboBoxItem, DataGridTextColumn, Grid, GridViewColumn, ItemCollection, ListBox, ListBoxItem, \
                                     ListView, ListViewItem, RowDefinition, StackPanel, TextBlock, TextBox, TreeView, TreeViewItem
 from System.Windows.Data import Binding
-from System.Windows.Documents import Run
+from System.Windows.Documents import LineBreak, Run
 from System.Windows.Input import AccessKeyManager, Key, Keyboard, Mouse
 from System.Windows.Media import Colors, SolidColorBrush, VisualTreeHelper
 from System.Windows.Media.Media3D import Point3D as SdePoint3D, Rect3D as SdeRect3D, Vector3D as SdeVector3D
@@ -324,6 +324,7 @@ except:
 #from Sitech.Data.D12D import ProjectHeader as D12dProjectHeader
 
 exec(open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\SCR_GlobalHelpers.py").read())
+
 
 
 
