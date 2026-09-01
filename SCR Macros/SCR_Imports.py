@@ -25,6 +25,7 @@ import webbrowser
 import xml.etree.ElementTree as ET
 import zipfile
 
+
 clr.AddReference("IronPython.Wpf")
 import wpf
 
@@ -34,18 +35,19 @@ from MetadataExtractor.Formats.Exif import ExifReader
 from MetadataExtractor.Formats.Jpeg import JpegMetadataReader, JpegSegmentReader
 
 import System
-from System import Action, Array, Byte, Convert, Double, Environment, Func, Guid, Int32, IntPtr, Math, Reflection, String, Tuple, Type, UInt16, UInt32
+from System import Action, Activator, Array, Byte, Convert, Double, Environment, Func, GC, Guid, Int32, IntPtr, Math, Reflection, String, Tuple, Type, UInt16, UInt32, Uri
 from System.Collections.ObjectModel import ObservableCollection
-from System.IO import File, MemoryStream, StreamReader
+from System.IO import File, FileMode, FileStream, MemoryStream, StreamReader
 from System.Net import HttpStatusCode, HttpWebRequest, WebException, WebRequestMethods
 from System.Reflection import BindingFlags
+from System.Runtime.InteropServices import Marshal
 from System.Text import Encoding
-from System.Windows import Application, FontWeights, GridLength, GridUnitType, MessageBox, MessageBoxButton, MessageBoxResult, PresentationSource, SizeToContent, Thickness, Visibility, \
-                           Window
+from System.Windows import Application, FontStyles, FontWeights, GridLength, GridUnitType, MessageBox, MessageBoxButton, MessageBoxResult, PresentationSource, SizeToContent, \
+                           TextWrapping, Thickness, Visibility, Window
 from System.Windows.Controls import Button, CheckBox, ColumnDefinition, ComboBox, ComboBoxItem, DataGridTextColumn, Grid, GridViewColumn, ItemCollection, ListBox, ListBoxItem, \
                                     ListView, ListViewItem, RowDefinition, StackPanel, TextBlock, TextBox, TreeView, TreeViewItem
 from System.Windows.Data import Binding
-from System.Windows.Documents import Run
+from System.Windows.Documents import LineBreak, Run
 from System.Windows.Input import AccessKeyManager, Key, Keyboard, Mouse
 from System.Windows.Media import Colors, SolidColorBrush, VisualTreeHelper
 from System.Windows.Media.Media3D import Point3D as SdePoint3D, Rect3D as SdeRect3D, Vector3D as SdeVector3D
@@ -168,9 +170,13 @@ except: # from 2026.10
 clr.AddReference ("Trimble.Vce.Data.SDE")
 from Trimble.Vce.Data.SDE import ColorizationState, GridScaledScan, Importer as SDEImporter
 clr.AddReference ("SDE.NET")
-from Trimble.Sde import Cloud as SdeCloud, CloudId as SdeCloudId, FilterByBox as SdeFilterByBox, FilterByRadius as SdeFilterByRadius, GutterPicker as SdeGutterPicker, \
+from Trimble.Sde import Cloud as SdeCloud, CloudId as SdeCloudId, FilterByBox as SdeFilterByBox, GutterPicker as SdeGutterPicker, \
                         List as SdeList, PointUV as SdePickerPointUV, ScanId as SdeScanId, SdeCloudOperator, SdeElevationType, SdePointInfo, SdePointSource, \
                         SpatialSamplingParameters as SdeSpatialSamplingParameters
+try: # not available in 2024.01, or assembly location has changed
+    from Trimble.Sde import FilterByRadius as SdeFilterByRadius
+except:
+    SdeFilterByRadius = None
 
 from Trimble.Vce.Data.Scanning import DefaultExposedPointCloudRegion, ExposedPointCloudRegion, ExposedPointCloudRegionContainer, PointCloudDatabaseContainer, PointCloudRegion, \
                                       ScanningWorkflows
@@ -324,6 +330,7 @@ except:
 #from Sitech.Data.D12D import ProjectHeader as D12dProjectHeader
 
 exec(open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\SCR_GlobalHelpers.py").read())
+
 
 
 

@@ -829,3 +829,160 @@ class SCRExpanders:
             expander.Expanded        += make_expanded(radiobutton)
             radiobutton.Checked      += make_checked(expander)
             radiobutton.Unchecked    += make_unchecked(expander)
+
+
+class SCRLasZip:
+    """Read raw X/Y/Z points out of a LAS/LAZ file via the LASzip C API (laszip3.dll, shipped
+    by TBC in its install root), without importing the file into the project - no
+    PointCloudDatabase object is ever created. Use this when only the coordinates are needed
+    (e.g. to build a temporary surface for a LandXML export) rather than a real TBC point cloud.
+
+    IronPython has no ctypes/ffi of its own, so the P/Invoke declarations are compiled on first
+    use into an in-memory assembly via CSharpCodeProvider and cached on the class.
+
+    Usage:
+        for x, y, z in SCRLasZip.read_points(r"C:\data\survey.laz"):
+            ...
+    """
+
+    _interop_type = None
+
+    _INTEROP_SOURCE = r"""
+using System;
+using System.Runtime.InteropServices;
+
+public static class SCR_LasZipInterop
+{
+    [DllImport("laszip3.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int laszip_create(out IntPtr pointer);
+
+    [DllImport("laszip3.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern int laszip_open_reader(IntPtr pointer, string file_name, out int is_compressed);
+
+    [DllImport("laszip3.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int laszip_get_point_count(IntPtr pointer, out long count);
+
+    [DllImport("laszip3.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int laszip_read_point(IntPtr pointer);
+
+    [DllImport("laszip3.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int laszip_get_coordinates(IntPtr pointer, [Out] double[] coordinates);
+
+    [DllImport("laszip3.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int laszip_close_reader(IntPtr pointer);
+
+    [DllImport("laszip3.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int laszip_destroy(IntPtr pointer);
+
+    [DllImport("laszip3.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern int laszip_get_error(IntPtr pointer, out IntPtr error);
+
+    public static string GetErrorMessage(IntPtr reader)
+    {
+        IntPtr msgPtr;
+        laszip_get_error(reader, out msgPtr);
+        return msgPtr == IntPtr.Zero ? "" : Marshal.PtrToStringAnsi(msgPtr);
+    }
+}
+"""
+
+    @classmethod
+    def _ensure_interop(cls):
+        if cls._interop_type is not None:
+            return cls._interop_type
+
+        import System.Diagnostics
+        from Microsoft.CSharp import CSharpCodeProvider
+        from System.CodeDom.Compiler import CompilerParameters
+
+        # laszip3.dll sits directly next to TBC.exe, which is already on the default DllImport
+        # search path (the calling exe's own folder) - no PATH tweak needed here, unlike
+        # gdal_wrap.dll which lives in a "gdal\x64" subfolder (see SCR_CloudRevise.py).
+        exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName
+        tbcDir = os.path.dirname(exePath)
+        laszipPath = os.path.join(tbcDir, "laszip3.dll")
+        if not os.path.isfile(laszipPath):
+            raise Exception("laszip3.dll not found next to TBC.exe (" + tbcDir + ")")
+
+        provider = CSharpCodeProvider()
+        compilerParams = CompilerParameters()
+        compilerParams.GenerateInMemory = True
+        compilerParams.ReferencedAssemblies.Add("System.dll")
+        results = provider.CompileAssemblyFromSource(compilerParams, cls._INTEROP_SOURCE)
+        if results.Errors.HasErrors:
+            errs = "; ".join([str(e) for e in results.Errors])
+            raise Exception("Failed to compile LASzip interop shim: " + errs)
+
+        # Assembly.GetType("SCR_LasZipInterop") would hand back a raw System.Type (RuntimeType) -
+        # reflection metadata, not something IronPython lets you call static methods on by name
+        # (that's what produced "'RuntimeType' object has no attribute 'laszip_create'"). Adding the
+        # compiled assembly as a CLR reference and importing the class by name instead gives back
+        # IronPython's own wrapper type, which does support normal attribute-style static calls.
+        clr.AddReference(results.CompiledAssembly)
+        import SCR_LasZipInterop
+        cls._interop_type = SCR_LasZipInterop
+        return cls._interop_type
+
+    @classmethod
+    def read_points(cls, path, progressCallback=None):
+        """Returns a list of (x, y, z) tuples read directly out of a LAS/LAZ file.
+
+        progressCallback, if given, is called periodically as progressCallback(pointIndex,
+        pointCount) - return True from it to cancel early (matches TBC_ProgressBar.SetProgress's
+        cancel convention). Coordinates come back already scaled/offset to real-world units by
+        LASzip - no further transform is needed.
+
+        Note: LASzip's API streams one point at a time (laszip_read_point / laszip_get_coordinates
+        per point) - there is no bulk "read the whole cloud" call like GDAL's Band.ReadRaster, so
+        this is inherently point-by-point. Per-call P/Invoke overhead is still far smaller than the
+        SWIG/COM marshaling GDAL goes through, so tens of millions of points remain workable, but
+        it will not be as fast as a single bulk raster read.
+        """
+        interop = cls._ensure_interop()
+
+        ret, reader = interop.laszip_create()
+        if ret != 0:
+            raise Exception("laszip_create failed (code %d)" % ret)
+
+        try:
+            ret, isCompressed = interop.laszip_open_reader(reader, path)
+            if ret != 0:
+                raise Exception("laszip_open_reader failed for " + path + ": " + interop.GetErrorMessage(reader))
+
+            # laszip_get_point_count() (the "friendly" API) comes back 0 for at least some real-world
+            # LAS 1.4 files even though the points read fine - a known quirk of this wrapper rather
+            # than the file being empty. Hand-decoding number_of_point_records from a fixed byte
+            # offset in the header was tried as a workaround and turned out worse: it read a
+            # plausible-looking but wrong value (the header struct isn't laid out exactly like the
+            # raw LAS spec header), which then made a real end-of-file look like a failure partway
+            # through. So: use the count only as an optional hint for the progress bar, and let
+            # laszip_read_point's own return value be the sole authority on when the file is done -
+            # confirmed by testing against a real file that it fails cleanly and exactly at the true
+            # last point, with a matching "point N of N" message from laszip itself.
+            ret, countHint = interop.laszip_get_point_count(reader)
+            if ret != 0:
+                countHint = 0
+
+            coords = Array.CreateInstance(Double, 3)
+            points = []
+            i = 0
+            while True:
+                ret = interop.laszip_read_point(reader)
+                if ret != 0:
+                    break  # end of file (or an unrecoverable error - laszip gives no separate signal for the two)
+
+                ret = interop.laszip_get_coordinates(reader, coords)
+                if ret != 0:
+                    raise Exception("laszip_get_coordinates failed at index %d: %s" % (i, interop.GetErrorMessage(reader)))
+
+                points.append((coords[0], coords[1], coords[2]))
+                i += 1
+
+                if progressCallback and (i % 100000 == 0):
+                    if progressCallback(i, countHint if countHint > 0 else i):
+                        break
+
+            return points
+        finally:
+            interop.laszip_close_reader(reader)
+            interop.laszip_destroy(reader)

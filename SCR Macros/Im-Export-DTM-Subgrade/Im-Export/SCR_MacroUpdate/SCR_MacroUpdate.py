@@ -164,7 +164,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version     = 1.14
+        cmdData.Version     = 1.15
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo   = r""
 
@@ -553,13 +553,22 @@ class SCR_MacroUpdateDialog(Window):
             else:
                 folder = "/".join(py_path.split("/")[:-1])
                 if py_path.lower().endswith(".htm"):
-                    # include everything under the folder recursively
+                    # everything under the folder recursively, but only files that are new or actually changed
                     folder_prefix = folder + "/" if folder else ""
-                    siblings = [item["path"] for item in self._repo_tree
-                                if item.get("type") == "blob"
-                                and (item["path"] == py_path or item["path"].startswith(folder_prefix))
-                                and os.path.splitext(item["path"])[1].lower()
-                                and os.path.splitext(item["path"])[1].lower() not in self._SKIP_EXTENSIONS]
+                    siblings = []
+                    for item in self._repo_tree:
+                        if item.get("type") != "blob":
+                            continue
+                        sib_path = item["path"]
+                        if not (sib_path == py_path or sib_path.startswith(folder_prefix)):
+                            continue
+                        ext = os.path.splitext(sib_path)[1].lower()
+                        if not ext or ext in self._SKIP_EXTENSIONS:
+                            continue
+                        sib_local = os.path.join(local_root, sib_path.replace("/", "\\"))
+                        if os.path.isfile(sib_local) and self._git_blob_sha(sib_local) == item.get("sha", ""):
+                            continue  # unchanged – skip re-download
+                        siblings.append(sib_path)
                 else:
                     siblings = [item["path"] for item in self._repo_tree
                                 if item.get("type") == "blob"

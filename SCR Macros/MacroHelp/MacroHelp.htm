@@ -137,6 +137,7 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>01/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> – new macro, downloads day job files from Trimble Connect into a configurable local folder structure, optionally archives them on Connect and logs them to an Excel register</li>
           <li>23/08/2026 – <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – transfers local files to Civillo and revises an existing layer with them</li>
           <li>01/07/2026 – <a class="class2" href="#SCR_VPath">SCR_VPath</a> – moved to production</li>
           <li>30/06/2026 – <a class="class2" href="#SCR_MeasureOffsetDistance">SCR_MeasureOffsetDistance</a> and <a class="class2" href="#SCR_PointFromVectorOffsetStation">SCR_PointFromVectorOffsetStation</a> – added highlighting and input swap</li>
@@ -1373,6 +1374,15 @@
               <li>editing a schedule entry through Apply clears its stored hash, so the next run always re-uploads even if only the second file was added, changed or removed</li>
           </ul>
 
+        <h3 id="SCR_DayJobSync" class="header3"><a id="SCR_DayJobSync"></a>SCR_DayJobSync</h3>
+          <ul>
+              <li><span style="color:#CC0000; font-weight:bold;">BETA Testing</span> – a floating window that logs into Trimble Connect (reusing TBC's own signed-in Trimble ID session, no separate login) and browses its region/project/folder tree to pick a day job file to download</li>
+              <li>select the Job file itself (not a folder) – its filename must start with a 6-digit date (YYMMDD); if a matching "&lt;job name&gt; Files" subfolder exists alongside it on Connect, that gets downloaded too</li>
+              <li>Local Download Target: choose a local sync folder and a Folder Structure template that defines the subfolder layout underneath it, using placeholders <span class="auto-style3">{YYYY}</span>, <span class="auto-style3">{YY}</span>, <span class="auto-style3">{MM}</span>, <span class="auto-style3">{YYMM}</span> and <span class="auto-style3">{Job}</span> (e.g. <span class="auto-style3">{YYYY}/{YYMM}/{Job}</span>) – optional Controller Data and TBC subfolders can each be created underneath, or unticked to place the files directly in that folder</li>
+              <li>Local Excel Register: optionally logs the job name into the next empty row of a chosen column in an existing Excel workbook, then leaves that workbook open so the rest of the row can be filled in by hand</li>
+              <li>Connect old Job folder: optionally archives the job (and its Files subfolder) into an "old job" folder on Connect once downloaded – tries a real move through the Trimble Connect Web API first (fast, regardless of file size), falling back to an upload-then-delete if that isn't available</li>
+          </ul>
+
         <h3 id="SCR_MacroUpdate" class="header3"><a id="SCR_MacroUpdate"></a>SCR_MacroUpdate</h3>
           <ul>
               <li>fetches the file tree of the public <a href="https://github.com/RonnySchneider/SCR_Macros_Public">SCR_Macros_Public</a> GitHub repository and compares it against your local SCR Macros folder</li>
@@ -2287,6 +2297,7 @@
               <li><a href="#UpdateTransfer">Update/Transfer</a>
                 <ul class="customListStyle">
                   <li><a href="#SCR_CloudRevise">SCR_CloudRevise</a></li>
+                  <li><a href="#SCR_DayJobSync">SCR_DayJobSync</a></li>
                   <li><a href="#SCR_MacroUpdate">SCR_MacroUpdate</a></li>
                 </ul>
               </li>
