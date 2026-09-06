@@ -254,7 +254,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version = 1.01
+        cmdData.Version = 1.02
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -819,6 +819,11 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
             self.error.Content = "Synced, but logging to job register failed: " + registerError
         elif self.jobRegisterPath:
             self.statusLabel.Text += " - logged to job register"
+
+        try:
+            subprocess.Popen(["explorer", targetFolder])
+        except Exception:
+            pass  # never let opening Explorer turn an otherwise-successful sync into an error
 
     def archive_item_on_connect(self, remoteItem, isFolder, name, parentFolder, oldJobFolder, localPathForFallback):
         # tries a real move first (PATCH .../{id} with parentId, via the actual Trimble Connect Web API -

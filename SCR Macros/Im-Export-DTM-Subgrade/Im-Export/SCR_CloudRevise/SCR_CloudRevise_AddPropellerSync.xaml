@@ -1,0 +1,192 @@
+<Window Background="#FFF3F3F7"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="Add Propeller Sync" Height="420" Width="900" MinHeight="320" MinWidth="700"
+        mc:Ignorable="d">
+
+    <Window.Resources>
+        <!-- explicit ListBoxItem template so hover stays the default light grey and only an
+             actually-selected item (clicked, whether or not the list has focus) turns light blue -->
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" Background="Transparent" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="LightGray"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="LightBlue"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="rootGrid" Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- 0 - zone headers -->
+            <RowDefinition Height="Auto"/> <!-- 1 - propeller: reload+org / civillo: reload+org -->
+            <RowDefinition Height="Auto"/> <!-- 2 - propeller: site / civillo: project -->
+            <RowDefinition Height="Auto"/> <!-- 3 - propeller: survey -->
+            <RowDefinition Height="*"/>    <!-- 4 - file lists -->
+            <RowDefinition Height="Auto"/> <!-- 5 - ok/cancel buttons -->
+            <RowDefinition Height="Auto"/> <!-- 6 - error label -->
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Propeller" FontWeight="Bold"/>
+        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+            <CheckBox x:Name="civEnabledCheckbox" IsChecked="True" VerticalAlignment="Center" Margin="0,0,6,0" ToolTip="Enable upload to Civillo"/>
+            <Label Content="Civillo" FontWeight="Bold" Padding="0"/>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal">
+            <CheckBox x:Name="tcEnabledCheckbox" IsChecked="True" VerticalAlignment="Center" Margin="0,0,6,0" ToolTip="Enable upload to Trimble Connect"/>
+            <Label Content="Trimble Connect" FontWeight="Bold" Padding="0"/>
+        </StackPanel>
+
+        <GridSplitter Grid.Row="0" Grid.RowSpan="7" Grid.Column="1" Width="6" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                      Background="#FFCCCCCC" ResizeDirection="Columns" ShowsPreview="True" Cursor="SizeWE" Margin="2,0,2,0"/>
+        <GridSplitter Grid.Row="0" Grid.RowSpan="7" Grid.Column="3" Width="6" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                      Background="#FFCCCCCC" ResizeDirection="Columns" ShowsPreview="True" Cursor="SizeWE" Margin="2,0,2,0"/>
+
+        <!-- Propeller column - the org/site/survey pickers live on the main window now; this dialog just
+             shows that currently-selected survey's file list (files are the same names for every survey,
+             so there's no need to re-pick org/site/survey per sync entry) -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,4,4,4">
+            <TextBlock x:Name="propContextLabel" Text="" FontSize="11" Foreground="Gray" TextWrapping="Wrap"/>
+            <TextBlock Text="DTM = bare earth model, DSM = unfiltered model" FontSize="10" FontStyle="Italic" Foreground="Gray" TextWrapping="Wrap" Margin="0,2,0,0"/>
+        </StackPanel>
+        <ListBox x:Name="propFileList" Grid.Row="2" Grid.RowSpan="3" Grid.Column="0" MinWidth="180" Margin="0,0,4,4"/>
+
+        <!-- Civillo column -->
+        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="4,4,4,4" IsEnabled="{Binding IsChecked, ElementName=civEnabledCheckbox}">
+            <Button x:Name="civReloadBtn" Content="&#x27F3;" FontSize="14" Width="22" Height="22" Padding="0" Margin="0,0,6,0" ToolTip="Reload Organizations"/>
+            <Label Content="Organization" Padding="0,0,4,0" VerticalAlignment="Center"/>
+            <ComboBox x:Name="civOrgCombo" Width="140" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" Margin="4,0,4,4" IsEnabled="{Binding IsChecked, ElementName=civEnabledCheckbox}">
+            <Label Content="Project" Width="90" Padding="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
+            <ComboBox x:Name="civProjectCombo" Width="280" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Grid Grid.Row="4" Grid.Column="2" Margin="4,0,4,4" IsEnabled="{Binding IsChecked, ElementName=civEnabledCheckbox}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="civFileList" Grid.Row="0" MinWidth="180"/>
+            <StackPanel x:Name="civCreateNewLayerPanel" Grid.Row="1" Margin="0,4,0,0">
+                <CheckBox x:Name="civCreateNewLayerCheckbox" Content="Create additional new layer" VerticalAlignment="Center"
+                          ToolTip="Also creates a brand-new Civillo layer on every run, in addition to whatever is selected above (or even without anything selected above) - useful for layer types that never show up as a pick in the list, e.g. terrain/DTM/surface layers"/>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=civCreateNewLayerCheckbox}">
+                    <Label Content="Title" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="civNewLayerTitleBox" Width="350" VerticalAlignment="Center"
+                             ToolTip="New layer title - {YYMMDD} is replaced with the run date (e.g. 260906), so a fixed title stays unique per day instead of colliding with the previous run's layer"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel x:Name="civOrthoOptionsPanel" Grid.Row="2" Margin="0,4,0,0" IsEnabled="False">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="m/pixel" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="civMetersPerPixelBox" Width="50" Text="0.1" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox x:Name="civFormatCombo" Width="80" VerticalAlignment="Center" SelectedIndex="0">
+                        <ComboBoxItem Content="TIFF"/>
+                        <ComboBoxItem Content="JPEG"/>
+                    </ComboBox>
+                </StackPanel>
+                <TextBlock Text="Blank m/pixel keeps the original resolution (still converts format if JPEG is selected), resamples only if max GB below is exceeded" FontStyle="Italic" Foreground="Gray" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                <TextBlock Text="Civillo re-converts JPEG uploads to GeoTIFF - JPEG only saves upload traffic, at the cost of some image quality" FontStyle="Italic" Foreground="Gray" Margin="0,2,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+            <StackPanel x:Name="civMaxSizePanel" Grid.Row="3" Orientation="Horizontal" Margin="0,4,0,0" IsEnabled="False">
+                <Label Content="max GB" Padding="0,0,4,0" VerticalAlignment="Center" ToolTip="If the resampled/resampled-surface file comes out larger than this, it's regenerated from the original at a coarser pixel size (orthophoto) or point spacing (LAZ) until it fits. Leave blank for no limit."/>
+                <TextBox x:Name="civMaxSizeGbBox" Width="50" Text="" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel x:Name="civLazOptionsPanel" Grid.Row="4" Margin="0,4,0,0" IsEnabled="False">
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="civLazMethodPdal" GroupName="civLazMethod" Content="PDAL" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed" ToolTip="Uses QGIS's bundled PDAL (filters.sample) to thin the cloud before this macro reads it - typically the fastest option by far, requires QGIS-PDAL Cloud resampling to be set up on the main window"/>
+                    <RadioButton x:Name="civLazMethodVoxel" GroupName="civLazMethod" Content="Voxel (Fastest)" VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="True" ToolTip="Fastest - density-target, keeps one point per spacing-sized cell, follows the cloud's own density"/>
+                    <RadioButton x:Name="civLazMethodGrid" GroupName="civLazMethod" Content="Grid (Fast)" VerticalAlignment="Center" Margin="0,0,8,0" ToolTip="Regular XY grid, nearest real point per cell - slower than Voxel, gives perfectly uniform output spacing"/>
+                    <RadioButton x:Name="civLazMethodOctree" GroupName="civLazMethod" Content="Octree (Slowest)" VerticalAlignment="Center" ToolTip="Slowest - true minimum spacing between kept points, follows the cloud's own density"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <Label Content="Spacing (m)" Padding="0,0,4,0" VerticalAlignment="Center" ToolTip="Target point spacing in meters"/>
+                    <TextBox x:Name="civLazSpacingBox" Width="50" Text="10" VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- Trimble Connect column -->
+        <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal" Margin="4,4,0,4" IsEnabled="{Binding IsChecked, ElementName=tcEnabledCheckbox}">
+            <Button x:Name="tcReloadBtn" Content="&#x27F3;" FontSize="14" Width="22" Height="22" Padding="0" Margin="0,0,6,0" ToolTip="Reload Regions"/>
+            <Label Content="Region" Padding="0,0,4,0" VerticalAlignment="Center"/>
+            <ComboBox x:Name="tcRegionCombo" Width="140" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="4" Orientation="Horizontal" Margin="4,0,0,4" IsEnabled="{Binding IsChecked, ElementName=tcEnabledCheckbox}">
+            <Label Content="Project" Width="90" Padding="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
+            <ComboBox x:Name="tcProjectCombo" Width="280" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="4" Orientation="Horizontal" Margin="4,0,0,4" IsEnabled="{Binding IsChecked, ElementName=tcEnabledCheckbox}">
+            <Button x:Name="tcUpBtn" Content="Up" Width="40" Margin="0,0,4,0"/>
+            <TextBlock x:Name="tcPathLabel" Text="/" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+        </StackPanel>
+        <Grid Grid.Row="4" Grid.Column="4" Margin="4,0,0,4" IsEnabled="{Binding IsChecked, ElementName=tcEnabledCheckbox}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="tcFileList" Grid.Row="0" MinWidth="180"/>
+            <StackPanel x:Name="tcOrthoOptionsPanel" Grid.Row="1" Margin="0,4,0,0" IsEnabled="False">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="m/pixel" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                    <TextBox x:Name="tcMetersPerPixelBox" Width="50" Text="0.1" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox x:Name="tcFormatCombo" Width="80" VerticalAlignment="Center" SelectedIndex="0">
+                        <ComboBoxItem Content="TIFF"/>
+                        <ComboBoxItem Content="JPEG"/>
+                    </ComboBox>
+                </StackPanel>
+                <TextBlock Text="Blank m/pixel keeps the original resolution (still converts format if JPEG is selected), resamples only if max GB below is exceeded" FontStyle="Italic" Foreground="Gray" Margin="0,2,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+            <StackPanel x:Name="tcMaxSizePanel" Grid.Row="2" Orientation="Horizontal" Margin="0,4,0,0" IsEnabled="False">
+                <Label Content="max GB" Padding="0,0,4,0" VerticalAlignment="Center" ToolTip="If the resampled/resampled-surface file comes out larger than this, it's regenerated from the original at a coarser pixel size (orthophoto) or point spacing (LAZ) until it fits. Leave blank for no limit."/>
+                <TextBox x:Name="tcMaxSizeGbBox" Width="50" Text="" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel x:Name="tcLazOptionsPanel" Grid.Row="3" Margin="0,4,0,0" IsEnabled="False">
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="tcLazMethodPdal" GroupName="tcLazMethod" Content="PDAL" VerticalAlignment="Center" Margin="0,0,8,0" Visibility="Collapsed" ToolTip="Uses QGIS's bundled PDAL (filters.sample) to thin the cloud before this macro reads it - typically the fastest option by far, requires QGIS-PDAL Cloud resampling to be set up on the main window"/>
+                    <RadioButton x:Name="tcLazMethodVoxel" GroupName="tcLazMethod" Content="Voxel (Fastest)" VerticalAlignment="Center" Margin="0,0,8,0" IsChecked="True" ToolTip="Fastest - density-target, keeps one point per spacing-sized cell, follows the cloud's own density"/>
+                    <RadioButton x:Name="tcLazMethodGrid" GroupName="tcLazMethod" Content="Grid (Fast)" VerticalAlignment="Center" Margin="0,0,8,0" ToolTip="Regular XY grid, nearest real point per cell - slower than Voxel, gives perfectly uniform output spacing"/>
+                    <RadioButton x:Name="tcLazMethodOctree" GroupName="tcLazMethod" Content="Octree (Slowest)" VerticalAlignment="Center" ToolTip="Slowest - true minimum spacing between kept points, follows the cloud's own density"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <Label Content="Spacing (m)" Padding="0,0,4,0" VerticalAlignment="Center" ToolTip="Target point spacing in meters"/>
+                    <TextBox x:Name="tcLazSpacingBox" Width="50" Text="10" VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,4">
+            <Button x:Name="okBtn" Content="Add" Width="70" Margin="0,0,4,0"/>
+            <Button x:Name="cancelBtn" Content="Cancel" Width="70"/>
+        </StackPanel>
+
+        <Label x:Name="error" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" Content="" FontWeight="Bold" Foreground="Red"/>
+
+    </Grid>
+</Window>

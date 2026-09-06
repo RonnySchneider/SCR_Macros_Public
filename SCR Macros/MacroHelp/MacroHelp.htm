@@ -26,6 +26,12 @@
 			color: #1155CC;
 			font-style: normal;
 		}
+		.header4 {
+			font-size: medium;
+			font-weight: bold;
+			color: #666666;
+			font-style: normal;
+		}
 		.sidebar1 {
 			font-size: medium;
 			font-weight: bold;
@@ -137,6 +143,7 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>06/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> and <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – improved</li>
           <li>01/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> – new macro, downloads day job files from Trimble Connect into a configurable local folder structure, optionally archives them on Connect and logs them to an Excel register</li>
           <li>23/08/2026 – <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – transfers local files to Civillo and revises an existing layer with them</li>
           <li>01/07/2026 – <a class="class2" href="#SCR_VPath">SCR_VPath</a> – moved to production</li>
@@ -1366,12 +1373,55 @@
         <h2 id="UpdateTransfer" class="header2">Update/Transfer</h2>
         <h3 id="SCR_CloudRevise" class="header3"><a id="SCR_CloudRevise"></a>SCR_CloudRevise</h3>
           <ul>
-              <li>a floating window that transfers local 12d/linestyle files to Civillo and revises an existing layer with them, so field crews always see the latest data</li>
+              <li>a floating window with two tabs, each covering a different sync direction – <a href="#SCR_CloudRevise_LocalToCivillo">Local -&gt; Civillo</a> and <a href="#SCR_CloudRevise_Propeller">Propeller -&gt; Civillo/Trimble Connect</a></li>
+              <li>schedule entries are remembered between sessions, so a run can simply be repeated without re-picking files, layers or targets</li>
+          </ul>
+
+        <h4 id="SCR_CloudRevise_LocalToCivillo" class="header4">Local -&gt; Civillo</h4>
+          <ul>
+              <li>transfers local 12d/linestyle files to Civillo and revises an existing layer with them, so field crews always see the latest data</li>
               <li>connects to Civillo through an API key/secret pair stored locally, entered once and reused on every run</li>
               <li>pick an organization and project, then browse to a local file (and, optionally, a second file such as a linestyle) and pair it with an existing Civillo layer to revise</li>
               <li>saved pairs show up as schedule entries that can be edited, enabled/disabled, or removed again</li>
               <li>Run checks a SHA-256 hash of the first local file against the last synced hash and skips the upload if nothing changed, so repeated runs are cheap</li>
               <li>editing a schedule entry through Apply clears its stored hash, so the next run always re-uploads even if only the second file was added, changed or removed</li>
+          </ul>
+
+        <h4 id="SCR_CloudRevise_Propeller" class="header4">Propeller -&gt; Civillo/Trimble Connect</h4>
+          <ul>
+              <li>downloads a deliverable from a <a href="https://www.propelleraero.com/">Propeller</a> drone-survey site and pushes it on to Civillo and/or Trimble Connect, so both platforms always show the latest survey without manually downloading and re-uploading files</li>
+              <li>connects to Propeller through an API key stored locally; pick an Organization and Site (filterable by name) – the newest Survey is selected automatically by capture date</li>
+              <li>the file list shows every deliverable for the selected survey, grouped by coordinate reference system (from the site's own EPSG code) and colour-coded – orthophoto TIFFs, LAZ point clouds, and anything else</li>
+              <li>Add pairs a file with a Civillo layer and/or a Trimble Connect folder, plus the format-specific resampling settings below; saved pairs show up as schedule rows that can be edited, enabled/disabled, or removed again</li>
+              <li>Civillo layers not organized into any folder (e.g. terrain/surface layers, which the API never returns via the folder tree) are listed separately under "Unassigned Layers"</li>
+              <li>for layer types that can't be revised this way, "Create additional new layer" makes a brand-new Civillo layer on every run instead, named from a title template where <code>{YYMMDD}</code> is replaced by the survey's capture date</li>
+              <li>Run for this Survey processes every enabled entry for the current site, re-matching each entry's file by name against the current survey's live file list – so switching survey and running again just picks up that survey's files</li>
+              <li>a progress bar and Cancel button cover the whole run, including GDAL and LAZ processing; closing the window mid-run cancels first, then closes</li>
+              <li>downloaded sources and resampled outputs are cached in a site/survey/platform folder structure, so a repeat run doesn't need to re-download the source file</li>
+
+              <li><b>Orthophoto (TIFF/JPEG) resampling</b>
+                <ul>
+                  <li>the source GeoTIFF is resampled with GDAL to the meters/pixel size and format (TIFF/JPEG) entered per platform; leaving the meters/pixel box blank keeps the source's own native resolution instead - the original file is uploaded completely untouched only if the format is also left at TIFF and it's already under that platform's "max GB" setting, otherwise it's still run through GDAL (format conversion to JPEG, and/or resampled down from its native resolution only as far as needed to fit the size limit)</li>
+                  <li>JPEG is restricted to 3 bands (RGB) to avoid a brownish result from 4-band sources, written at quality 85, and auto-falls back to a coarser pixel size if it would exceed JPEG's 65,500px per-side limit</li>
+                  <li>an optional "max GB" setting re-resamples at a coarser pixel size (always from the original) if the output exceeds it, deleting any oversized attempt that isn't uploaded</li>
+                  <li>for a Civillo target, JPEG only reduces upload data traffic - Civillo converts it back into a GeoTIFF on its own server regardless, so choosing JPEG still costs some image quality to JPEG's own lossy compression without avoiding a re-encode</li>
+                </ul>
+              </li>
+
+              <li><b>LAZ point cloud resampling</b>
+                <ul>
+                  <li>points are read directly from the downloaded LAZ, triangulated in memory and written as a LandXML surface – no point cloud database or project import involved</li>
+                  <li>since a raw drone LAZ is far denser than a surface needs, points are thinned first to the chosen Spacing (m), by one of three methods per platform, fastest to slowest:
+                    <ul>
+                      <li><b>Voxel</b> – buckets points per cell, keeps one per bucket; fastest, follows the cloud's own density</li>
+                      <li><b>Grid</b> – regular XY grid, keeps the closest real point per cell; most uniform spacing, but slower than Voxel</li>
+                      <li><b>Octree</b> – true minimum spacing via a spatial index; slowest, but grid-position independent</li>
+                      <li><b>PDAL</b> – thins and triangulates via an external PDAL install; handles very large point counts without loading them all into memory</li>
+                    </ul>
+                  </li>
+                  <li>triangulation caps outer edge length at 5x the spacing, avoiding long sliver triangles at the surface's edge</li>
+                </ul>
+              </li>
           </ul>
 
         <h3 id="SCR_DayJobSync" class="header3"><a id="SCR_DayJobSync"></a>SCR_DayJobSync</h3>

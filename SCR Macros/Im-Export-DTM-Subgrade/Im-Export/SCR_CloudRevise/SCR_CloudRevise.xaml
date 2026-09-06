@@ -4,48 +4,202 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
-        Title="SCR_CloudRevise" Height="460" Width="300" MinHeight="200" MinWidth="220"
+        Title="SCR_CloudRevise" Height="460" Width="1000" MinHeight="200" MinWidth="600"
         mc:Ignorable="d">
+
+    <Window.Resources>
+        <!-- default GroupBox chrome renders as a barely-visible line when hosted via ElementHost inside
+             TBC - this explicit template draws its own high-contrast border instead of relying on
+             whatever OS/classic theme happens to be active. The frame Border is a separate, undecorated
+             grid cell alongside the content (not a parent of it) - a Border with non-zero CornerRadius
+             clips its own children to the rounded shape, which was cropping the real controls when they
+             were nested inside it. (same style as SCR_DayJobSync.xaml) -->
+        <Style TargetType="GroupBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="6"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="6"/>
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="4"
+                                    BorderBrush="#FF707070" BorderThickness="1.5" CornerRadius="4"/>
+
+                            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="#FFF3F3F7" Padding="4,0">
+                                <ContentPresenter ContentSource="Header"/>
+                            </Border>
+
+                            <ContentPresenter Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,4,0,4"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
     <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- 0 - config path label -->
-            <RowDefinition Height="Auto"/> <!-- 1 - reload / org / project, one line -->
-            <RowDefinition Height="Auto"/> <!-- 2 - add/run buttons -->
-            <RowDefinition Height="*"/>    <!-- 3 - schedules list, stretches with window -->
-            <RowDefinition Height="Auto"/> <!-- 4 - error label -->
+            <RowDefinition Height="*"/>    <!-- 1 - tabs -->
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="configPathLabel" Grid.Row="0" Text="" FontSize="13" Foreground="Gray" TextDecorations="Underline" Cursor="Hand" Margin="0,0,0,8"/>
-
-        <Grid Grid.Row="1" Margin="0,0,0,8">
+        <Grid Grid.Row="0" Margin="0,0,0,8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- config path label / help button -->
+                <RowDefinition Height="Auto"/> <!-- open settings folder link -->
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/> <!-- reload button -->
-                <ColumnDefinition Width="Auto"/> <!-- org label -->
-                <ColumnDefinition Width="*"/>    <!-- org combo -->
-                <ColumnDefinition Width="Auto"/> <!-- project label -->
-                <ColumnDefinition Width="*"/>    <!-- project combo -->
+                <ColumnDefinition Width="*"/>    <!-- config path label / open folder link -->
                 <ColumnDefinition Width="Auto"/> <!-- help button -->
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="reloadOrgsBtn" Grid.Column="0" Content="&#x27F3;" FontSize="14" Width="22" Height="22" Padding="0" Margin="0,0,6,0" ToolTip="Reload Organizations"/>
-            <Label Grid.Column="1" Content="Organization" Padding="0,0,4,0" VerticalAlignment="Center"/>
-            <ComboBox x:Name="orgCombo" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,6,0"/>
-            <Label Grid.Column="3" Content="Project" Padding="0,0,4,0" VerticalAlignment="Center"/>
-            <ComboBox x:Name="projectCombo" Grid.Column="4" VerticalAlignment="Center" Margin="0,0,6,0"/>
-            <Button x:Name="helpBtn" Grid.Column="5" Content="Help" Height="22" Padding="6,0" ToolTip="Help"/>
+            <TextBlock x:Name="configPathLabel" Grid.Row="0" Grid.Column="0" Text="" FontSize="13" Foreground="Gray" TextDecorations="Underline" Cursor="Hand" VerticalAlignment="Center"/>
+            <Button x:Name="helpBtn" Grid.Row="0" Grid.Column="1" Content="Help" Height="22" Padding="6,0" ToolTip="Help"/>
+            <TextBlock x:Name="openSettingsFolderLabel" Grid.Row="1" Grid.Column="0" Text="open settings folder" FontSize="13" Foreground="Gray" TextDecorations="Underline" Cursor="Hand" VerticalAlignment="Center"/>
         </Grid>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,8">
-            <Button x:Name="addScheduleBtn" Content="Add" Width="70" Margin="0,0,4,0"/>
-            <Button x:Name="runSchedulesBtn" Content="Run" Width="70"/>
-        </StackPanel>
+        <TabControl Grid.Row="1">
+            <TabItem Header="Local -&gt; Civillo">
+                <Grid Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- 0 - reload / org / project, one line -->
+                        <RowDefinition Height="Auto"/> <!-- 1 - add/run buttons -->
+                        <RowDefinition Height="*"/>    <!-- 2 - schedules list, stretches with window -->
+                        <RowDefinition Height="Auto"/> <!-- 3 - error label -->
+                    </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
-            <StackPanel x:Name="schedulesPanel"/>
-        </ScrollViewer>
+                    <Grid Grid.Row="0" Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/> <!-- reload button -->
+                            <ColumnDefinition Width="Auto"/> <!-- org label -->
+                            <ColumnDefinition Width="*"/>    <!-- org combo -->
+                            <ColumnDefinition Width="Auto"/> <!-- project label -->
+                            <ColumnDefinition Width="*"/>    <!-- project combo -->
+                        </Grid.ColumnDefinitions>
 
-        <Label x:Name="error" Grid.Row="4" Content="" FontWeight="Bold" Foreground="Red"/>
+                        <Button x:Name="reloadOrgsBtn" Grid.Column="0" Content="&#x27F3;" FontSize="14" Width="22" Height="22" Padding="0" Margin="0,0,6,0" ToolTip="Reload Organizations"/>
+                        <Label Grid.Column="1" Content="Organization" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="orgCombo" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <Label Grid.Column="3" Content="Project" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="projectCombo" Grid.Column="4" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button x:Name="addScheduleBtn" Content="Add" Width="70" Margin="0,0,4,0"/>
+                        <Button x:Name="runSchedulesBtn" Content="Run" Width="70"/>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="schedulesPanel"/>
+                    </ScrollViewer>
+
+                    <Label x:Name="error" Grid.Row="3" Content="" FontWeight="Bold" Foreground="Red"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Propeller -&gt; Civillo/Trimble Connect">
+                <Grid Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- 0 - QGIS-PDAL cloud resampling -->
+                        <RowDefinition Height="Auto"/> <!-- 1 - propeller org/site/survey -->
+                        <RowDefinition Height="Auto"/> <!-- 2 - add/run buttons -->
+                        <RowDefinition Height="*"/>    <!-- 3 - schedules list, stretches with window -->
+                        <RowDefinition Height="Auto"/> <!-- 4 - run progress -->
+                        <RowDefinition Height="Auto"/> <!-- 5 - error label -->
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Grid.Row="0" Margin="0,0,0,8" Padding="4">
+                        <GroupBox.Header>
+                            <TextBlock Text="QGIS-PDAL Cloud resampling if installed - otherwise fallback to slower methods is available" FontWeight="Bold" FontStyle="Italic"/>
+                        </GroupBox.Header>
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="300"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="QGIS Folder (usually C:\Program Files\QGIS x.xx.x)" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                                <TextBox x:Name="qgisFolderBox" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,4,0" ToolTip="The main QGIS install folder (e.g. C:\Program Files\QGIS 3.36.2) - pdal.exe is expected under its bin subfolder"/>
+                                <Button x:Name="browseQgisFolderBtn" Grid.Column="2" Content="..." Width="30" VerticalAlignment="Center"/>
+                            </Grid>
+                            <TextBlock x:Name="pdalStatusLabel" Text="" FontSize="11" Margin="0,2,0,0" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <StackPanel Grid.Row="1" Margin="0,0,0,8">
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <Button x:Name="propReloadBtn" Content="&#x27F3;" FontSize="14" Width="22" Height="22" Padding="0" Margin="0,0,6,0" ToolTip="Reload Organizations"/>
+                                <Label Content="Org" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <ComboBox x:Name="propOrgCombo" Grid.Column="1" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="Filter Site List" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                            <TextBox x:Name="propSiteFilterBox" Grid.Column="1" VerticalAlignment="Center" ToolTip="Type to filter the Site list below (case-insensitive)"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="Site" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="propSiteCombo" Grid.Column="1" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="Survey" Padding="0,0,4,0" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="propSurveyCombo" Grid.Column="1" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button x:Name="addPropellerScheduleBtn" Content="Add" Width="70" Margin="0,0,4,0"/>
+                        <Button x:Name="runPropellerSchedulesBtn" Content="Run for this Survey" Width="120" Margin="0,0,4,0"/>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="propellerSchedulesPanel"/>
+                    </ScrollViewer>
+
+                    <Grid x:Name="propellerProgressPanel" Grid.Row="4" Margin="0,4,0,4" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="propellerProgressStatus" Text="" FontSize="11" Margin="0,0,0,2" TextTrimming="CharacterEllipsis"/>
+                            <ProgressBar x:Name="propellerProgressBar" Height="14" Minimum="0" Maximum="100" Value="0"/>
+                        </StackPanel>
+                        <Button x:Name="cancelPropellerRunBtn" Grid.Column="1" Content="Cancel" Width="60" IsEnabled="False"/>
+                    </Grid>
+
+                    <Label x:Name="propellerError" Grid.Row="5" Content="" FontWeight="Bold" Foreground="Red"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
 
     </Grid>
 </Window>

@@ -650,6 +650,33 @@ class SCROctree(object):
 
     # ------------------------------------------------------------- 3D queries
 
+    def has_within(self, x, y, z, threshold):
+        """Same query as find_within, but returns True as soon as one match is found instead of
+        collecting every match in range into a list first - for a caller that only needs to know
+        whether anything is nearby (filter_min_spacing below being the main one), this skips both the
+        list allocation and, more importantly, exploring the rest of the tree once the answer is
+        already known."""
+        if self._root is None:
+            return False
+        t2 = threshold * threshold
+        stack = [self._root]
+        while stack:
+            node = stack.pop()
+            dx = max(abs(x - node.cx) - node.hs, 0.0)
+            dy = max(abs(y - node.cy) - node.hs, 0.0)
+            dz = max(abs(z - node.cz) - node.hs, 0.0)
+            if dx*dx + dy*dy + dz*dz > t2:
+                continue
+            if node.leaf:
+                for ix, iy, iz, data in node.items:
+                    ddx = ix - x; ddy = iy - y; ddz = iz - z
+                    if ddx*ddx + ddy*ddy + ddz*ddz <= t2:
+                        return True
+            else:
+                for child in node.children:
+                    stack.append(child)
+        return False
+
     def find_within(self, x, y, z, threshold):
         """Return list[data] for all stored points within threshold of (x, y, z)."""
         if self._root is None:
@@ -762,6 +789,72 @@ class SCROctree(object):
         if best[0] is None:
             return None, None
         return best[0], best[1] ** 0.5
+
+    # ------------------------------------------------------------- resampling
+
+    def filter_min_spacing(self, points, spacing, progressCallback=None, bounds=None):
+        """Greedily keep points at least `spacing` apart (radius-based, uniform minimum spacing -
+        closer to PDAL's Poisson-disk-like "sample" filter than a density-target voxel grid).
+
+        Builds this tree's bounds from the full `points` set up front, then walks them in order,
+        testing each against what's already accepted before inserting it - first point in a cluster
+        wins. Slower than a voxel grid (O(log n) tree traversal per point instead of a dict lookup,
+        and every acceptance grows the tree it's checked against) but gives an actual minimum
+        distance between kept points rather than one-per-cell.
+
+        points: iterable of (x, y, z, ...) - extra trailing fields are preserved untouched.
+        progressCallback, if given, is called periodically as progressCallback(index, count) - same
+        time-gated (~1s) convention used elsewhere in this macro set. Return True to cancel early.
+        bounds, if given, is (min_x, min_y, min_z, max_x, max_y, max_z) precomputed by the caller (e.g.
+        SCRLasZip.read_points already tracks this for free while reading) - skips this method's own
+        full pass over `points` computing the same thing, which is otherwise a real extra full scan at
+        tens of millions of points before the point-by-point pass even starts.
+        Returns a new list; does not mutate `points`."""
+        points = list(points)
+        if not points:
+            return []
+        count = len(points)
+        if bounds is not None:
+            min_x, min_y, min_z, max_x, max_y, max_z = bounds
+        else:
+            # one pass over all the points rather than six (min/max on each of x, y, z separately) - at
+            # tens of millions of points that's the difference between one full scan and six before the
+            # actual point-by-point pass (which has its own progress reporting) even starts
+            first = points[0]
+            min_x = max_x = first[0]
+            min_y = max_y = first[1]
+            min_z = max_z = first[2]
+            for p in points:
+                x, y, z = p[0], p[1], p[2]
+                if x < min_x: min_x = x
+                elif x > max_x: max_x = x
+                if y < min_y: min_y = y
+                elif y > max_y: max_y = y
+                if z < min_z: min_z = z
+                elif z > max_z: max_z = z
+        cx = (min_x + max_x) * 0.5
+        cy = (min_y + max_y) * 0.5
+        cz = (min_z + max_z) * 0.5
+        hs = max(max_x - min_x, max_y - min_y, max_z - min_z) * 0.5005 + 0.001
+        self._root = SCROctree._Node(cx, cy, cz, hs)
+        kept = []
+        lastReport = timer()
+        for i, p in enumerate(points):
+            # progress is checked before the accept/reject branch below, not after it - checking only on
+            # acceptance meant a long run of rejected points (e.g. a dense cluster all within `spacing`
+            # of one already-kept point, which is exactly what a large spacing setting produces on a
+            # dense cloud) skipped the check entirely for however long that run took, which is what made
+            # the display look stuck on one message the whole time instead of just updating less often
+            if progressCallback and (timer() - lastReport) > 1.0:
+                lastReport = timer()
+                if progressCallback(i, count):
+                    break
+
+            if self.has_within(p[0], p[1], p[2], spacing):
+                continue
+            self._ins(self._root, (p[0], p[1], p[2], p), 0)
+            kept.append(p)
+        return kept
 
     def _closest_2d(self, node, x, y, best):
         dx = max(abs(x - node.cx) - node.hs, 0.0)
@@ -924,7 +1017,7 @@ public static class SCR_LasZipInterop
         return cls._interop_type
 
     @classmethod
-    def read_points(cls, path, progressCallback=None):
+    def read_points(cls, path, progressCallback=None, relative=False, expectedCount=None):
         """Returns a list of (x, y, z) tuples read directly out of a LAS/LAZ file.
 
         progressCallback, if given, is called periodically as progressCallback(pointIndex,
@@ -937,6 +1030,32 @@ public static class SCR_LasZipInterop
         this is inherently point-by-point. Per-call P/Invoke overhead is still far smaller than the
         SWIG/COM marshaling GDAL goes through, so tens of millions of points remain workable, but
         it will not be as fast as a single bulk raster read.
+
+        relative=True changes both the return shape AND the memory footprint: instead of a plain list
+        of (x, y, z) tuples, returns (offsetX, offsetY, offsetZ, xs, ys, zs, bounds) where xs/ys/zs are
+        array.array('f', ...) - flat, unboxed 32-bit-float arrays - holding each point's coordinate
+        MINUS the first point's (the offset). Subtracting the offset first is what makes 32-bit safe:
+        raw survey coordinates (easily in the hundreds of thousands to millions) would lose meters of
+        precision at that width, but values near zero keep sub-millimeter precision. The bigger saving
+        isn't actually the halved bit width - it's that a Python list of tuples means one boxed float
+        object per coordinate plus one tuple object per point (three-plus separate heap allocations per
+        point); array.array stores raw values packed contiguously with none of that, which is what
+        actually matters at tens of millions of points. Add the offset back before writing real-world
+        coordinates anywhere (e.g. into a LandXML file) - see laz_points_to_landxml_surface.
+
+        bounds is (min_x, min_y, min_z, max_x, max_y, max_z) of the offset-relative coordinates, tracked
+        for free alongside the same read loop that's already visiting every point - or None if no points
+        were read. Hand this to SCROctree.filter_min_spacing's own bounds parameter to skip its separate
+        full pass over the points computing the exact same thing.
+
+        expectedCount, if given (some workflows name their LAZ files with the point count baked into
+        the filename), pre-sizes the relative=True output arrays up front instead of growing them one
+        append() at a time - array.array's automatic growth reallocates and copies the whole buffer
+        periodically as it grows, which is real, avoidable overhead at tens of millions of points. It's
+        used only as a hint, not trusted blindly: laszip_get_point_count() has already proven unreliable
+        for some real files (see the comment below), so a filename-derived count gets exactly the same
+        skepticism - reading falls back to normal appending for any points beyond it, and any unused
+        pre-sized tail is trimmed off at the end if the file actually held fewer points.
         """
         interop = cls._ensure_interop()
 
@@ -962,10 +1081,34 @@ public static class SCR_LasZipInterop
             ret, countHint = interop.laszip_get_point_count(reader)
             if ret != 0:
                 countHint = 0
+            if expectedCount:
+                countHint = expectedCount
 
             coords = Array.CreateInstance(Double, 3)
-            points = []
+
+            if relative:
+                import array
+                preSized = bool(expectedCount) and expectedCount > 0
+                if preSized:
+                    # IronPython's array module (unlike CPython's) rejects a raw string/bytes initializer
+                    # for a numeric typecode - "cannot use a str to initialize an array with typecode 'f'"
+                    # - so pre-size via sequence repetition instead, which is standard array behavior
+                    xs = array.array('f', [0.0]) * expectedCount
+                    ys = array.array('f', [0.0]) * expectedCount
+                    zs = array.array('f', [0.0]) * expectedCount
+                else:
+                    xs, ys, zs = array.array('f'), array.array('f'), array.array('f')
+                offsetX = offsetY = offsetZ = None
+                # tracked alongside the read loop below (already visiting every point once) rather than
+                # left for a caller to compute afterward with its own separate full pass - SCROctree's
+                # bounding-box scan is exactly that kind of redundant extra pass, see filter_min_spacing's
+                # bounds parameter
+                minX = minY = minZ = maxX = maxY = maxZ = None
+            else:
+                points = []
+
             i = 0
+            lastReport = timer()
             while True:
                 ret = interop.laszip_read_point(reader)
                 if ret != 0:
@@ -975,14 +1118,202 @@ public static class SCR_LasZipInterop
                 if ret != 0:
                     raise Exception("laszip_get_coordinates failed at index %d: %s" % (i, interop.GetErrorMessage(reader)))
 
-                points.append((coords[0], coords[1], coords[2]))
+                if relative:
+                    if offsetX is None:
+                        offsetX, offsetY, offsetZ = coords[0], coords[1], coords[2]
+                    x, y, z = coords[0] - offsetX, coords[1] - offsetY, coords[2] - offsetZ
+                    if preSized and i < expectedCount:
+                        xs[i] = x
+                        ys[i] = y
+                        zs[i] = z
+                    else:
+                        # either not pre-sized, or the hint undercounted and we've run past its capacity -
+                        # either way, append for the rest same as the no-hint path always does
+                        preSized = False
+                        xs.append(x)
+                        ys.append(y)
+                        zs.append(z)
+
+                    if minX is None:
+                        minX = maxX = x
+                        minY = maxY = y
+                        minZ = maxZ = z
+                    else:
+                        if x < minX: minX = x
+                        elif x > maxX: maxX = x
+                        if y < minY: minY = y
+                        elif y > maxY: maxY = y
+                        if z < minZ: minZ = z
+                        elif z > maxZ: maxZ = z
+                else:
+                    points.append((coords[0], coords[1], coords[2]))
                 i += 1
 
-                if progressCallback and (i % 100000 == 0):
+                # time-gated rather than count-gated (a fixed point-count interval either updates far too
+                # often on a fast machine/small file or barely at all on a slow one/huge file - the same
+                # lesson learned the hard way with TBC_ProgressBar) - same >1s cadence used elsewhere in
+                # this macro set (see laz_points_to_landxml_surface's vertex-adding loop)
+                if progressCallback and (timer() - lastReport) > 1.0:
+                    lastReport = timer()
                     if progressCallback(i, countHint if countHint > 0 else i):
                         break
 
+            if relative:
+                if preSized and i < expectedCount:
+                    # the hint overcounted - trim the unused pre-sized (zero-filled) tail
+                    xs, ys, zs = xs[:i], ys[:i], zs[:i]
+                bounds = (minX, minY, minZ, maxX, maxY, maxZ) if minX is not None else None
+                return offsetX or 0.0, offsetY or 0.0, offsetZ or 0.0, xs, ys, zs, bounds
             return points
         finally:
             interop.laszip_close_reader(reader)
             interop.laszip_destroy(reader)
+
+
+def resample_points_voxel_grid(points, spacing, progressCallback=None):
+    """Fast density-target point cloud resampling: buckets points into a `spacing`-sized voxel grid
+    and keeps one point per occupied voxel (first point encountered) - same behavior as PDAL's voxel
+    grid filter. O(1) per point via a dict lookup, no tree construction - much cheaper than
+    SCROctree.filter_min_spacing for a plain density target, at the cost of not guaranteeing a true
+    minimum distance between kept points (two points in adjacent voxels can end up closer together
+    than `spacing`).
+
+    points: iterable of (x, y, z, ...) - extra trailing fields are preserved untouched.
+    progressCallback, if given, is called periodically as progressCallback(index, count) - same
+    time-gated (~1s) convention used elsewhere in this macro set. Return True to cancel early. count
+    requires materializing `points` into a list up front if it isn't already one.
+    Returns a new list; does not mutate `points`."""
+    seen = {}
+    if progressCallback:
+        points = points if hasattr(points, "__len__") else list(points)
+        count = len(points)
+        lastReport = timer()
+        for i, p in enumerate(points):
+            key = (int(p[0] // spacing), int(p[1] // spacing), int(p[2] // spacing))
+            if key not in seen:
+                seen[key] = p
+            if (timer() - lastReport) > 1.0:
+                lastReport = timer()
+                if progressCallback(i, count):
+                    break
+    else:
+        for p in points:
+            key = (int(p[0] // spacing), int(p[1] // spacing), int(p[2] // spacing))
+            if key not in seen:
+                seen[key] = p
+    return list(seen.values())
+
+
+def resample_points_grid_2d(points, spacing, bounds=None, progressCallback=None):
+    """Regular-grid ("DEM-style") resampling: lays a plain XY grid across the point cloud's extent at
+    `spacing` intervals, and for every grid cell takes the nearest actual point by 2D distance (Z
+    ignored for the search itself, but the matched point's real Z is what gets kept - never
+    interpolated). Different in kind from voxel_grid/filter_min_spacing above, which both thin the
+    cloud while following its own point distribution; this instead produces perfectly uniform output
+    spacing, closer to how a raster DEM samples.
+
+    Fast specifically for a dense, roughly uniform cloud at a spacing coarser than the native point
+    spacing: grid cell count scales with (extent/spacing)^2 while point count scales with
+    (extent/native_spacing)^2, so there are far fewer nearest-point searches than input points - e.g.
+    ~0.05m native spacing thinned to 10m is a ~40,000x reduction in query count.
+
+    Uses a simple spatial hash grid (dict of (cellx, celly) -> list of points, cell size = spacing) for
+    the nearest-point search, rather than SCROctree: an octree built over tens of millions of points
+    holds one tree node object plus a duplicated (x, y, z, data) tuple per point, which at real drone-LAZ
+    point counts (tens of millions) is enough object overhead to push a 16GB machine into swapping. The
+    hash grid holds exactly one list-entry reference per point (no per-point node objects, no duplicated
+    coordinates), and building it is a single O(1)-per-point pass, same as resample_points_voxel_grid's
+    own dict - so this method now shares that one's memory profile instead of SCROctree's.
+
+    points: iterable of (x, y, z, ...) - extra trailing fields are preserved untouched on a match.
+    bounds, if given, is (min_x, min_y, min_z, max_x, max_y, max_z) precomputed by the caller (e.g.
+    SCRLasZip.read_points already tracks this for free while reading) - skips computing it again here.
+    progressCallback, if given, is called periodically as progressCallback(index, count) over the grid
+    cells (not the input points) - same time-gated (~1s) convention used elsewhere. Return True to
+    cancel early - a cancelled run returns whatever was matched so far.
+    Returns a new list; does not mutate `points`. A grid cell with no point within `spacing` (e.g. near
+    an irregular site boundary) is simply skipped, not filled in with a distant/wrong match."""
+    points = list(points)
+    if not points:
+        return []
+
+    if bounds is not None:
+        min_x, min_y, min_z, max_x, max_y, max_z = bounds
+    else:
+        first = points[0]
+        min_x = max_x = first[0]
+        min_y = max_y = first[1]
+        min_z = max_z = first[2]
+        for p in points:
+            x, y, z = p[0], p[1], p[2]
+            if x < min_x: min_x = x
+            elif x > max_x: max_x = x
+            if y < min_y: min_y = y
+            elif y > max_y: max_y = y
+            if z < min_z: min_z = z
+            elif z > max_z: max_z = z
+
+    # bucket size == spacing, so any point within `spacing` of a grid centre is guaranteed to fall in
+    # the centre's own cell or one of its 8 immediate neighbors - a 3x3 neighborhood search is enough
+    buckets = {}
+    for p in points:
+        key = (int((p[0] - min_x) // spacing), int((p[1] - min_y) // spacing))
+        bucket = buckets.get(key)
+        if bucket is None:
+            buckets[key] = [p]
+        else:
+            bucket.append(p)
+
+    countX = int((max_x - min_x) / spacing) + 1
+    countY = int((max_y - min_y) / spacing) + 1
+    count = countX * countY
+    maxD2 = spacing * spacing
+
+    kept = []
+    seenIds = set()
+    lastReport = timer()
+    i = 0
+    neighborOffsets = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,0),(0,1),(1,-1),(1,0),(1,1)]
+    for ix in range(countX):
+        gx = min_x + ix * spacing
+        cx = ix
+        for iy in range(countY):
+            gy = min_y + iy * spacing
+            cy = iy
+
+            bestP = None
+            bestD2 = maxD2
+            for ox, oy in neighborOffsets:
+                bucket = buckets.get((cx + ox, cy + oy))
+                if not bucket:
+                    continue
+                for p in bucket:
+                    ddx = p[0] - gx; ddy = p[1] - gy
+                    d2 = ddx*ddx + ddy*ddy
+                    if d2 <= bestD2:
+                        bestD2 = d2
+                        bestP = p
+
+            if bestP is not None:
+                # dedupe by which native bucket bestP itself falls into (same cell key/size used to build
+                # `buckets` above), NOT by point identity - two neighboring grid queries only share the
+                # exact same nearest point often enough to thin properly when the native spacing happens
+                # to be a clean multiple of the target spacing. In the (common) case where it isn't - e.g.
+                # 1m native spacing being thinned to a 1.26m target - most adjacent queries instead snap to
+                # DIFFERENT-but-still-distinct real points, so identity-based dedup lets nearly every
+                # native point through with no effective thinning at all in that axis, while an axis whose
+                # native spacing is already coarser than the target looks fine and masks the bug. Cell-key
+                # dedup instead guarantees at most one output point per spacing-sized cell regardless of
+                # query alignment, the same hard guarantee resample_points_voxel_grid already has.
+                cellKey = (int((bestP[0] - min_x) // spacing), int((bestP[1] - min_y) // spacing))
+                if cellKey not in seenIds:
+                    seenIds.add(cellKey)
+                    kept.append(bestP)
+
+            i += 1
+            if progressCallback and (timer() - lastReport) > 1.0:
+                lastReport = timer()
+                if progressCallback(i, count):
+                    return kept
+
+    return kept
