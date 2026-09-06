@@ -43,6 +43,44 @@ LAZ_RESAMPLE_SPACING = 1.0
 LAZ_RESAMPLE_METHOD = "voxel"  # "voxel" (fast, density-target), "octree" (slower, true minimum spacing), or "grid" (regular XY grid, usually fastest for a dense uniform cloud - see resample_points_grid_2d)
 
 
+def Setup(cmdData, macroFileFolder):
+    cmdData.Key = "SCR_CloudRevise"
+    cmdData.CommandName = "SCR_CloudRevise"
+    cmdData.Caption = "_SCR_CloudRevise"
+    #cmdData.UIForm = "SCR_CloudRevise"      # left disabled - this is a fully independent floating window, not a TBC-managed dialog
+                                                        # if you enable or disable this line, you MUST restart TBC
+    cmdData.HelpFile = "Macros.chm"
+    cmdData.HelpTopic = "0"
+
+    try:
+        cmdData.DefaultTabKey = "SCR ImExport/DTM/Subgrade"
+        cmdData.DefaultTabGroupKey = "Update/Transfer"
+        cmdData.ShortCaption = "Cloud Revise"
+        cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
+        cmdData.EnableNoProject       = True
+
+        cmdData.Version = 1.21
+        cmdData.MacroAuthor = "SCR"
+        cmdData.MacroInfo = r""
+
+        cmdData.ToolTipTitle = "CloudRevise"
+        cmdData.ToolTipTextFormatted = "transfer new files and revise Civillo layers"
+
+    except:
+        pass
+    try:
+        b = Bitmap (macroFileFolder + "\\" + cmdData.Key + ".png") # we have to include a icon revision, otherwise TBC might not show the new one
+        cmdData.ImageSmall = b
+    except:
+        pass
+
+def Execute(cmd, currentProject, macroFileFolder, parameters):
+    form = SCR_CloudReviseDialog(currentProject, macroFileFolder).Show()
+    return
+    # .Show() - is non modal - you can interact with the drawing window
+    # .ShowDialog() - is modal - you CAN NOT interact with the drawing window
+
+
 class PropellerRunCancelled(Exception):
     """Raised from set_run_progress() when the user clicks Cancel mid-run - caught separately from a
     real failure so it's reported as "cancelled" rather than logged/shown as an error."""
@@ -616,42 +654,6 @@ def _ensure_gdal_native_dir_on_path():
         os.environ["PATH"] = gdalNativeDir + os.pathsep + os.environ.get("PATH", "")
 
 
-def _log_gdal_dataset_info(dataset, path):
-    # dumps what GDAL itself actually read for georeferencing (driver, size, geotransform, projection) -
-    # answers directly whether GDAL is failing to find/parse the embedded georeferencing at all, versus
-    # something more specific to the translate call itself
-    lines = ["--- GDAL dataset info for " + path + " ---"]
-    try:
-        lines.append("Driver: " + dataset.GetDriver().ShortName + " / " + dataset.GetDriver().LongName)
-    except Exception as ex:
-        lines.append("Driver: ERROR " + str(ex))
-
-    try:
-        lines.append("Size: " + str(dataset.RasterXSize) + " x " + str(dataset.RasterYSize) + ", bands=" + str(dataset.RasterCount))
-    except Exception as ex:
-        lines.append("Size: ERROR " + str(ex))
-
-    try:
-        geoTransform = Array[float]([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-        dataset.GetGeoTransform(geoTransform)
-        lines.append("GeoTransform: " + str(list(geoTransform)))
-    except Exception as ex:
-        lines.append("GeoTransform: ERROR " + str(ex))
-
-    try:
-        lines.append("ProjectionRef: " + str(dataset.GetProjectionRef()))
-    except Exception as ex:
-        lines.append("ProjectionRef: ERROR " + str(ex))
-
-    try:
-        if not os.path.isdir(r"C:\temp"):
-            os.makedirs(r"C:\temp")
-        with open(r"C:\temp\gdal_debug.log", "a") as f:
-            f.write(str(datetime.now()) + "\n" + "\n".join(lines) + "\n\n")
-    except Exception:
-        pass
-
-
 def get_geotiff_extent_meters(path):
     """Returns (extentXMeters, extentYMeters) - the real-world ground size of a GeoTIFF. Used to work out
     the coarsest pixel size a hard per-format limit (e.g. JPEG's 65500px-per-dimension cap) allows,
@@ -730,8 +732,6 @@ def convert_geotiff_resolution(inputPath, outputPath, pixelSizeMeters, outputFor
     srcDataset = osgeo_gdal.Gdal.Open(inputPath, osgeo_gdal.Access.GA_ReadOnly)
     if srcDataset is None:
         raise Exception("Could not open input file: " + inputPath)
-
-    _log_gdal_dataset_info(srcDataset, inputPath)
 
     # GDAL's -tr handling strictly rejects any non-zero rotation term in the geotransform, but real-world
     # exports (like this one) can carry ~1e-14 floating-point noise there instead of a true zero - many
@@ -1297,22 +1297,6 @@ def collect_civillo_files(node, results):
         collect_civillo_files(d, results)
 
 
-def dump_civillo_layer_directory(tree, configFolder):
-    """Writes the raw, unmodified /layer-directory JSON response next to credentials.json - a temporary
-    diagnostic aid for checking exactly what Civillo's API returns for a project (e.g. whether a terrain/
-    DTM/surface layer shows up in the "layers" array at all, since collect_civillo_files above doesn't
-    filter by any type and Civillo's own documented schema has no type field to filter on in the first
-    place - if a terrain layer is missing from our own file list, this dump settles whether that's because
-    the API never returned it, rather than something being dropped on our side). Overwrites on every
-    fetch; safe to ignore/delete, not read by anything else in this macro."""
-    try:
-        dumpPath = os.path.join(configFolder, "civillo_layerdirectory_dump.json")
-        with open(dumpPath, "w") as f:
-            f.write(json.dumps(tree, indent=2, sort_keys=True))
-    except Exception:
-        pass  # purely diagnostic - never let a failure here interrupt the real file-list load
-
-
 def get_civillo_unassigned_layers(civilloClient, orgNickname, projectId, directoryFiles):
     """Returns every layer from the flat GET /layers endpoint whose layerId never showed up while
     walking /layer-directory (directoryFiles, already collected via collect_civillo_files) - by
@@ -1335,44 +1319,6 @@ def get_civillo_unassigned_layers(civilloClient, orgNickname, projectId, directo
     directoryIds = set(f["layerId"] for f in directoryFiles)
     allLayers = civilloClient.get("/" + orgNickname + "/projects/" + str(projectId) + "/layers")
     return [l for l in allLayers if l.get("layerId") not in directoryIds]
-
-
-def Setup(cmdData, macroFileFolder):
-    cmdData.Key = "SCR_CloudRevise"
-    cmdData.CommandName = "SCR_CloudRevise"
-    cmdData.Caption = "_SCR_CloudRevise"
-    #cmdData.UIForm = "SCR_CloudRevise"      # left disabled - this is a fully independent floating window, not a TBC-managed dialog
-                                                        # if you enable or disable this line, you MUST restart TBC
-    cmdData.HelpFile = "Macros.chm"
-    cmdData.HelpTopic = "0"
-
-    try:
-        cmdData.DefaultTabKey = "SCR ImExport/DTM/Subgrade"
-        cmdData.DefaultTabGroupKey = "Update/Transfer"
-        cmdData.ShortCaption = "Cloud Revise"
-        cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
-        cmdData.EnableNoProject       = True
-        
-        cmdData.Version = 1.2
-        cmdData.MacroAuthor = "SCR"
-        cmdData.MacroInfo = r""
-
-        cmdData.ToolTipTitle = "CloudRevise"
-        cmdData.ToolTipTextFormatted = "transfer new files and revise Civillo layers"
-
-    except:
-        pass
-    try:
-        b = Bitmap (macroFileFolder + "\\" + cmdData.Key + ".png") # we have to include a icon revision, otherwise TBC might not show the new one
-        cmdData.ImageSmall = b
-    except:
-        pass
-
-def Execute(cmd, currentProject, macroFileFolder, parameters):
-    form = SCR_CloudReviseDialog(currentProject, macroFileFolder).Show()
-    return
-    # .Show() - is non modal - you can interact with the drawing window
-    # .ShowDialog() - is modal - you CAN NOT interact with the drawing window
 
 
 class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control - a fully independent floating window
@@ -3171,8 +3117,6 @@ class SCR_CloudReviseAddSyncDialog(Window):
             self.error.Content = str(ex)
             return
 
-        dump_civillo_layer_directory(tree, os.path.dirname(self.get_config_path()))
-
         files = []
         collect_civillo_files(tree, files)
 
@@ -3801,10 +3745,6 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
         except Exception as ex:
             self.error.Content = str(ex)
             return
-
-        # this dialog has no get_config_path() of its own (that's on the main window) - same folder,
-        # built the same way, since it's just for a diagnostic file dump
-        dump_civillo_layer_directory(tree, os.path.join(os.environ.get("APPDATA"), "SCR Macros", "SCR_CloudRevise"))
 
         files = []
         collect_civillo_files(tree, files)
