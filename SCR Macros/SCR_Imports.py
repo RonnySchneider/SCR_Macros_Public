@@ -38,7 +38,7 @@ import System
 from System import Action, Activator, Array, Byte, Convert, Double, Environment, Func, GC, Guid, Int32, IntPtr, Math, Reflection, String, Tuple, Type, UInt16, UInt32, Uri
 from System.Collections.ObjectModel import ObservableCollection
 from System.IO import File, FileAccess, FileMode, FileStream, MemoryStream, StreamReader
-from System.Net import HttpStatusCode, HttpWebRequest, WebException, WebRequestMethods
+from System.Net import HttpStatusCode, HttpWebRequest, WebClient, WebException, WebRequestMethods
 from System.Reflection import BindingFlags
 from System.Runtime.InteropServices import Marshal
 from System.Text import Encoding

@@ -22,6 +22,9 @@ from System.Collections.Generic import List, IEnumerable
 exec(open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\SCR_Imports.py").read())
 
 _OPTIONS = {
+    "pickonesurface":       True,
+    "surfacepicker":        0,
+    "pickmultiplesurfaces": False,
     "newsurface":       False,
     "usecsv":           True,
     "csvfilename":      os.path.abspath(os.path.dirname(__file__)),
@@ -48,7 +51,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Slope-Colored 3D-Faces"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.14
+        cmdData.Version = 1.15
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -87,20 +90,10 @@ class SCR_DTMSlopeColored(StackPanel): # this inherits from the WPF StackPanel c
         self.hiddenmateriallist.ValueChanged += self.materialsChanged
         
         types = Array[Type](SurfaceTypeLists.AllWithCutFillMap)+Array[Type]([clr.GetClrType(ProjectedSurface)])
-        #types.extend (Array[Type]([clr.GetClrType(ProjectedSurface)]))
-        #self.surfacepicker.FilterByEntityTypes = types
-        #self.surfacepicker.AllowNone = False
+        self.surfacepicker.FilterByEntityTypes = types
+        self.surfacepicker.AllowNone = False
 
-        self.surfaceticklist.SearchContainer = Project.FixedSerial.WorldView
-        self.surfaceticklist.UseSelectionEngine = False
-        self.surfaceticklist.SetEntityType(types, self.currentProject)
-        #tt = self.surfaceticklist
-        #self.surfaceticklist.Height = 200
-        #self.surfaceticklist.Width = 200
-
-        # Description is the actual property name inside the item in ticklist.Content.Items
-        sd = System.ComponentModel.SortDescription("Description", System.ComponentModel.ListSortDirection.Ascending)
-        self.surfaceticklist.Content.Items.SortDescriptions.Add(sd)
+        self.surfaceticklist, self.innerlist = SCREntityPicker.create_surfaces(self.surfacelisthost)
 
         self.ticklistfilter.TextChanged += self.FilterChanged
 
@@ -135,6 +128,7 @@ class SCR_DTMSlopeColored(StackPanel): # this inherits from the WPF StackPanel c
                     exclude.Add(i.Value)
 
         self.surfaceticklist.SetExcludedEntities(exclude)
+        SCREntityPicker.reapply_highlights(self.innerlist)
 
         self.SaveOptions()
 
@@ -196,10 +190,15 @@ class SCR_DTMSlopeColored(StackPanel): # this inherits from the WPF StackPanel c
             # the "with" statement will unroll any changes if something go wrong
             with TransactMethodCall(self.currentProject.TransactionCollector) as failGuard:
 
-                for i in self.surfaceticklist.Content.SelectedItems:
+                if self.pickonesurface.IsChecked:
+                    surfaceserials = [self.surfacepicker.SelectedSerial]
+                else:
+                    surfaceserials = SCREntityPicker.get_selected_serials(self.surfaceticklist, self.innerlist)
+
+                for sn in surfaceserials:
 
                     # get the surface geometry
-                    surface = wv.Lookup(i.EntitySerialNumber)
+                    surface = wv.Lookup(sn)
                     gem = surface.Gem
                     if isinstance(surface, ProjectedSurface):
                         projected=True

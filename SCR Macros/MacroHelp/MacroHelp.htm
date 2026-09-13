@@ -107,6 +107,10 @@
 		.customListStyle {
 			list-style: none;
 		}
+		#sidebarnav, #sidebarnav a {
+			overflow-wrap: break-word;
+			word-break: break-word;
+		}
 		.auto-style1 {
 			color: #FF0000;
 			background-color: #FFFF00;
@@ -139,10 +143,13 @@
   </head>
   <body>
     <div class="wrapper" id="sitewidewrapper" style="">
-      <div id ="macrohelp" style="padding-left: 2%; padding-right: 2%;position: absolute; height: 100%; width: 76%; z-index: 2; left: 20%; top: 0px; list-style-type: none; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; white-space: normal; font-size: medium; overflow-y: scroll;">
+      <div id ="macrohelp" style="padding-left: 2%; padding-right: 2%;position: absolute; height: 100%; width: 74%; z-index: 2; left: 24%; top: 0px; list-style-type: none; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; white-space: normal; font-size: medium; overflow-y: scroll;">
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>10/09/2026 – <a class="class2" href="#SCR_ImportRibbonTab">SCR_ImportRibbonTab</a> – new macro, merges custom ribbon tab(s) from an older TBC ribbon-customization export into a newer one after a TBC update</li>
+
+          <li>08/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> – added Field Data sync (jobs collected straight out of Trimble Access) alongside the existing Connect file browser</li>
           <li>06/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> and <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – improved</li>
           <li>01/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> – new macro, downloads day job files from Trimble Connect into a configurable local folder structure, optionally archives them on Connect and logs them to an Excel register</li>
           <li>23/08/2026 – <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – transfers local files to Civillo and revises an existing layer with them</li>
@@ -1235,6 +1242,18 @@
 			  <br><br>
 		  </ul>
 
+        <h3><a id="SCR_ImportRibbonTab"></a> <span id="SCR_ImportRibbonTab" class="header3">SCR_ImportRibbonTab</span> </h3>
+          <ul>
+			  <li>merges custom ribbon tab(s) from an older TBC ribbon-customization export into a newer one, so you don't have to manually rebuild them by hand after a TBC update</li>
+			  <li>before updating TBC, right-click the ribbon and choose "Customize the Ribbon…", then use "Export…" to save your current (old-version) ribbon as an XML file – this is the "source" file</li>
+			  <li>after updating TBC, open "Customize the Ribbon…" again in the new version and "Export…" its ribbon as well, before making any other changes – this is the "target" file, and it's still missing your custom tab(s)</li>
+			  <li>in the macro, browse for the old-version export as the source, tick the custom tab(s) to merge, then browse for the new-version export as the target and click "Merge"</li>
+			  <li>if the target already has a tab with the same name (e.g. you already merged once), the merged copy is renamed with an increment ("Ronny 2") and merged anyway, rather than failing</li>
+			  <li>the macro writes a new XML file next to the target file – it does not import it into TBC automatically</li>
+			  <li>to finish, open "Customize the Ribbon…" in the new TBC version and "Import…" that merged file – your custom tab(s) will now appear alongside the new version's own tabs</li>
+			  <br>
+		  </ul>
+
         <h3><a id="SCR_ImportStaOffEl"></a> <span id="SCR_ImportStaOffEl"
 
             class="header3">SCR_ImportStaOffEl</span> </h3>
@@ -1431,6 +1450,7 @@
               <li>Local Download Target: choose a local sync folder and a Folder Structure template that defines the subfolder layout underneath it, using placeholders <span class="auto-style3">{YYYY}</span>, <span class="auto-style3">{YY}</span>, <span class="auto-style3">{MM}</span>, <span class="auto-style3">{YYMM}</span> and <span class="auto-style3">{Job}</span> (e.g. <span class="auto-style3">{YYYY}/{YYMM}/{Job}</span>) – optional Controller Data and TBC subfolders can each be created underneath, or unticked to place the files directly in that folder</li>
               <li>Local Excel Register: optionally logs the job name into the next empty row of a chosen column in an existing Excel workbook, then leaves that workbook open so the rest of the row can be filled in by hand</li>
               <li>Connect old Job folder: optionally archives the job (and its Files subfolder) into an "old job" folder on Connect once downloaded – tries a real move through the Trimble Connect Web API first (fast, regardless of file size), falling back to an upload-then-delete if that isn't available</li>
+              <li>Field Data from synching straight out of Access: a second list next to the Connect browser shows the selected project's Field Data jobs – select one and Sync downloads its files into the same Controller Data folder a regular day job would use</li>
           </ul>
 
         <h3 id="SCR_MacroUpdate" class="header3"><a id="SCR_MacroUpdate"></a>SCR_MacroUpdate</h3>
@@ -2233,7 +2253,7 @@
 
 
 
-      <div id="sidebarnav" style="margin: 0px; position: absolute; width: 20%; height: 100%; z-index: 1; left: 0px; top: 0px; overflow-y: scroll; list-style: none">
+      <div id="sidebarnav" style="margin: 0px; position: absolute; width: 24%; height: 100%; z-index: 1; left: 0px; top: 0px; overflow-y: scroll; overflow-x: hidden; list-style: none">
         <ul id="mozToc" class="customListStyle">
           <!--mozToc h1 1 h2 2 h3 3 h4 4 h5 5 h6 6-->
           <li><a href="#News">News</a></li>
@@ -2327,6 +2347,7 @@
                   <li><a href="#SCR_CSVtoTable">SCR_CSVtoTable</a></li>
                   <li><a href="#SCR_ImportDEM">SCR_ImportDEM</a></li>
                   <li><a href="#SCR_ImportOBJ">SCR_ImportOBJ</a></li>
+                  <li><a href="#SCR_ImportRibbonTab">SCR_ImportRibbonTab</a></li>
                   <li><a href="#SCR_ImportStaOffEl">SCR_ImportStaOffEl</a></li>
                 </ul>
               </li>

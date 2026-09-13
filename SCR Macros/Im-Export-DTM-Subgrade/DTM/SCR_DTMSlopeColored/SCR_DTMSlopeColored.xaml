@@ -1,25 +1,29 @@
 <StackPanel Background="#FFF3F3F7"
        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
        d:DesignWidth="222" d:DesignHeight="800
             ">
 
-    <Label Content="select Surface"/>
-    <!--<Wpf:ComboBoxEntityPicker x:Name="surfacepicker" VerticalAlignment="Center" VerticalContentAlignment="Center"/>-->
-    <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+    <GroupBox>
         <StackPanel>
-            <UniformGrid Columns="2">
-                <Label Content="Pre-Filter List&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center" />
-                <TextBox x:Name="ticklistfilter" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
-            </UniformGrid>
-            <Label Content="no need to tick,&#xA;only highlight using SHIFT or CTRL"/>
-            <GroupBox>
-                <StackPanel>
-                    <Wpf:CheckedListBoxEntityPicker x:Name="surfaceticklist" Background="#FFF3F3F7" Height="190"/>
-                </StackPanel>
-            </GroupBox>
+            <RadioButton x:Name="pickonesurface" IsChecked="True" Content="select single Surface" GroupName="surfacesource" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+            <StackPanel IsEnabled="{Binding IsChecked, ElementName=pickonesurface, Mode=OneWay}">
+                <Wpf:ComboBoxEntityPicker x:Name="surfacepicker" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            </StackPanel>
+            <RadioButton x:Name="pickmultiplesurfaces" Content="select multiple Surfaces" GroupName="surfacesource" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+            <StackPanel IsEnabled="{Binding IsChecked, ElementName=pickmultiplesurfaces, Mode=OneWay}">
+                <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
+                    <StackPanel>
+                        <UniformGrid Columns="2">
+                            <Label Content="Pre-Filter List&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                            <TextBox x:Name="ticklistfilter" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                        </UniformGrid>
+                        <wfi:WindowsFormsHost x:Name="surfacelisthost" Height="190"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
         </StackPanel>
-    </Border>
+    </GroupBox>
 
     <CheckBox x:Name="newsurface" Content="create new Surface with flat but elevated Triangles" VerticalAlignment="Center" VerticalContentAlignment="Center" Checked="newsurfaceChanged" Unchecked="newsurfaceChanged"/>
 
