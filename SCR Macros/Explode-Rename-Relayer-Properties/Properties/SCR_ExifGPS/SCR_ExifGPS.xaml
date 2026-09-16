@@ -47,7 +47,8 @@
             <Label>
                 <TextBlock x:Name="copytargetfolder" IsEnabled="False" Text=""/>
             </Label>
-            <Wpf:MemberSelection x:Name="objs1" Height="30" Margin="0" UseLocalSelection="True" UpdateTextOnSelectionChange="False" PreviewGotKeyboardFocus="Selection_PreviewGotFocus" ValueChanged="Selection_ValueChanged"/>
+            <Wpf:MemberSelection x:Name="objs1" Height="30" Margin="0" UseLocalSelection="True" UpdateTextOnSelectionChange="False" PreviewGotKeyboardFocus="Selection_PreviewGotFocus"/>
+            <Label x:Name="copyfilesgigapixels" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
 
             <Border Background="#FFCBECC2" BorderBrush="#FF337C27" BorderThickness="1">
                 <StackPanel>
@@ -107,6 +108,7 @@
                 <RadioButton x:Name="checkwithinselection" Content="Check within selection" IsChecked="False" GroupName="group4" VerticalAlignment="Center" Margin="0,2,0,2"/>
             </UniformGrid>
             <Wpf:MemberSelection x:Name="objs2" Height="30" Margin="0" UseLocalSelection="True" UpdateTextOnSelectionChange="False" PreviewGotKeyboardFocus="Selection_PreviewGotFocus"/>
+            <Label x:Name="duplicatesgigapixels" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
             <StackPanel  IsEnabled="{Binding IsChecked, ElementName=checkperlayer}">
                 <Label Content="you can quick-select Layers by selecting Points&#xA;only the Layer matters in this mode&#xA;not which points you selected" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
                 <UniformGrid Columns="2">

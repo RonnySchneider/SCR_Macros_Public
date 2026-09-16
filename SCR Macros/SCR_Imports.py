@@ -30,7 +30,7 @@ clr.AddReference("IronPython.Wpf")
 import wpf
 
 clr.AddReference("MetadataExtractor")
-from MetadataExtractor import Formats as MetadataFormats, GeoLocation as MetadataGeoLocation, ImageMetadataReader
+from MetadataExtractor import DirectoryExtensions as MetadataDirectoryExtensions, Formats as MetadataFormats, GeoLocation as MetadataGeoLocation, ImageMetadataReader
 from MetadataExtractor.Formats.Exif import ExifReader
 from MetadataExtractor.Formats.Jpeg import JpegMetadataReader, JpegSegmentReader
 

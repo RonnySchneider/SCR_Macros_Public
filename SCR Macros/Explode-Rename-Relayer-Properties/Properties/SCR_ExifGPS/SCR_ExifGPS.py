@@ -53,7 +53,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "EXIF GPS"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.19
+        cmdData.Version = 1.20
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -106,6 +106,7 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
             objs.ButtonContextMenu = optionMenu
 
         self.objs1.IsEntityValidCallback = self.IsValidcoordpoint
+        self.objs1.ValueChanged += self.Objs1_ValueChanged
         self.objs2.IsEntityValidCallback = self.IsValidcoordpoint
         self.objs2.CountOnlyValidEntities = True
         self.objs2.ValueChanged += self.Objs2_ValueChanged
@@ -174,16 +175,36 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
         return False
 
     def Selection_PreviewGotFocus(self, sender, e):
-        self.ignoreGotFocus = True
-        for ctrl in self.selectionControls:
-            active = (sender == ctrl)
-            ctrl.ProcessGlobalSelectionChanges = active
-            ctrl.UpdateTextOnSelectionChange = active
+        self._activate_selection_control(sender)
 
-    def Selection_ValueChanged(self, sender, e):
-        if self.ignoreGotFocus:
-            self.ignoreGotFocus = False
-            return
+    def _activate_selection_control(self, ctrl):
+        self.ignoreGotFocus = True
+        for c in self.selectionControls:
+            active = (c == ctrl)
+            c.ProcessGlobalSelectionChanges = active
+            c.UpdateTextOnSelectionChange = active
+
+    def _activate_and_focus_later(self, ctrl):
+        # deferred: at the moment a RadioButton's Checked handler runs, the Expander it belongs to
+        # (expanded by a separate Checked handler wired in SCRExpanders.wire_pairs) may not have
+        # expanded yet, so the target control can still be collapsed/non-focusable - wait for layout.
+        def activate():
+            self._activate_selection_control(ctrl)
+            Keyboard.Focus(ctrl)
+        ctrl.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, Action(activate))
+
+    def _update_gigapixels_label(self, picker, label):
+        totalpixels = 0
+        for o in picker:
+            if isinstance(o, self.coordpointType):
+                userattributes = SnapInAttributeExtension.UserAttributes.Overloads[ISnapIn](o)
+                if userattributes.ContainsKey("PixelCount"):
+                    totalpixels += userattributes["PixelCount"]
+        label.Content = (totalpixels / 1e9).ToString("0.000") + " GP"
+
+    def Objs1_ValueChanged(self, sender, e):
+        self.ignoreGotFocus = False
+        self._update_gigapixels_label(self.objs1, self.copyfilesgigapixels)
 
     def _apply_layer_highlight(self):
         if self.innerlist is None:
@@ -204,17 +225,19 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
         self.ignoreGotFocus = False
         if self._filtering_objs2:
             self._apply_layer_highlight()
-            return
-        valid_sns = List[System.UInt32]()
-        for o in self.objs2:
-            if isinstance(o, self.coordpointType):
-                valid_sns.Add(o.SerialNumber)
-        if valid_sns.Count < self.objs2.Count:
-            self._filtering_objs2 = True
-            self.objs2.SetSelection(self.currentProject, valid_sns)
-            self._filtering_objs2 = False
         else:
-            self._apply_layer_highlight()
+            valid_sns = List[System.UInt32]()
+            for o in self.objs2:
+                if isinstance(o, self.coordpointType):
+                    valid_sns.Add(o.SerialNumber)
+            if valid_sns.Count < self.objs2.Count:
+                self._filtering_objs2 = True
+                self.objs2.SetSelection(self.currentProject, valid_sns)
+                self._filtering_objs2 = False
+            else:
+                self._apply_layer_highlight()
+
+        self._update_gigapixels_label(self.objs2, self.duplicatesgigapixels)
 
     def FilterChanged(self, ctrl, e):
         exclude = []
@@ -335,8 +358,10 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
             self.okBtn.Content = "read GPS tags"
         elif self.copyfiles.IsChecked:
             self.okBtn.Content = "copy selected files on disk"
+            self._activate_and_focus_later(self.objs1)
         elif self.checkduplicates.IsChecked:
             self.okBtn.Content = "Check Duplicates"
+            self._activate_and_focus_later(self.objs2)
 
     def CancelClicked(self, cmd, args):
         cmd.CloseUICommand ()
@@ -410,7 +435,7 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
                                         break
                                     time1 = datetime.now()
 
-                                isgeotagged, latdeg, longdeg, elev, filedate, rtkflag = self.latlongelevdate_fromexif(jpeglist[i])
+                                isgeotagged, latdeg, longdeg, elev, filedate, rtkflag, pixelcount = self.latlongelevdate_fromexif(jpeglist[i])
 
                                 if self.usefixedlayer.IsChecked:
                                     pointlayer = self.currentProject.Concordance[self.layerpicker.SelectedSerialNumber]
@@ -437,6 +462,8 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
                                     pointlayer.DefaultColor = Color.Lime
 
                                     pnew_wv.Description1 = jpeglist[i]
+
+                                    SnapInAttributeExtension.UserAttributes.Overloads[ISnapIn](pnew_wv)["PixelCount"] = pixelcount
 
                                     if not rtkflag or int(rtkflag) < 50:
 
@@ -475,6 +502,8 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
 
                                     pnew_wv.Layer = nogpstaglayer.SerialNumber
                                     pnew_wv.Description1 = jpeglist[i]
+
+                                    SnapInAttributeExtension.UserAttributes.Overloads[ISnapIn](pnew_wv)["PixelCount"] = pixelcount
 
                                 if self.writechainagetofile.IsChecked:
                                     if polyseg1.FindPointFromPoint(pnew_wv.AnchorPoint, outPointOnCL1, station1):
@@ -566,6 +595,7 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
     def latlongelevdate_fromexif(self, filename):
 
         latdeg, longdeg, elev, filedate = None, None, None, None
+        pixelcount = None
 
         # get EXIF information from file
         #tt = JpegMetadataReader.ReadMetadata(o.Description1)
@@ -575,14 +605,26 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
         rtkflag = False
 
         for dataentry in metadata:
-            if isinstance(dataentry, MetadataFormats.Exif.GpsDirectory):
-                
-                geoloc = dataentry.GetGeoLocation()
-                latdeg = float(geoloc.Latitude)
-                longdeg = float(geoloc.Longitude)
-                elev = float(dataentry.GetDescription(6).replace(" metres", "")) # Altitude
+            if isinstance(dataentry, MetadataFormats.Jpeg.JpegDirectory):
 
-                isgeotagged = True    
+                width = MetadataDirectoryExtensions.GetInt32(dataentry, MetadataFormats.Jpeg.JpegDirectory.TagImageWidth)
+                height = MetadataDirectoryExtensions.GetInt32(dataentry, MetadataFormats.Jpeg.JpegDirectory.TagImageHeight)
+                pixelcount = width * height
+
+            elif isinstance(dataentry, MetadataFormats.Exif.GpsDirectory):
+                
+                if hasattr(dataentry, "TryGetGeoLocation"):  # MetadataExtractor 2.9+ (TBC 2026.1+)
+                    success, geoloc = dataentry.TryGetGeoLocation()
+                else:  # MetadataExtractor 2.8 (older TBC versions)
+                    geoloc = dataentry.GetGeoLocation()
+                    success = geoloc is not None
+
+                if success:
+                    latdeg = float(geoloc.Latitude)
+                    longdeg = float(geoloc.Longitude)
+                    elev = float(dataentry.GetDescription(6).replace(" metres", "")) # Altitude
+
+                    isgeotagged = True
             
             elif isinstance(dataentry, MetadataFormats.Exif.ExifIfd0Directory):
                 filedate = dataentry.GetDescription(306).replace(" ", ":").split(":")
@@ -595,5 +637,5 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
 
                         rtkflag = xmp.Value
 
-        return isgeotagged, latdeg, longdeg, elev, filedate, rtkflag
+        return isgeotagged, latdeg, longdeg, elev, filedate, rtkflag, pixelcount
 
