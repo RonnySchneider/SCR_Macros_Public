@@ -123,7 +123,39 @@ def find_tab_captions(text):
     return captions
 
 
-def merge_ribbon_tabs(srcpath, dstpath, tab_captions):
+def set_toolbar_name(fragment, new_text):
+    # a custom toolbar's own name lives in its first inline <Key id="ref-N">Name</Key> field
+    m = re.search(r'<Key id="ref-\d+">[^<]*</Key>', fragment)
+    if not m:
+        return fragment
+    open_tag = re.match(r'(<Key id="ref-\d+">)', m.group(0)).group(1)
+    return fragment[:m.start()] + open_tag + new_text + '</Key>' + fragment[m.end():]
+
+
+def find_toolbar_names(text):
+    # only user-created ("customized") toolbars carry IsStockToolbar=false; a
+    # fresh/default ribbon export has no a1:UltraToolbar objects at all
+    names = []
+    for m in re.finditer(r'<a1:UltraToolbar id="ref-\d+"[^>]*>(.*?)</a1:UltraToolbar>', text, re.S):
+        block = m.group(1)
+        stockm = re.search(r'<IsStockToolbar>(true|false)</IsStockToolbar>', block)
+        if stockm and stockm.group(1) == 'true':
+            continue
+        keym = re.search(r'<Key id="ref-\d+">([^<]*)</Key>', block)
+        if keym:
+            names.append(keym.group(1))
+    return names
+
+
+def _find_collection(text, ref_id):
+    """Given the ref-id a collection is referenced by, return (tag_name, start, end, full_text)."""
+    m = re.search(r'<a1:(\w+) id="' + ref_id + r'"[^>]*>(.*?)</a1:\1>', text, re.S)
+    if not m:
+        return None
+    return m.group(1), m.start(), m.end(), m.group(0)
+
+
+def merge_ribbon_items(srcpath, dstpath, tab_captions, toolbar_names):
     with io.open(srcpath, 'r', encoding='utf-8') as f:
         src = f.read()
     with io.open(dstpath, 'r', encoding='utf-8') as f:
@@ -143,27 +175,56 @@ def merge_ribbon_tabs(srcpath, dstpath, tab_captions):
         if cap not in tab_ids:
             raise Exception("Could not find RibbonTab with caption '" + cap + "' in the source file.")
 
-    # collision handling: if the target already has a tab with this caption,
-    # rename the merged copy with an increment and merge it anyway
+    toolbar_ids = {}
+    for m in re.finditer(r'<a1:UltraToolbar id="(ref-\d+)"[^>]*>', src):
+        rid = m.group(1)
+        start, end = id_spans[rid]
+        block = src[start:end]
+        keym = re.search(r'<Key id="ref-\d+">([^<]*)</Key>', block)
+        if keym and keym.group(1) in toolbar_names:
+            toolbar_ids[keym.group(1)] = rid
+    for name in toolbar_names:
+        if name not in toolbar_ids:
+            raise Exception("Could not find toolbar '" + name + "' in the source file.")
+
+    # collision handling: tabs and toolbars are separate namespaces. If the
+    # target already has an item with this name, rename the merged copy with
+    # an increment and merge it anyway
     existing_captions = set()
     for m in re.finditer(r'<a1:RibbonTab id="ref-\d+"[^>]*>(.*?)</a1:RibbonTab>', dst, re.S):
         cm = re.search(r'<Caption[^>]*>([^<]*)</Caption>', m.group(1))
         if cm:
             existing_captions.add(cm.group(1))
 
+    existing_toolbar_names = set()
+    for m in re.finditer(r'<a1:UltraToolbar id="ref-\d+"[^>]*>(.*?)</a1:UltraToolbar>', dst, re.S):
+        keym = re.search(r'<Key id="ref-\d+">([^<]*)</Key>', m.group(1))
+        if keym:
+            existing_toolbar_names.add(keym.group(1))
+
+    def dedupe_name(name, existing):
+        candidate = name
+        n = 2
+        while candidate in existing:
+            candidate = name + " " + str(n)
+            n += 1
+        existing.add(candidate)
+        return candidate
+
     final_captions = {}
     for cap in tab_captions:
-        candidate = cap
-        n = 2
-        while candidate in existing_captions:
-            candidate = cap + " " + str(n)
-            n += 1
-        final_captions[cap] = candidate
-        existing_captions.add(candidate)
+        final_captions[cap] = dedupe_name(cap, existing_captions)
+
+    final_toolbar_names = {}
+    for name in toolbar_names:
+        final_toolbar_names[name] = dedupe_name(name, existing_toolbar_names)
 
     # shared "empty Key" singleton: many groups' DialogBoxLauncherKey (and
     # QuickAccessToolbar.Key) point to one canonical empty <Key id="ref-N"/>
-    # object. Cloning a duplicate of this when grafting breaks import, so we
+    # object - regardless of which single group happens to physically carry its
+    # definition in the raw XML, it's referenced from many other places too, so
+    # it must ALWAYS be resolved against the target's own instance rather than
+    # cloned. Cloning a duplicate of this when grafting breaks import, so we
     # detect it in both files and rewire references to the target's instance.
     EMPTYKEY_RE = re.compile(r'<Key id="(ref-\d+)"(?:/>|></Key>)')
     src_emptykey_m = EMPTYKEY_RE.search(src)
@@ -172,32 +233,95 @@ def merge_ribbon_tabs(srcpath, dstpath, tab_captions):
     if src_emptykey_m and dst_emptykey_m:
         external_resolve[src_emptykey_m.group(1)] = dst_emptykey_m.group(1)
 
-    # BFS closure over all requested tabs together (shared visited set/queue)
-    visited = set(tab_ids.values())
-    queue = list(tab_ids.values())
+    # Shared "borrowed" NAMED objects: a cloned tool (IsClonedTool=true)
+    # doesn't own its <Key> privately - its <Key href="#ref-N"/> points at the
+    # ORIGINAL stock/master tool's own inline Key elsewhere in the ribbon (e.g.
+    # a custom toolbar's clone of the stock "EditText" command references the
+    # SAME Key object as the real EditText button on some tab). The same
+    # pattern also applies to <UnderlyingToolTypeID>: it's a per-.NET-type
+    # string ("Infragistics.Win.UltraWinToolbars.ButtonTool" etc.) shared by
+    # every clone of that tool kind throughout the whole ribbon, not owned by
+    # whichever clone happens to serialize its definition first. Cloning either
+    # as a brand-new, disconnected object breaks TBC's import validator
+    # (confirmed empirically - see project_scr_importribbontab_toolbar_merge
+    # memory), so both must be rewired to the target's own equivalent (matched
+    # by tag + text) instead. This only applies when the object's owner falls
+    # OUTSIDE our own closure - a toolbar's own name Key has an ancestor (the
+    # toolbar itself) that we ARE grafting, so it must stay put and be cloned
+    # normally.
+    BORROWED_TAGS = ('Key', 'UnderlyingToolTypeID')
+
+    # BFS closure, done separately per item type. The legacy-marker stripping in
+    # clean_block() was bisected specifically against an old ribbon-Tab/Group/Tool
+    # export and is proven necessary there - but a toolbar pulled in from a
+    # different/unknown-vintage export can legitimately need fields like
+    # UnderlyingToolTypeID (observed shared by hundreds of tool clones throughout
+    # a real export, clearly not stale there), so toolbar fragments are copied
+    # through unmodified rather than risk stripping something load-bearing.
     href_re = re.compile(r'href="#(ref-\d+)"')
-    while queue:
-        cur = queue.pop()
-        start, end = id_spans[cur]
-        block = clean_block(src[start:end])
-        for hm in href_re.finditer(block):
-            target = hm.group(1)
-            if target in external_resolve:
+
+    def bfs_closure(seed_ids, apply_clean):
+        visited_local = set(seed_ids)
+        queue = list(seed_ids)
+        while queue:
+            cur = queue.pop()
+            start, end = id_spans[cur]
+            raw = src[start:end]
+            block = clean_block(raw) if apply_clean else raw
+            for hm in href_re.finditer(block):
+                target = hm.group(1)
+                if target in external_resolve:
+                    continue
+                if target not in visited_local:
+                    visited_local.add(target)
+                    queue.append(target)
+
+        # Post-pass for named (non-empty) borrowed Key/UnderlyingToolTypeID
+        # objects - see comment above. Both are always leaf nodes (no outgoing
+        # href of their own), so removing one here is always safe - nothing
+        # else becomes unreachable as a result.
+        for rid in list(visited_local):
+            if rid in external_resolve:
                 continue
-            if target not in visited:
-                visited.add(target)
-                queue.append(target)
+            ancestor = id_ancestor.get(rid)
+            if ancestor is None or ancestor in visited_local:
+                continue
+            start, end = id_spans[rid]
+            block = src[start:end]
+            tagm = re.match(r'<(\w+) id="ref-\d+">([^<]+)</\1>', block)
+            if not tagm or tagm.group(1) not in BORROWED_TAGS:
+                continue
+            tag, text = tagm.group(1), tagm.group(2)
+            dm = re.search(r'<' + tag + r' id="(ref-\d+)">' + re.escape(text) + r'</' + tag + r'>', dst)
+            if dm:
+                external_resolve[rid] = dm.group(1)
+                visited_local.discard(rid)
+
+        return visited_local
+
+    tab_visited = bfs_closure(list(tab_ids.values()), True) if tab_captions else set()
+    toolbar_visited = bfs_closure(list(toolbar_ids.values()), False) if toolbar_names else set()
+    toolbar_visited -= tab_visited
+    visited = tab_visited | toolbar_visited
 
     emit_ids = [rid for rid in visited if (id_ancestor.get(rid) is None or id_ancestor.get(rid) not in visited)]
     emit_ids.sort(key=lambda rid: id_spans[rid][0])
 
-    fragments = [clean_block(src[id_spans[rid][0]:id_spans[rid][1]]) for rid in emit_ids]
+    fragments = []
+    for rid in emit_ids:
+        raw = src[id_spans[rid][0]:id_spans[rid][1]]
+        fragments.append(clean_block(raw) if rid in tab_visited else raw)
 
-    # apply the increment-renamed caption, only to each tab's own top-level fragment
+    # apply the increment-renamed caption/name, only to each item's own top-level fragment
     for cap in tab_captions:
         if final_captions[cap] != cap:
             idx = emit_ids.index(tab_ids[cap])
             fragments[idx] = set_caption_text(fragments[idx], final_captions[cap])
+
+    for name in toolbar_names:
+        if final_toolbar_names[name] != name:
+            idx = emit_ids.index(toolbar_ids[name])
+            fragments[idx] = set_toolbar_name(fragments[idx], final_toolbar_names[name])
 
     blob = "\n\t\t".join(fragments)
 
@@ -234,6 +358,10 @@ def merge_ribbon_tabs(srcpath, dstpath, tab_captions):
     for cap in tab_captions:
         new_tab_ids[cap] = "ref-" + str(remap[int(tab_ids[cap][4:])])
 
+    new_toolbar_ids = {}
+    for name in toolbar_names:
+        new_toolbar_ids[name] = "ref-" + str(remap[int(toolbar_ids[name][4:])])
+
     blob_ids = re.findall(r'id="(ref-\d+)"', blob)
     if len(blob_ids) != len(set(blob_ids)):
         raise Exception("Internal error: duplicate ids produced while merging.")
@@ -242,37 +370,87 @@ def merge_ribbon_tabs(srcpath, dstpath, tab_captions):
     if collisions:
         raise Exception("Internal error: id collision with target file: " + str(collisions))
 
-    # locate target's Ribbon Tabs collection, add ALL new tabs
-    m = re.search(r'<a1:Ribbon id="ref-3".*?<Tabs href="#(ref-\d+)"', dst, re.S)
-    if not m:
-        raise Exception("Could not locate the Ribbon Tabs collection in the target file.")
-    tabs_ref = m.group(1)
-    m2 = re.search(r'<a1:(\w+) id="' + tabs_ref + r'"[^>]*>(.*?)</a1:\1>', dst, re.S)
-    tag_name = m2.group(1)
-    coll_start, coll_end = m2.start(), m2.end()
-    coll_text = m2.group(0)
-    old_count = int(re.search(r'<Count>(\d+)</Count>', coll_text).group(1))
+    extra_blocks = []  # brand-new collection objects that need to be appended to Body
 
-    new_entries = []
-    count = old_count
-    for cap in tab_captions:
-        idx_name = encode_index(count)
-        new_entries.append("\t\t\t<" + idx_name + ' href="#' + new_tab_ids[cap] + '"/>\n\t\t')
-        count += 1
+    # splice new tabs into the target's Ribbon Tabs collection
+    if tab_captions:
+        m = re.search(r'<a1:Ribbon id="ref-3".*?<Tabs href="#(ref-\d+)"', dst, re.S)
+        if not m:
+            raise Exception("Could not locate the Ribbon Tabs collection in the target file.")
+        tabs_ref = m.group(1)
+        tag_name, coll_start, coll_end, coll_text = _find_collection(dst, tabs_ref)
+        old_count = int(re.search(r'<Count>(\d+)</Count>', coll_text).group(1))
 
-    new_coll_text = coll_text.replace("<Count>" + str(old_count) + "</Count>", "<Count>" + str(count) + "</Count>", 1)
-    close_tag = "</a1:" + tag_name + ">"
-    insert_at = new_coll_text.rindex(close_tag)
-    new_coll_text = new_coll_text[:insert_at] + "".join(new_entries) + new_coll_text[insert_at:]
+        new_entries = []
+        count = old_count
+        for cap in tab_captions:
+            idx_name = encode_index(count)
+            new_entries.append("\t\t\t<" + idx_name + ' href="#' + new_tab_ids[cap] + '"/>\n\t\t')
+            count += 1
 
-    dst = dst[:coll_start] + new_coll_text + dst[coll_end:]
+        new_coll_text = coll_text.replace("<Count>" + str(old_count) + "</Count>", "<Count>" + str(count) + "</Count>", 1)
+        close_tag = "</a1:" + tag_name + ">"
+        insert_at = new_coll_text.rindex(close_tag)
+        new_coll_text = new_coll_text[:insert_at] + "".join(new_entries) + new_coll_text[insert_at:]
 
-    body_close = "\t</SOAP-ENV:Body>"
+        dst = dst[:coll_start] + new_coll_text + dst[coll_end:]
+
+    # splice new toolbars into the target's Toolbars collection; a target
+    # with no custom toolbars at all has no such collection yet, so create one
+    if toolbar_names:
+        sm = re.search(r'(<a1:UltraToolbarsStreamer id="ref-1"[^>]*>)(.*?)(</a1:UltraToolbarsStreamer>)', dst, re.S)
+        if not sm:
+            raise Exception("Could not locate the UltraToolbarsStreamer in the target file.")
+        streamer_body = sm.group(2)
+        tm = re.search(r'<Toolbars href="#(ref-\d+)"', streamer_body)
+
+        if tm:
+            toolbars_ref = tm.group(1)
+            tag_name, coll_start, coll_end, coll_text = _find_collection(dst, toolbars_ref)
+            old_count = int(re.search(r'<Count>(\d+)</Count>', coll_text).group(1))
+
+            new_entries = []
+            count = old_count
+            for name in toolbar_names:
+                idx_name = encode_index(count)
+                new_entries.append("\t\t\t<" + idx_name + ' href="#' + new_toolbar_ids[name] + '"/>\n\t\t')
+                count += 1
+
+            new_coll_text = coll_text.replace("<Count>" + str(old_count) + "</Count>", "<Count>" + str(count) + "</Count>", 1)
+            close_tag = "</a1:" + tag_name + ">"
+            insert_at = new_coll_text.rindex(close_tag)
+            new_coll_text = new_coll_text[:insert_at] + "".join(new_entries) + new_coll_text[insert_at:]
+
+            dst = dst[:coll_start] + new_coll_text + dst[coll_end:]
+        else:
+            new_coll_id = next_new
+            next_new += 1
+
+            entries = []
+            for i in range(len(toolbar_names)):
+                idx_name = encode_index(i)
+                entries.append("\t\t\t<" + idx_name + ' href="#' + new_toolbar_ids[toolbar_names[i]] + '"/>\n')
+
+            new_coll_block = (
+                '<a1:ToolbarsCollection id="ref-' + str(new_coll_id) + '" '
+                'xmlns:a1="http://schemas.microsoft.com/clr/nsassem/Infragistics.Win.UltraWinToolbars/'
+                'Infragistics4.Win.UltraWinToolbars.v22.2">\n'
+                '\t\t<Count>' + str(len(toolbar_names)) + '</Count>\n'
+                + "".join(entries) +
+                '\t\t</a1:ToolbarsCollection>\n'
+            )
+            extra_blocks.append(new_coll_block)
+
+            new_streamer_body = '<Toolbars href="#ref-' + str(new_coll_id) + '"/>\n' + streamer_body
+            dst = dst[:sm.start(2)] + new_streamer_body + dst[sm.end(2):]
+
+    body_close = "</SOAP-ENV:Body>"
     idx = dst.rindex(body_close)
-    insertion = "\t\t" + blob + "\n"
+    insertion = blob + "\n" + "".join(extra_blocks)
     dst = dst[:idx] + insertion + dst[idx:]
 
-    tag = "+".join(final_captions[c] for c in tab_captions)
+    tag_parts = [final_captions[c] for c in tab_captions] + [final_toolbar_names[n] for n in toolbar_names]
+    tag = "+".join(tag_parts)
     base, ext = os.path.splitext(dstpath)
     outpath = base + " + " + tag + ext
 
@@ -297,12 +475,12 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
         cmdData.EnableNoProject = True
 
-        cmdData.Version = 1.01
+        cmdData.Version = 1.015
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
         cmdData.ToolTipTitle = "Import Ribbon Tab"
-        cmdData.ToolTipTextFormatted = "Merge custom ribbon tab(s) from an old ribbon customization export into a newer ribbon customization file"
+        cmdData.ToolTipTextFormatted = "Merge custom ribbon tab(s) and/or toolbar(s) from an old ribbon customization export into a newer ribbon customization file"
 
     except:
         pass
@@ -336,6 +514,9 @@ class SCR_ImportRibbonTab(StackPanel): # this inherits from the WPF StackPanel c
         except:
             pass
 
+        if self.sourcefilename.Text and File.Exists(self.sourcefilename.Text):
+            self.load_source_file(self.sourcefilename.Text)
+
     def SetDefaultOptions(self):
         SCROptions.LoadMacroOptions(self, "SCR_ImportRibbonTab", _OPTIONS, self.currentProject)
 
@@ -344,6 +525,30 @@ class SCR_ImportRibbonTab(StackPanel): # this inherits from the WPF StackPanel c
 
     def CancelClicked(self, cmd, args):
         cmd.CloseUICommand ()
+
+    def load_source_file(self, path):
+        # the tab/toolbar lists are derived from whatever file is currently
+        # browsed - they aren't part of _OPTIONS, so this needs to run both
+        # right after browsing AND when the saved sourcefilename is restored
+        # on load, otherwise the lists stay empty even though the path shows.
+        try:
+            with io.open(path, 'r', encoding='utf-8') as f:
+                text = f.read()
+            captions = find_tab_captions(text)
+            toolbars = find_toolbar_names(text)
+        except Exception as ex:
+            self.error.Text = 'Could not read tabs/toolbars from that file:\n' + str(ex)
+            return
+
+        self.sourcefilename.Text = path
+        self.tabslist.Items.Clear()
+        for cap in captions:
+            self.tabslist.Items.Add(cap)
+        self.toolbarslist.Items.Clear()
+        for name in toolbars:
+            self.toolbarslist.Items.Add(name)
+        if not captions and not toolbars:
+            self.error.Text = 'No custom ribbon tabs or toolbars were found in that file.'
 
     def browsesource_Click(self, sender, e):
         dialog = OpenFileDialog()
@@ -356,20 +561,7 @@ class SCR_ImportRibbonTab(StackPanel): # this inherits from the WPF StackPanel c
         if tt == DialogResult.OK:
             self.error.Text = ''
             self.success.Text = ''
-            try:
-                with io.open(dialog.FileName, 'r', encoding='utf-8') as f:
-                    text = f.read()
-                captions = find_tab_captions(text)
-            except Exception as ex:
-                self.error.Text = 'Could not read tabs from that file:\n' + str(ex)
-                return
-
-            self.sourcefilename.Text = dialog.FileName
-            self.tabslist.Items.Clear()
-            for cap in captions:
-                self.tabslist.Items.Add(cap)
-            if not captions:
-                self.error.Text = 'No custom ribbon tabs were found in that file.'
+            self.load_source_file(dialog.FileName)
 
     def browsetarget_Click(self, sender, e):
         dialog = OpenFileDialog()
@@ -399,21 +591,22 @@ class SCR_ImportRibbonTab(StackPanel): # this inherits from the WPF StackPanel c
             self.error.Text = 'Please browse for a valid target ribbon XML file.'
             return
 
-        selected = [str(c) for c in self.tabslist.SelectedItems]
-        if not selected:
-            self.error.Text = 'Please select at least one tab to merge.'
+        selected_tabs = [str(c) for c in self.tabslist.SelectedItems]
+        selected_toolbars = [str(c) for c in self.toolbarslist.SelectedItems]
+        if not selected_tabs and not selected_toolbars:
+            self.error.Text = 'Please select at least one tab or toolbar to merge.'
             return
 
         try:
-            ProgressBar.TBC_ProgressBar.Title = "merging ribbon tab(s), this can take a moment for large files"
-            outpath = merge_ribbon_tabs(srcpath, dstpath, selected)
+            ProgressBar.TBC_ProgressBar.Title = "merging ribbon item(s), this can take a moment for large files"
+            outpath = merge_ribbon_items(srcpath, dstpath, selected_tabs, selected_toolbars)
             ProgressBar.TBC_ProgressBar.Title = ""
             self.success.Text = "Merged. Wrote:\n" + outpath
             self.SaveOptions()
-            try:
-                subprocess.Popen(["explorer", os.path.dirname(outpath)])
-            except Exception:
-                pass
+            #try:
+            #    subprocess.Popen(["explorer", os.path.dirname(outpath)])
+            #except Exception:
+            #    pass
         except Exception as ex:
             ProgressBar.TBC_ProgressBar.Title = ""
             exc_type, exc_obj, exc_tb = sys.exc_info()

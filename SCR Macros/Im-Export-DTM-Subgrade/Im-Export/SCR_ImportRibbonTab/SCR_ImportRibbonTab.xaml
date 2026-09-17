@@ -9,14 +9,17 @@
     </Label>
 
     <TextBlock Text="Select tab(s) to merge (Ctrl/Shift-click for multiple):" Margin="0,4,0,2" TextWrapping="Wrap"/>
-    <ListBox x:Name="tabslist" Height="150" SelectionMode="Extended"/>
+    <ListBox x:Name="tabslist" Height="120" SelectionMode="Extended"/>
 
-    <Button x:Name="browsetarget" Content="Browse for Ribbon XML missing custom tabs (target)..." Height="42" HorizontalContentAlignment="Center" Margin="0,8,0,0" Click="browsetarget_Click" />
+    <TextBlock Text="Select custom toolbar(s) to merge (Ctrl/Shift-click for multiple):" Margin="0,4,0,2" TextWrapping="Wrap"/>
+    <ListBox x:Name="toolbarslist" Height="90" SelectionMode="Extended"/>
+
+    <Button x:Name="browsetarget" Content="Browse for Ribbon XML missing custom tabs/toolbars (target)..." Height="42" HorizontalContentAlignment="Center" Margin="0,8,0,0" Click="browsetarget_Click" />
     <Label>
         <TextBlock x:Name="targetfilename" Text="" TextWrapping="Wrap"/>
     </Label>
 
-    <TextBlock Text="If the target already has a tab with the same name, the merged copy is renamed with an increment (e.g. &quot;Custom 2&quot;) and merged anyway." Margin="0,8,0,0" TextWrapping="Wrap" FontStyle="Italic" Foreground="Gray" FontSize="11"/>
+    <TextBlock Text="If the target already has a tab or toolbar with the same name, the merged copy is renamed with an increment (e.g. &quot;Custom 2&quot;) and merged anyway." Margin="0,8,0,0" TextWrapping="Wrap" FontStyle="Italic" Foreground="Gray" FontSize="11"/>
 
     <Label VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000">
         <TextBlock x:Name="error" Text="" TextWrapping="Wrap" FontWeight="Bold" Foreground="Red"/>

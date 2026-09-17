@@ -147,6 +147,10 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>17/09/2026 – <a class="class2" href="#SCR_ImportRibbonTab">SCR_ImportRibbonTab</a> – can now also merge custom toolbars, not just ribbon tabs</li>
+
+          <li>16/09/2026 – <a class="class2" href="#SCR_ExifGPS">SCR_ExifGPS</a> – fixed a bug caused by a TBC-bundled DLL change; added a live gigapixel sum for the selected images</li>
+
           <li>10/09/2026 – <a class="class2" href="#SCR_ImportRibbonTab">SCR_ImportRibbonTab</a> – new macro, merges custom ribbon tab(s) from an older TBC ribbon-customization export into a newer one after a TBC update</li>
 
           <li>08/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> – added Field Data sync (jobs collected straight out of Trimble Access) alongside the existing Connect file browser</li>
@@ -1244,13 +1248,14 @@
 
         <h3><a id="SCR_ImportRibbonTab"></a> <span id="SCR_ImportRibbonTab" class="header3">SCR_ImportRibbonTab</span> </h3>
           <ul>
-			  <li>merges custom ribbon tab(s) from an older TBC ribbon-customization export into a newer one, so you don't have to manually rebuild them by hand after a TBC update</li>
+			  <li>merges custom ribbon tab(s) and/or custom toolbar(s) from an older TBC ribbon-customization export into a newer one, so you don't have to manually rebuild them by hand after a TBC update</li>
 			  <li>before updating TBC, right-click the ribbon and choose "Customize the Ribbon…", then use "Export…" to save your current (old-version) ribbon as an XML file – this is the "source" file</li>
-			  <li>after updating TBC, open "Customize the Ribbon…" again in the new version and "Export…" its ribbon as well, before making any other changes – this is the "target" file, and it's still missing your custom tab(s)</li>
-			  <li>in the macro, browse for the old-version export as the source, tick the custom tab(s) to merge, then browse for the new-version export as the target and click "Merge"</li>
-			  <li>if the target already has a tab with the same name (e.g. you already merged once), the merged copy is renamed with an increment ("Ronny 2") and merged anyway, rather than failing</li>
+			  <li>after updating TBC, open "Customize the Ribbon…" again in the new version and "Export…" its ribbon as well, before making any other changes – this is the "target" file, and it's still missing your custom tab(s)/toolbar(s)</li>
+			  <li>in the macro, browse for the old-version export as the source, tick the custom tab(s) and/or toolbar(s) to merge, then browse for the new-version export as the target and click "Merge"</li>
+			  <li>the toolbar list only shows toolbars you customized yourself – TBC's own built-in toolbars aren't offered</li>
+			  <li>if the target already has a tab or toolbar with the same name (e.g. you already merged once), the merged copy is renamed with an increment ("Ronny 2") and merged anyway, rather than failing</li>
 			  <li>the macro writes a new XML file next to the target file – it does not import it into TBC automatically</li>
-			  <li>to finish, open "Customize the Ribbon…" in the new TBC version and "Import…" that merged file – your custom tab(s) will now appear alongside the new version's own tabs</li>
+			  <li>to finish, open "Customize the Ribbon…" in the new TBC version and "Import…" that merged file – your custom tab(s)/toolbar(s) will now appear alongside the new version's own ones</li>
 			  <br>
 		  </ul>
 
