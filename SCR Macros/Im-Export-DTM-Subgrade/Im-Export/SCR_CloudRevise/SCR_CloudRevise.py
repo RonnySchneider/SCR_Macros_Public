@@ -59,7 +59,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version = 1.21
+        cmdData.Version = 1.215
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -1393,12 +1393,11 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
 
         self.propellerSchedules = self.load_propeller_schedules()
         self.refresh_propeller_schedules_ui()
-        self.reload_propeller_orgs_clicked(None, None)
 
         if self.is_placeholder_config(self.civilloConfig):
             self.error.Content = "Edit the config file above with your Civillo API key/secret, then click 'Reload Organizations'."
-        else:
-            self.load_organizations()
+
+        self.Loaded += self.start_initial_load
 
 
     # ---------- QGIS-PDAL cloud resampling ----------
@@ -1438,6 +1437,18 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
 
     def SetDefaultOptions(self, sender, e):
         SCROptions.LoadWindowState(self, "SCR_CloudRevise", default_width=300, default_height=460)
+
+    def start_initial_load(self, sender, e):
+        # deferred (Background priority, below rendering) so the window is already visible and painted
+        # before the Civillo/Propeller/Trimble Connect calls start - otherwise the window can sit
+        # blank/frozen for a while with no indication the macro has actually started
+        def run_initial_load():
+            # Civillo first - it's the default visible tab, so its "Connecting..." should show up
+            # right away rather than sitting queued behind the (often slower) Propeller connection
+            if not self.is_placeholder_config(self.civilloConfig):
+                self.load_organizations()
+            self.reload_propeller_orgs_clicked(None, None)
+        self.Dispatcher.BeginInvoke(DispatcherPriority.Background, Action(run_initial_load))
 
     def SaveOptions(self, sender, e):
         SCROptions.SaveWindowState(self, "SCR_CloudRevise")
@@ -1667,8 +1678,8 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         e.g. "TIFF -> 0.05 m/px JPEG" (orthophoto resample) or "LAZ -> 1.3 m LandXML" (LAZ resample +
         triangulate). platformPrefix is "civillo" or "trimbleConnect" - matches the same prefix used for
         that platform's own per-entry keys (civilloPixelSizeMeters/trimbleConnectPixelSizeMeters, etc.),
-        since the two platforms can be configured differently for the same entry. Returns None if there's
-        nothing meaningful to summarize (a raw passthrough - no pixel size and no LAZ spacing set)."""
+        since the two platforms can be configured differently for the same entry. Falls back to just the
+        source format (e.g. "TIFF") for a raw passthrough - no pixel size and no LAZ spacing set."""
         sourceFormat = (entry.get("propellerFileFormat") or "").upper()
         pixelSize = entry.get(platformPrefix + "PixelSizeMeters")
         if pixelSize is not None:
@@ -1677,7 +1688,7 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         lazSpacing = entry.get(platformPrefix + "LazResampleSpacing")
         if lazSpacing is not None:
             return sourceFormat + " -> " + ("%g" % lazSpacing) + " m LandXML"
-        return None
+        return sourceFormat or None
 
     def build_propeller_schedule_group_header(self, entry):
         # the description reflects this one entry (whichever started the group - see
@@ -1833,7 +1844,9 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
     # ---------- Propeller org/site/survey selection (drives what the Add/Edit dialog's file list shows) ----------
 
     def reload_propeller_orgs_clicked(self, sender, e):
-        self.propellerError.Content = ""
+        self.propellerConnectStatus.Foreground = SolidColorBrush(Colors.Red)
+        self.propellerConnectStatus.Text = "Connecting to Propeller..."
+        self.Dispatcher.Invoke(DispatcherPriority.Render, Action(lambda: None))
         self.propOrgCombo.Items.Clear()
         self.propSiteCombo.Items.Clear()
         self.propSurveyCombo.Items.Clear()
@@ -1843,6 +1856,8 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         try:
             orgs = self.propellerClient.get_organizations()
         except Exception as ex:
+            self.propellerConnectStatus.Text = ""
+            self.propellerError.Foreground = SolidColorBrush(Colors.Red)
             self.propellerError.Content = str(ex)
             return
 
@@ -1853,6 +1868,11 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
             self.propOrgCombo.Items.Add(item)
 
         self._select_preferred_propeller(self.propOrgCombo, "SCR_CloudRevise.selectedproporgid")
+        if not str(self.propellerError.Content):
+            self.propellerConnectStatus.Foreground = SolidColorBrush(Colors.Green)
+            self.propellerConnectStatus.Text = "Connected to Propeller."
+        else:
+            self.propellerConnectStatus.Text = ""
 
     def propeller_org_selection_changed(self, sender, e):
         self.propSurveyCombo.Items.Clear()
@@ -1876,6 +1896,7 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         try:
             self.propellerSites = self.propellerClient.get_sites(orgItem.Tag)
         except Exception as ex:
+            self.propellerError.Foreground = SolidColorBrush(Colors.Red)
             self.propellerError.Content = str(ex)
             return
 
@@ -1961,6 +1982,7 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         try:
             surveys = self.propellerClient.get_surveys(orgItem.Tag, siteItem.Tag)
         except Exception as ex:
+            self.propellerError.Foreground = SolidColorBrush(Colors.Red)
             self.propellerError.Content = str(ex)
             return
 
@@ -2008,6 +2030,7 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         try:
             self.propellerSelectedFiles = self.propellerClient.get_survey_files(orgItem.Tag, siteItem.Tag, surveyItem.Tag)
         except Exception as ex:
+            self.propellerError.Foreground = SolidColorBrush(Colors.Red)
             self.propellerError.Content = str(ex)
 
     def _select_preferred_propeller(self, combo, optionKey):
@@ -2322,7 +2345,7 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
                                                                           maxSizeBytes=tcMaxSizeGb * (1024 ** 3) if tcMaxSizeGb else None)
             else:
                 tcPath, tcWorldfile = self._prepare_platform_file(sourcePath, entry, "trimbleConnectPixelSizeMeters", "trimbleConnectOutputFormat", "trimbleConnectMaxSizeGb", siteName, surveyName, "TrimbleConnect")
-            self.set_run_progress("Uploading to Trimble Connect...")
+            self.set_run_progress("Uploading to Trimble Connect... (no progress reporting - check i.e. Task Manager network traffic)")
             self.trimbleConnectClient.save_file_remotely(tcPath, tcTarget)
             if tcWorldfile is not None:
                 self.trimbleConnectClient.save_file_remotely(tcWorldfile, tcTarget)
@@ -2601,13 +2624,17 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         self.load_organizations()
 
     def load_organizations(self):
-        self.error.Content = ""
+        self.civilloConnectStatus.Foreground = SolidColorBrush(Colors.Red)
+        self.civilloConnectStatus.Text = "Connecting to Civillo..."
+        self.Dispatcher.Invoke(DispatcherPriority.Render, Action(lambda: None))
         self.orgCombo.Items.Clear()
         self.projectCombo.Items.Clear()
 
         try:
             orgs = self.civilloClient.get("/applications")
         except Exception as ex:
+            self.civilloConnectStatus.Text = ""
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
             return
 
@@ -2629,6 +2656,12 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         elif self.orgCombo.Items.Count > 0:
             self.orgCombo.SelectedIndex = 0
 
+        if not str(self.error.Content):
+            self.civilloConnectStatus.Foreground = SolidColorBrush(Colors.Green)
+            self.civilloConnectStatus.Text = "Connected to Civillo."
+        else:
+            self.civilloConnectStatus.Text = ""
+
     def org_selection_changed(self, sender, e):
         self.projectCombo.Items.Clear()
         self.error.Content = ""
@@ -2642,6 +2675,7 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
         try:
             projects = self.civilloClient.get("/" + nickname + "/projects")
         except Exception as ex:
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
             return
 
@@ -3082,6 +3116,7 @@ class SCR_CloudReviseAddSyncDialog(Window):
                 if os.path.isfile(full):
                     listBox.Items.Add(name)
         except Exception as ex:
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
 
     def select_item_by_text(self, listBox, targetName):
@@ -3114,6 +3149,7 @@ class SCR_CloudReviseAddSyncDialog(Window):
         try:
             tree = self.civilloClient.get("/" + self.orgNickname + "/projects/" + str(self.projectId) + "/layer-directory")
         except Exception as ex:
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
             return
 
@@ -3695,6 +3731,7 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
         try:
             orgs = self.civilloClient.get("/applications")
         except Exception as ex:
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
             return
 
@@ -3719,6 +3756,7 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
         try:
             projects = self.civilloClient.get("/" + orgItem.Tag + "/projects")
         except Exception as ex:
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
             return
 
@@ -3743,6 +3781,7 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
         try:
             tree = self.civilloClient.get("/" + orgItem.Tag + "/projects/" + str(projectItem.Tag) + "/layer-directory")
         except Exception as ex:
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
             return
 
@@ -3840,6 +3879,7 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
         try:
             regions = self.trimbleConnectClient.get_regions()
         except Exception as ex:
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
             return
 
@@ -3866,6 +3906,7 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
         try:
             projects = self.trimbleConnectClient.get_children(regionItem.Tag)
         except Exception as ex:
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
             return
 
@@ -3959,6 +4000,7 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
         try:
             children = self.trimbleConnectClient.get_children(folder)
         except Exception as ex:
+            self.error.Foreground = SolidColorBrush(Colors.Red)
             self.error.Content = str(ex)
             return
 

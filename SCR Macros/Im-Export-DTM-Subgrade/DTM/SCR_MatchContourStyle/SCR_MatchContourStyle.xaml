@@ -1,0 +1,35 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
+       xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+       mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="216.478" d:DesignHeight="750" >
+    <Label Content="apply Contour representation style from Source to Target"/>
+    <Label Content="select Source Contours (grouped by Surface):"  Margin="0" />
+    <wfi:WindowsFormsHost x:Name="sourcehelperhost" Width="0" Height="0" Visibility="Collapsed"/>
+    <TreeView x:Name="sourceTree" Height="150" Margin="0,0,0,4"/>
+
+    <Label Content="select Target Contours:"  Margin="0" />
+    <Wpf:MemberSelection x:Name="objs" Height="30" Margin="0"/>
+
+    <Label Content="properties to transfer" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    <CheckBox x:Name="contourinterval" Content="Contour interval" IsChecked="True"/>
+    <CheckBox x:Name="indexfrequency" Content="Index frequency" IsChecked="True"/>
+    <CheckBox x:Name="labelalllines" Content="Label all lines" IsChecked="True"/>
+    <CheckBox x:Name="normalcolour" Content="Normal colour" IsChecked="True"/>
+    <CheckBox x:Name="normallineweight" Content="Normal line weight" IsChecked="True"/>
+    <CheckBox x:Name="indexcolour" Content="Index colour" IsChecked="True"/>
+    <CheckBox x:Name="indexlineweight" Content="Index line weight" IsChecked="True"/>
+    <CheckBox x:Name="colourbyelevation" Content="Colour by elevation" IsChecked="True"/>
+    <CheckBox x:Name="rebuildmethod" Content="Rebuild method" IsChecked="True"/>
+    <CheckBox x:Name="textstyle" Content="Text style" IsChecked="True"/>
+    <CheckBox x:Name="distancebetweenlabels" Content="Distance between labels" IsChecked="True"/>
+    <CheckBox x:Name="minimumlength" Content="Minimum length" IsChecked="True"/>
+    <CheckBox x:Name="minimumarea" Content="Minimum area" IsChecked="True"/>
+    <CheckBox x:Name="labelends" Content="Label ends" IsChecked="True"/>
+    <CheckBox x:Name="smoothcontours" Content="Smooth contours" IsChecked="True"/>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+</StackPanel>

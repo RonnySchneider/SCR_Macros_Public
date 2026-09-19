@@ -190,7 +190,7 @@ from Trimble.Vce.ForeignCad import AttachmentPoint, BlockReference, DimArrowhead
                                    Text as CadText, TextUtilities
 
 from Trimble.Vce.Gem import CompositeSurface, ConstructionMaterialCollection, DisplayMode, DtmVolumes, ElevationSlopeTypes, Filer, Gem, GemMaterialMap, GemMaterials, GemVertexType, \
-                            Model3D, Model3DCompSettings, Model3DContoursBuilder, Model3DQuickContours, ModelBoundaries, ProjectedSurface, SiteImprovementMaterialCollection, \
+                            Model3D, Model3DCompSettings, Model3DContours, Model3DContoursBuilder, Model3DQuickContours, ModelBoundaries, ProjectedSurface, SiteImprovementMaterialCollection, \
                             SlopingLevelSurface, SurfaceClassification, VextexAndTriangleList
 
 clr.AddReference ("Trimble.Vce.Scanning")

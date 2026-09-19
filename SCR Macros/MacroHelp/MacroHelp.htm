@@ -147,6 +147,12 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>19/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> and <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – improved error handling and connectivity visualization</li>
+
+          <li>19/09/2026 – <a class="class2" href="#SCR_MatchContourStyle">SCR_MatchContourStyle</a> – source list is now a tree grouped by Surface, and target picking resolves contour lines to their parent Contours entity live</li>
+
+          <li>18/09/2026 – new <a class="class2" href="#SCR_MatchContourStyle">SCR_MatchContourStyle</a> – copies the representation style from a source Surface Contours entity onto one or more targets</li>
+
           <li>17/09/2026 – <a class="class2" href="#SCR_ImportRibbonTab">SCR_ImportRibbonTab</a> – can now also merge custom toolbars, not just ribbon tabs</li>
 
           <li>16/09/2026 – <a class="class2" href="#SCR_ExifGPS">SCR_ExifGPS</a> – fixed a bug caused by a TBC-bundled DLL change; added a live gigapixel sum for the selected images</li>
@@ -1063,6 +1069,17 @@
 			  <li>added option to create outline and offsets and add them to an existing surface<br>
 			  <img alt="" src="Media/SCR_ManholeSurfaceRL-2.png" height="382" width="542" border="1">
 			  <br><br></li>
+		  </ul>
+
+
+       <h3 id="SCR_MatchContourStyle" class="header3"><a id="SCR_MatchContourStyle"></a>SCR_MatchContourStyle</h3>
+          <ul>
+			  <li>same idea as <a class="class2" href="#SCR_MatchSurfaceStyle">SCR_MatchSurfaceStyle</a>, but for Surface Contours entities</li>
+			  <li>the source list is grouped by Surface (bold, not selectable itself) with its Contours entities listed underneath – handy since a project can easily have several Contours entities that all share the same name</li>
+			  <li>pick one source Contours entity, then pick one or more target Contours entities to copy the style onto</li>
+			  <li>for the targets you can click directly on a contour line in the view or the Project Explorer – it resolves to the parent Contours entity automatically, no need to hit the entity itself</li>
+			  <li>tick which properties to transfer: contour interval, index frequency, label all lines, normal/index colour and line weight, colour by elevation, rebuild method, text style, distance between labels, minimum length/area, label ends, smooth contours</li>
+			  <li>everything else stays untouched, and the targets are rebuilt right after so the new style shows immediately</li>
 		  </ul>
 
 
@@ -2328,6 +2345,7 @@
                   <li><a href="#SCR_ElevateToPlane">SCR_ElevateToPlane</a></li>
                   <li><a href="#SCR_IntersectSurfaceAnySurface">SCR_IntersectSurfaceAnySurface</a></li>
                   <li><a href="#SCR_ManholeSurfaceRL">SCR_ManholeSurfaceRL</a></li>
+                  <li><a href="#SCR_MatchContourStyle">SCR_MatchContourStyle</a></li>
                   <li><a href="#SCR_MatchSurfaceStyle">SCR_MatchSurfaceStyle</a></li>
                   <li><a href="#SCR_MoveAlongVector">SCR_MoveAlongVector</a></li>
                   <li><a href="#SCR_PerpDistToDTM">SCR_PerpDistToDTM</a></li>

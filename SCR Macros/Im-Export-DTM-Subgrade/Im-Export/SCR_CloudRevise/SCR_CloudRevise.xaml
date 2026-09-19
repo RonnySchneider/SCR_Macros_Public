@@ -50,7 +50,8 @@
     <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- 0 - config path label -->
-            <RowDefinition Height="*"/>    <!-- 1 - tabs -->
+            <RowDefinition Height="Auto"/> <!-- 1 - Civillo/Propeller connection status -->
+            <RowDefinition Height="*"/>    <!-- 2 - tabs -->
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="0,0,0,8">
@@ -68,7 +69,12 @@
             <TextBlock x:Name="openSettingsFolderLabel" Grid.Row="1" Grid.Column="0" Text="open settings folder" FontSize="13" Foreground="Gray" TextDecorations="Underline" Cursor="Hand" VerticalAlignment="Center"/>
         </Grid>
 
-        <TabControl Grid.Row="1">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock x:Name="civilloConnectStatus" Text="" FontSize="11" FontWeight="Bold" Margin="0,0,12,0"/>
+            <TextBlock x:Name="propellerConnectStatus" Text="" FontSize="11" FontWeight="Bold"/>
+        </StackPanel>
+
+        <TabControl Grid.Row="2">
             <TabItem Header="Local -&gt; Civillo">
                 <Grid Margin="0,8,0,0">
                     <Grid.RowDefinitions>

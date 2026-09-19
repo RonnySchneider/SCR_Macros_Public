@@ -815,7 +815,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version = 1.03
+        cmdData.Version = 1.033
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -908,9 +908,8 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
         self.helpBtn.Click += self.help_clicked
 
         self.Loaded += self.SetDefaultOptions
+        self.Loaded += self.start_initial_load
         self.Closing += self.SaveOptions
-
-        self.reload_regions_clicked(None, None)
 
 
     # ---------- local sync folder / subfolder-name settings ----------
@@ -981,6 +980,12 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
     def SetDefaultOptions(self, sender, e):
         SCROptions.LoadWindowState(self, "SCR_DayJobSync", default_width=340, default_height=460)
 
+    def start_initial_load(self, sender, e):
+        # deferred (Background priority, below rendering) so the window is already visible and painted
+        # before the Trimble Connect connection attempt starts - otherwise the whole window can sit
+        # blank/frozen for a while with no indication the macro has actually started
+        self.Dispatcher.BeginInvoke(DispatcherPriority.Background, Action(lambda: self.reload_regions_clicked(None, None)))
+
     def SaveOptions(self, sender, e):
         SCROptions.SaveWindowState(self, "SCR_DayJobSync")
         # the GridSplitter between the two lists has no per-drag "changed" event to hook, so its position
@@ -1024,6 +1029,7 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
     def reload_regions_clicked(self, sender, e):
         self.error.Content = ""
         self.statusLabel.Text = "Connecting to Trimble Connect..."
+        self.statusLabel.Foreground = SolidColorBrush(Colors.Red)
         self.Dispatcher.Invoke(DispatcherPriority.Render, Action(lambda: None))
 
         self.regionCombo.Items.Clear()
@@ -1036,6 +1042,7 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
             regions = self.trimbleConnectClient.get_regions()
         except Exception as ex:
             self.statusLabel.Text = ""
+            self.statusLabel.Foreground = SolidColorBrush(Colors.Gray)
             self.error.Content = str(ex)
             return
 
@@ -1046,6 +1053,7 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
             self.regionCombo.Items.Add(item)
 
         self.statusLabel.Text = "Connected to Trimble Connect."
+        self.statusLabel.Foreground = SolidColorBrush(Colors.Green)
         self.select_preferred_by_content(self.regionCombo, "selectedregionname")
 
         # TEMPORARY - was for manually testing the jobs-service _sync endpoint in Swagger (see the parked
@@ -1268,6 +1276,7 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
     def sync_clicked(self, sender, e):
         self.error.Content = ""
         self.statusLabel.Text = ""
+        self.statusLabel.Foreground = SolidColorBrush(Colors.Gray)
 
         connectItem = self.fileList.SelectedItem
         fieldDataItem = self.fieldDataList.SelectedItem
@@ -1347,7 +1356,7 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
             self.error.Content = "Folders created, but download failed: " + str(ex)
             return
 
-        if not self.wait_for_file(downloadPath):
+        if not self.wait_for_file(downloadPath, expectedSize=connectFile.Size):
             self.syncBtn.IsEnabled = True
             self.error.Content = "Download reported success, but the file is not at: " + downloadPath
             return
@@ -1646,6 +1655,8 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
                 self.download_connect_folder(child, childLocalPath)
             else:
                 self.trimbleConnectClient.download_file(child, childLocalPath)
+                if not self.wait_for_file(childLocalPath, expectedSize=child.Size):
+                    raise Exception("Download reported success, but the file is not at: " + childLocalPath)
 
     def upload_connect_folder(self, localFolder, remoteFolder):
         # mirror image of download_connect_folder - re-uploads the local copy of a folder tree (e.g. the
@@ -1658,17 +1669,30 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
             else:
                 self.trimbleConnectClient.save_file_remotely(fullLocalPath, remoteFolder)
 
-    def wait_for_file(self, path, timeoutSeconds=5.0, pollIntervalSeconds=0.2):
-        # EndDownloadFile() returning doesn't guarantee the destination file is visible yet - there's a
-        # brief race where the download itself has finished but a final rename/flush is still in flight,
-        # so a single immediate os.path.isfile() check can report a false failure - poll for a few
-        # seconds instead of trusting one snapshot
+    def wait_for_file(self, path, expectedSize=None, timeoutSeconds=30.0, pollIntervalSeconds=0.2, stableChecksNeeded=3):
+        # EndDownloadFile() returning doesn't guarantee the destination file is fully written yet - on a
+        # slow connection the file can appear (even at 0 bytes) while the actual content is still being
+        # streamed in, so checking os.path.isfile() alone reports a false success. When the remote node's
+        # Size (IFileInformation.Size) is known, wait for the local file to actually reach it - the exact
+        # check. Otherwise fall back to waiting for the size to stop growing for a few consecutive polls.
         deadline = time.time() + timeoutSeconds
+        lastSize = -1
+        stableChecks = 0
         while time.time() < deadline:
             if os.path.isfile(path):
-                return True
+                size = os.path.getsize(path)
+                if expectedSize is not None and expectedSize > 0:
+                    if size >= expectedSize:
+                        return True
+                elif size == lastSize and size > 0:
+                    stableChecks += 1
+                    if stableChecks >= stableChecksNeeded:
+                        return True
+                else:
+                    stableChecks = 0
+                lastSize = size
             time.sleep(pollIntervalSeconds)
-        return os.path.isfile(path)
+        return os.path.isfile(path) and os.path.getsize(path) > 0
 
     def help_clicked(self, sender, e):
         webbrowser.open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\MacroHelp\MacroHelp.htm#SCR_DayJobSync")
