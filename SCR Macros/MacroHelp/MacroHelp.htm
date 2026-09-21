@@ -147,6 +147,10 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>21/09/2026 – <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – both Add/Edit sync dialogs can now manually select a CRS to upload to Civillo with, instead of always using the project's own default</li>
+
+          <li>19/09/2026 – <a class="class2" href="#SCR_DeletePopulatedLayers">SCR_DeletePopulatedLayers</a> – multi-layer selection changed to list-style selection with a pre-filter</li>
+
           <li>19/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> and <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – improved error handling and connectivity visualization</li>
 
           <li>19/09/2026 – <a class="class2" href="#SCR_MatchContourStyle">SCR_MatchContourStyle</a> – source list is now a tree grouped by Surface, and target picking resolves contour lines to their parent Contours entity live</li>
@@ -1416,6 +1420,7 @@
           <ul>
               <li>a floating window with two tabs, each covering a different sync direction – <a href="#SCR_CloudRevise_LocalToCivillo">Local -&gt; Civillo</a> and <a href="#SCR_CloudRevise_Propeller">Propeller -&gt; Civillo/Trimble Connect</a></li>
               <li>schedule entries are remembered between sessions, so a run can simply be repeated without re-picking files, layers or targets</li>
+              <li>both tabs' Civillo section has a "Manually select CRS" checkbox – when ticked, a chosen EPSG code is uploaded with instead of the Civillo project's own default coordinate system; the filterable code/name list is read from <span class="auto-style3">crs_list.json</span>, shipped with the macro – there's no in-dialog reload, since refreshing it requires a fresh EPSG dataset download, which needs a logged-in epsg.org account and can't be automated from here</li>
           </ul>
 
         <h4 id="SCR_CloudRevise_LocalToCivillo" class="header4">Local -&gt; Civillo</h4>

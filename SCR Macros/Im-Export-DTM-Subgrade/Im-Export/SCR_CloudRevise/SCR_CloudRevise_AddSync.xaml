@@ -54,17 +54,35 @@
             <Button x:Name="clearLocalFile1Btn" Content="Clear" Margin="4,0,0,0"/>
             <Label Content="12d file" VerticalAlignment="Center" Margin="4,0,0,0"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="4,0,0,4">
-            <Button x:Name="refreshCivilloFilesBtn" Content="Refresh" HorizontalAlignment="Left"/>
-            <Button x:Name="clearCivilloFileBtn" Content="Clear" Margin="4,0,0,0"/>
-        </StackPanel>
 
         <ListBox x:Name="localFileList1" Grid.Row="2" Grid.Column="0" MinWidth="180" Margin="0,0,4,4"/>
 
         <GridSplitter Grid.Row="0" Grid.RowSpan="7" Grid.Column="1" Width="6" HorizontalAlignment="Center" VerticalAlignment="Stretch"
                       Background="#FFCCCCCC" ResizeDirection="Columns" ShowsPreview="True" Cursor="SizeWE" Margin="2,0,2,0"/>
 
-        <ListBox x:Name="civilloFileList" Grid.Row="2" Grid.RowSpan="3" Grid.Column="2" MinWidth="180" Margin="4,0,0,4"/>
+        <!-- civillo column - its own nested Grid (buttons/list/CRS override) so the CRS section sits
+             pinned to the bottom of this column regardless of the local-file column's row layout -->
+        <Grid Grid.Row="1" Grid.RowSpan="4" Grid.Column="2" Margin="4,0,0,4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,4">
+                <Button x:Name="refreshCivilloFilesBtn" Content="Refresh" HorizontalAlignment="Left"/>
+                <Button x:Name="clearCivilloFileBtn" Content="Clear" Margin="4,0,0,0"/>
+            </StackPanel>
+
+            <ListBox x:Name="civilloFileList" Grid.Row="1" MinWidth="180"/>
+
+            <StackPanel Grid.Row="2" Margin="0,4,0,0">
+                <CheckBox x:Name="manualCrsCheckbox" Content="Manually select CRS" VerticalAlignment="Center"
+                          ToolTip="Overrides the Civillo project's own default coordinate system with a specific EPSG code for this sync entry"/>
+                <TextBox x:Name="crsFilterBox" Margin="0,4,0,0" VerticalAlignment="Center" IsEnabled="{Binding IsChecked, ElementName=manualCrsCheckbox}" ToolTip="Type to filter the CRS list below by code or name"/>
+                <ComboBox x:Name="crsCombo" Margin="0,4,0,0" MaxDropDownHeight="300" IsEnabled="{Binding IsChecked, ElementName=manualCrsCheckbox}"/>
+            </StackPanel>
+        </Grid>
 
         <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="0,0,4,4">
             <Button x:Name="browseLocalFolderBtn2" Content="Browse File 2 Folder..." HorizontalAlignment="Left"/>

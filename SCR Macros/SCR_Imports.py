@@ -37,7 +37,7 @@ from MetadataExtractor.Formats.Jpeg import JpegMetadataReader, JpegSegmentReader
 import System
 from System import Action, Activator, Array, Byte, Convert, Double, Environment, Func, GC, Guid, Int32, IntPtr, Math, Reflection, String, Tuple, Type, UInt16, UInt32, Uri
 from System.Collections.ObjectModel import ObservableCollection
-from System.IO import File, FileAccess, FileMode, FileStream, MemoryStream, StreamReader
+from System.IO import Directory, File, FileAccess, FileMode, FileStream, MemoryStream, StreamReader
 from System.Net import HttpStatusCode, HttpWebRequest, WebClient, WebException, WebRequestMethods
 from System.Reflection import BindingFlags
 from System.Runtime.InteropServices import Marshal
@@ -61,7 +61,7 @@ clr.AddReference("System.Data")
 from System.Data import DataColumn, DataRow, DataTable
 
 clr.AddReference("System.Drawing")
-from System.Drawing import Bitmap, Color, Image, Point as SystemDrawingPoint
+from System.Drawing import Bitmap, Color, Graphics, Image, Point as SystemDrawingPoint
 from System.Drawing.Imaging import ImageFormat
 
 clr.AddReference("System.Windows.Forms")
@@ -187,7 +187,7 @@ from Trimble.Vce.Features.FeatureCoding import FeatureCodeManager
 from Trimble.Vce.ForeignCad import Arc as ArcObject, Circle as CadCircle, Face3D, Poly3D as CadPoly3D # we are also using Arc from geometry, PolyLine, PolyLineBase
 
 from Trimble.Vce.ForeignCad import AttachmentPoint, BlockReference, DimArrowheadType, Hatch, Leader, LeaderType, MText, Point as CadPoint, PointLabelEntity as CadLabel, \
-                                   Text as CadText, TextUtilities
+                                   RasterImage, Text as CadText, TextUtilities
 
 from Trimble.Vce.Gem import CompositeSurface, ConstructionMaterialCollection, DisplayMode, DtmVolumes, ElevationSlopeTypes, Filer, Gem, GemMaterialMap, GemMaterials, GemVertexType, \
                             Model3D, Model3DCompSettings, Model3DContours, Model3DContoursBuilder, Model3DQuickContours, ModelBoundaries, ProjectedSurface, SiteImprovementMaterialCollection, \

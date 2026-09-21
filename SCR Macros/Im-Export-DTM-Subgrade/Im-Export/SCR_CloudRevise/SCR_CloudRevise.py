@@ -59,7 +59,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version = 1.215
+        cmdData.Version = 1.220
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -91,21 +91,43 @@ class CivilloClient(object):
     """Thin wrapper around the Civillo REST API (https://docs.civillo.com/api/) shared by the main
     window and the Add Sync dialog, so both use the same auth/error handling."""
 
-    # class-level (not per-instance) so the 1-request-per-second throttle holds across every
-    # CivilloClient created during this session - e.g. reload_orgs_clicked makes a fresh instance
+    # class-level (not per-instance) so both throttles hold across every CivilloClient created during
+    # this session - e.g. reload_orgs_clicked makes a fresh instance
     _last_request_time = None
+    _request_times = []  # timestamps of recent real HTTP calls, trimmed to the trailing 60s - see _throttle
 
     def __init__(self, config):
         self.config = config
 
     def _throttle(self):
-        # Civillo's API rejects requests faster than 1/second, so pace every real HTTP call here
+        # per https://docs.civillo.com/api/rateLimiting.html, Civillo enforces 1/second AND 30/minute
+        # (also 1800/hour and 12000/day, but pacing to 30/minute already keeps an hour-long run at or
+        # under 1800 automatically, and a run long/steady enough to threaten the daily cap isn't a
+        # realistic case for this macro) - exceeding either returns HTTP 429, so both are paced here
+        # rather than just the per-second one this originally only handled
         now = time.time()
         if CivilloClient._last_request_time is not None:
             elapsed = now - CivilloClient._last_request_time
             if elapsed < 1.0:
                 time.sleep(1.1 - elapsed)
-        CivilloClient._last_request_time = time.time()
+                now = time.time()
+
+        requestTimes = CivilloClient._request_times
+        cutoff = now - 60.0
+        while requestTimes and requestTimes[0] <= cutoff:
+            requestTimes.pop(0)
+
+        if len(requestTimes) >= 30:
+            sleepSeconds = (requestTimes[0] + 60.0) - now + 0.1
+            if sleepSeconds > 0:
+                time.sleep(sleepSeconds)
+                now = time.time()
+                cutoff = now - 60.0
+                while requestTimes and requestTimes[0] <= cutoff:
+                    requestTimes.pop(0)
+
+        requestTimes.append(now)
+        CivilloClient._last_request_time = now
 
     def _auth_header(self):
         raw = self.config["api_key"] + ":" + self.config["api_secret"]
@@ -515,13 +537,18 @@ def zip_files_for_civillo_ortho(files):
     return [(zipPath, zipName)]
 
 
-def push_to_civillo(civilloClient, orgNickname, projectId, replaceLayerId, files, progressCallback=None):
+def push_to_civillo(civilloClient, orgNickname, projectId, replaceLayerId, files, progressCallback=None, manualSrid=None):
     # files: list of (localPath, uploadFileName) tuples - a single LandXML, a raw GeoTIFF passthrough
     # (embedded georeferencing is enough), or a single zip already bundling image+worldfile (see
     # zip_files_for_civillo_ortho - the caller zips a resampled orthophoto+worldfile before this point,
     # this function itself doesn't care whether "files" holds one entry or several)
-    projectInfo = civilloClient.get("/" + orgNickname + "/projects/" + str(projectId))
-    srid = projectInfo.get("defaultProjection", -1)
+    # manualSrid: "manually select CRS" override - when given, skips the project-lookup call below
+    # entirely and just uses this EPSG code instead of the project's own default projection
+    if manualSrid is not None:
+        srid = manualSrid
+    else:
+        projectInfo = civilloClient.get("/" + orgNickname + "/projects/" + str(projectId))
+        srid = projectInfo.get("defaultProjection", -1)
 
     body = {
         "mode": 1,  # 1 = revise an existing layer
@@ -534,7 +561,7 @@ def push_to_civillo(civilloClient, orgNickname, projectId, replaceLayerId, files
     civilloClient.upload_files(initResp["processPath"], initResp["token"], initResp["application"], initResp["job"], files, progressCallback)
 
 
-def push_to_civillo_create_new(civilloClient, orgNickname, projectId, title, files, progressCallback=None):
+def push_to_civillo_create_new(civilloClient, orgNickname, projectId, title, files, progressCallback=None, manualSrid=None):
     """Creates a brand-new Civillo layer (mode 0) named `title`, rather than revising an existing one -
     see push_to_civillo above for the revise (mode 1) equivalent this mirrors. Backs a schedule entry's
     "create additional new layer" option, mainly meant for layer types (terrain/DTM/surface) that never
@@ -548,8 +575,11 @@ def push_to_civillo_create_new(civilloClient, orgNickname, projectId, title, fil
     (confirmed by hand) - not handled here, since retrying under a different title is a decision this
     function shouldn't make for the caller; a stable {YYMMDD}-based title (see format_survey_yymmdd)
     keeps re-running the same survey's sync from hitting this by accident."""
-    projectInfo = civilloClient.get("/" + orgNickname + "/projects/" + str(projectId))
-    srid = projectInfo.get("defaultProjection", -1)
+    if manualSrid is not None:
+        srid = manualSrid
+    else:
+        projectInfo = civilloClient.get("/" + orgNickname + "/projects/" + str(projectId))
+        srid = projectInfo.get("defaultProjection", -1)
 
     body = {
         "mode": 0,  # 0 = create a new layer
@@ -881,6 +911,58 @@ def format_site_crs_label(site):
     if not authority or not crsId:
         return None
     return str(authority) + ":" + str(crsId)
+
+
+def get_crs_list_path(macroFileFolder):
+    """crs_list.json lives in the macro's own folder (not per-user AppData) so it's committed/distributed
+    via GitHub alongside the macro - it's shared reference data (every EPSG code/name), not per-user
+    config. There's no in-app reload - refreshing it requires an EPSG dataset download, which needs a
+    logged-in epsg.org account and can't be automated from here."""
+    return os.path.join(macroFileFolder, "crs_list.json")
+
+
+def load_crs_list(macroFileFolder):
+    """Returns the cached [{"code", "name", "kind"}, ...] list, or [] if crs_list.json is missing/invalid -
+    callers show an empty/unusable combo rather than raising, since "manually select CRS" is opt-in and
+    shouldn't block the rest of the dialog."""
+    try:
+        with io.open(get_crs_list_path(macroFileFolder), "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+
+def populate_crs_combo(combo, crsList, filterText, preferredCode=None):
+    """Fills combo with crsList entries matching filterText, each item displaying "EPSG:<code> - <name>"
+    with Tag=code. Same multi-word AND filter as the ticklist prefilter elsewhere (e.g. SCR_SNRLayername's
+    FilterChanged) - filterText is split on whitespace and an entry is kept only if every segment appears
+    somewhere in "<code> <name>" (case-insensitive), in any order, so "2020 56" matches
+    "EPSG:32756 - GDA2020 / MGA zone 56" even though that's not a single contiguous substring.
+    Re-selects preferredCode if it's still present after filtering, otherwise falls back to index 0 -
+    used both on initial load and every filter keystroke."""
+    combo.Items.Clear()
+
+    filterSegments = (filterText or "").lower().split()
+    target = None
+    for entry in crsList:
+        code = entry.get("code")
+        name = entry.get("name", "")
+        searchable = (str(code) + " " + name).lower()
+        if not all(seg in searchable for seg in filterSegments):
+            continue
+
+        item = ComboBoxItem()
+        item.Content = "EPSG:" + str(code) + " - " + name
+        item.Tag = code
+        combo.Items.Add(item)
+
+        if preferredCode is not None and code == preferredCode:
+            target = item
+
+    if target is not None:
+        combo.SelectedItem = target
+    elif combo.Items.Count > 0:
+        combo.SelectedIndex = 0
 
 
 def _run_pdal_pipeline(pdalExePath, pipelinePath, statusText, progressCallback=None):
@@ -2323,16 +2405,18 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
 
                     self.set_run_progress(statusText, int(bytesSent * 100 / totalBytes))
 
+            civManualSrid = entry.get("civilloManualCrsCode") if entry.get("civilloManualCrs") else None
+
             if entry.get("civilloLayerId") is not None:
                 self.set_run_progress("Uploading to Civillo...", 0)
-                push_to_civillo(self.civilloClient, entry["civilloOrgNickname"], entry["civilloProjectId"], entry["civilloLayerId"], files, reportCivilloUploadProgress)
+                push_to_civillo(self.civilloClient, entry["civilloOrgNickname"], entry["civilloProjectId"], entry["civilloLayerId"], files, reportCivilloUploadProgress, manualSrid=civManualSrid)
                 pushed.append("Civillo")
 
             if entry.get("civilloCreateNewLayer"):
                 titleTemplate = entry.get("civilloNewLayerTitleTemplate") or "{YYMMDD} "
                 newTitle = titleTemplate.replace("{YYMMDD}", surveyYYMMDD) if surveyYYMMDD else titleTemplate
                 self.set_run_progress("Creating new Civillo layer...", 0)
-                push_to_civillo_create_new(self.civilloClient, entry["civilloOrgNickname"], entry["civilloProjectId"], newTitle, files, reportCivilloUploadProgress)
+                push_to_civillo_create_new(self.civilloClient, entry["civilloOrgNickname"], entry["civilloProjectId"], newTitle, files, reportCivilloUploadProgress, manualSrid=civManualSrid)
                 pushed.append("Civillo (new layer)")
 
         if entry.get("trimbleConnectEnabled", True) and entry.get("trimbleConnectTargetName") is not None:
@@ -2878,6 +2962,9 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
                 "projectId": dlg.result["projectId"],
                 "orgName": str(orgItem.Content) if orgItem is not None else "",
                 "projectName": str(projectItem.Content) if projectItem is not None else "",
+                "manualCrs": dlg.result["manualCrs"],
+                "manualCrsCode": dlg.result["manualCrsCode"],
+                "manualCrsName": dlg.result["manualCrsName"],
             }
             self.schedules.append(entry)
             self.save_schedules()
@@ -2904,6 +2991,9 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
             existingEntry["civilloLayerId"] = dlg.result["civilloLayerId"]
             existingEntry["orgNickname"] = dlg.result["orgNickname"]
             existingEntry["projectId"] = dlg.result["projectId"]
+            existingEntry["manualCrs"] = dlg.result["manualCrs"]
+            existingEntry["manualCrsCode"] = dlg.result["manualCrsCode"]
+            existingEntry["manualCrsName"] = dlg.result["manualCrsName"]
             existingEntry.pop("lastSyncedHash", None)  # force the next run, even if file 1 is unchanged but file 2 was added/removed
             self.save_schedules()
             self.refresh_schedules_ui()
@@ -2953,9 +3043,13 @@ class SCR_CloudReviseDialog(Window): # this inherits from the WPF Window control
             return "skipped"
 
         # Civillo's auto-detection of the source SRS is currently unavailable server-side, so we
-        # must pass the project's own default projection explicitly instead of relying on srid=-1 (auto).
-        projectInfo = self.civilloClient.get("/" + entry["orgNickname"] + "/projects/" + str(entry["projectId"]))
-        srid = projectInfo.get("defaultProjection", -1)
+        # must pass a projection explicitly instead of relying on srid=-1 (auto) - either the project's
+        # own default, or this entry's manually-selected EPSG code if "manually select CRS" is on
+        if entry.get("manualCrs") and entry.get("manualCrsCode") is not None:
+            srid = entry["manualCrsCode"]
+        else:
+            projectInfo = self.civilloClient.get("/" + entry["orgNickname"] + "/projects/" + str(entry["projectId"]))
+            srid = projectInfo.get("defaultProjection", -1)
 
         # local file 2 (e.g. a linestyle file) is optional - only include it if the user supplied one
         files = [(localPath1, os.path.basename(localPath1))]
@@ -3001,6 +3095,8 @@ class SCR_CloudReviseAddSyncDialog(Window):
         self.projectId = projectId
         self.existingEntry = existingEntry
         self.result = None
+        self.macroFileFolder = macroFileFolder
+        self.crsList = load_crs_list(macroFileFolder)
 
         existingLocalPath1 = existingEntry.get("localPath1", "") if existingEntry is not None else ""
         existingLocalPath2 = existingEntry.get("localPath2", "") if existingEntry is not None else ""
@@ -3025,6 +3121,10 @@ class SCR_CloudReviseAddSyncDialog(Window):
         self.clearLocalFile1Btn.Click += self.clear_local_file1_clicked
         self.clearLocalFile2Btn.Click += self.clear_local_file2_clicked
         self.clearCivilloFileBtn.Click += self.clear_civillo_file_clicked
+        self.manualCrsCheckbox.Checked += self.manual_crs_changed
+        self.manualCrsCheckbox.Unchecked += self.manual_crs_changed
+        self.crsFilterBox.TextChanged += self.crs_filter_changed
+        self.crsCombo.SelectionChanged += self.crs_selection_changed
         self.okBtn.Click += self.ok_clicked
         self.cancelBtn.Click += self.cancel_clicked
 
@@ -3043,6 +3143,24 @@ class SCR_CloudReviseAddSyncDialog(Window):
         if self.localFolder2:
             self.populate_local_files(self.localFileList2, self.localFolder2)
             self.select_item_by_text(self.localFileList2, os.path.basename(existingLocalPath2))
+
+        # "manually select CRS" - existingEntry (Edit) wins over the last-remembered value (Add), same
+        # precedence used throughout the Propeller dialog for its own per-entry options
+        entryManualCrs = existingEntry.get("manualCrs") if existingEntry is not None else None
+        entryManualCrsCode = existingEntry.get("manualCrsCode") if existingEntry is not None else None
+        if existingEntry is not None:
+            self.manualCrsCheckbox.IsChecked = bool(entryManualCrs)
+        else:
+            savedManualCrs = OptionsManager.GetString("SCR_CloudRevise_AddSync.manualcrs", "")
+            self.manualCrsCheckbox.IsChecked = bool(savedManualCrs) and savedManualCrs != "False"
+
+        self.crsFilterBox.Text = OptionsManager.GetString("SCR_CloudRevise_AddSync.crsfilter", "")
+
+        initialCrsCode = entryManualCrsCode
+        if initialCrsCode is None:
+            savedCrsCode = OptionsManager.GetString("SCR_CloudRevise_AddSync.lastcrscode", "")
+            initialCrsCode = int(savedCrsCode) if savedCrsCode.isdigit() else None
+        populate_crs_combo(self.crsCombo, self.crsList, self.crsFilterBox.Text, initialCrsCode)
 
 
     # ---------- window position/size persistence ----------
@@ -3137,6 +3255,22 @@ class SCR_CloudReviseAddSyncDialog(Window):
 
     def clear_civillo_file_clicked(self, sender, e):
         self.civilloFileList.SelectedItem = None
+
+    def manual_crs_changed(self, sender, e):
+        OptionsManager.SetValue("SCR_CloudRevise_AddSync.manualcrs", str(bool(self.manualCrsCheckbox.IsChecked)))
+
+    def crs_filter_changed(self, sender, e):
+        OptionsManager.SetValue("SCR_CloudRevise_AddSync.crsfilter", self.crsFilterBox.Text)
+        self.repopulate_crs_combo()
+
+    def crs_selection_changed(self, sender, e):
+        item = self.crsCombo.SelectedItem
+        if item is not None:
+            OptionsManager.SetValue("SCR_CloudRevise_AddSync.lastcrscode", str(item.Tag))
+
+    def repopulate_crs_combo(self):
+        currentCode = self.crsCombo.SelectedItem.Tag if self.crsCombo.SelectedItem is not None else None
+        populate_crs_combo(self.crsCombo, self.crsList, self.crsFilterBox.Text, currentCode)
 
     def refresh_civillo_files_clicked(self, sender, e):
         self.civilloFileList.Items.Clear()
@@ -3244,6 +3378,12 @@ class SCR_CloudReviseAddSyncDialog(Window):
         localPath1 = os.path.join(self.localFolder1, str(local1Item))
         localPath2 = os.path.join(self.localFolder2, str(local2Item)) if local2Item is not None else ""
 
+        manualCrs = bool(self.manualCrsCheckbox.IsChecked)
+        crsItem = self.crsCombo.SelectedItem if manualCrs else None
+        if manualCrs and crsItem is None:
+            self.error.Content = "Select a CRS, or uncheck \"Manually select CRS\"."
+            return
+
         self.result = {
             "localPath1": localPath1,
             "localPath2": localPath2,
@@ -3251,6 +3391,9 @@ class SCR_CloudReviseAddSyncDialog(Window):
             "civilloLayerId": civilloItem.Tag["layerId"],
             "orgNickname": self.orgNickname,
             "projectId": self.projectId,
+            "manualCrs": manualCrs,
+            "manualCrsCode": crsItem.Tag if crsItem is not None else None,
+            "manualCrsName": str(crsItem.Content) if crsItem is not None else None,
         }
         self.Close()
 
@@ -3285,6 +3428,8 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
         self.trimbleConnectClient = TrimbleConnectClient()
         self.existingEntry = existingEntry
         self.result = None
+        self.macroFileFolder = macroFileFolder
+        self.crsList = load_crs_list(macroFileFolder)
 
         self.tcProjectRoot = None
         self.tcFolderStack = []
@@ -3312,6 +3457,10 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
         self.civCreateNewLayerCheckbox.Checked += self.civ_create_new_layer_changed
         self.civCreateNewLayerCheckbox.Unchecked += self.civ_create_new_layer_changed
         self.civNewLayerTitleBox.TextChanged += self.civ_new_layer_title_changed
+        self.civManualCrsCheckbox.Checked += self.civ_manual_crs_changed
+        self.civManualCrsCheckbox.Unchecked += self.civ_manual_crs_changed
+        self.civCrsFilterBox.TextChanged += self.civ_crs_filter_changed
+        self.civCrsCombo.SelectionChanged += self.civ_crs_selection_changed
 
         self.tcEnabledCheckbox.Checked += self.tc_enabled_changed
         self.tcEnabledCheckbox.Unchecked += self.tc_enabled_changed
@@ -3369,6 +3518,23 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
 
         entryNewLayerTitle = self.existingEntry.get("civilloNewLayerTitleTemplate") if self.existingEntry is not None else None
         self.civNewLayerTitleBox.Text = entryNewLayerTitle if entryNewLayerTitle else (self.get_saved("civnewlayertitle") or "{YYMMDD} ")
+
+        # "manually select CRS" - same existingEntry-wins-over-remembered precedence as the other options above
+        entryManualCrs = self.existingEntry.get("civilloManualCrs") if self.existingEntry is not None else None
+        entryManualCrsCode = self.existingEntry.get("civilloManualCrsCode") if self.existingEntry is not None else None
+        if self.existingEntry is not None:
+            self.civManualCrsCheckbox.IsChecked = bool(entryManualCrs)
+        else:
+            savedManualCrs = self.get_saved("civmanualcrs")
+            self.civManualCrsCheckbox.IsChecked = bool(savedManualCrs) and savedManualCrs != "False"
+
+        self.civCrsFilterBox.Text = self.get_saved("civcrsfilter")
+
+        initialCivCrsCode = entryManualCrsCode
+        if initialCivCrsCode is None:
+            savedCivCrsCode = self.get_saved("civlastcrscode")
+            initialCivCrsCode = int(savedCivCrsCode) if savedCivCrsCode.isdigit() else None
+        populate_crs_combo(self.civCrsCombo, self.crsList, self.civCrsFilterBox.Text, initialCivCrsCode)
 
         self.civEnabledCheckbox.IsChecked = self._resolve_enabled_checkbox("civilloEnabled", "civenabled")
         self.tcEnabledCheckbox.IsChecked = self._resolve_enabled_checkbox("trimbleConnectEnabled", "tcenabled")
@@ -3694,6 +3860,22 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
 
     def civ_new_layer_title_changed(self, sender, e):
         self.save_selected("civnewlayertitle", self.civNewLayerTitleBox.Text)
+
+    def civ_manual_crs_changed(self, sender, e):
+        self.save_selected("civmanualcrs", str(bool(self.civManualCrsCheckbox.IsChecked)))
+
+    def civ_crs_filter_changed(self, sender, e):
+        self.save_selected("civcrsfilter", self.civCrsFilterBox.Text)
+        self.repopulate_civ_crs_combo()
+
+    def civ_crs_selection_changed(self, sender, e):
+        item = self.civCrsCombo.SelectedItem
+        if item is not None:
+            self.save_selected("civlastcrscode", item.Tag)
+
+    def repopulate_civ_crs_combo(self):
+        currentCode = self.civCrsCombo.SelectedItem.Tag if self.civCrsCombo.SelectedItem is not None else None
+        populate_crs_combo(self.civCrsCombo, self.crsList, self.civCrsFilterBox.Text, currentCode)
 
     def tc_laz_method_changed(self, sender, e):
         if sender.IsChecked:
@@ -4040,6 +4222,12 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
             self.error.Content = "Select a Propeller file and a Civillo (existing layer or \"create additional new layer\") or Trimble Connect target (with its checkbox enabled)."
             return
 
+        civManualCrs = bool(self.civManualCrsCheckbox.IsChecked) and (civFileItem is not None or civCreateNew)
+        civCrsItem = self.civCrsCombo.SelectedItem if civManualCrs else None
+        if civManualCrs and civCrsItem is None:
+            self.error.Content = "Select a CRS, or uncheck \"Manually select CRS\"."
+            return
+
         # propFileItem.Content is a colored TextBlock now (see propeller_survey_selection_changed), not
         # plain text - rebuild the display string from the underlying file dict instead of str()'ing it
         propFileDisplayText = propFileItem.Tag.get("name", "(unnamed)") + " (" + propFileItem.Tag.get("type", "?") + ")"
@@ -4084,6 +4272,10 @@ class SCR_CloudReviseAddPropellerSyncDialog(Window):
             if civCreateNew:
                 result["civilloNewLayerTitleTemplate"] = self.civNewLayerTitleBox.Text
                 targetLabels.append("Civillo: create new layer '" + self.civNewLayerTitleBox.Text + "'")
+
+            result["civilloManualCrs"] = civManualCrs
+            result["civilloManualCrsCode"] = civCrsItem.Tag if civCrsItem is not None else None
+            result["civilloManualCrsName"] = str(civCrsItem.Content) if civCrsItem is not None else None
 
             if isOrtho:
                 # format is independent of whether a pixel size was entered at all - a blank m/pixel box

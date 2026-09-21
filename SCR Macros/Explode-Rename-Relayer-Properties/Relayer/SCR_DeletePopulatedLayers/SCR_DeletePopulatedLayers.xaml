@@ -1,6 +1,7 @@
 <StackPanel Background="#FFF3F3F7"
        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
+       xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
        d:DesignWidth="245.277" d:DesignHeight="491.228"  >
 
     <Label Content="Clean and delete populated layers:"/>
@@ -31,11 +32,15 @@
 
     <GroupBox>
         <GroupBox.Header>
-            <RadioButton x:Name="multilayer" Content="Clean multiple layers - tick them" GroupName="selection" IsChecked="False"/>
+            <RadioButton x:Name="multilayer" Content="Clean multiple layers" GroupName="selection" IsChecked="False"/>
         </GroupBox.Header>
-        <Border IsEnabled="{Binding IsChecked, ElementName=multilayer}">
+        <Border IsEnabled="{Binding IsChecked, ElementName=multilayer}" Background="#FF97B9D9">
             <StackPanel>
-                <Wpf:CheckedListBoxEntityPicker x:Name="layerticklist" Height="400"/>
+                <UniformGrid Columns="2">
+                    <Label Content="Pre-filter list&#xA;(case insensitive)" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                    <TextBox x:Name="ticklistfilter" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                </UniformGrid>
+                <wfi:WindowsFormsHost x:Name="layerlisthost" Height="400"/>
             </StackPanel>
         </Border>
     </GroupBox>

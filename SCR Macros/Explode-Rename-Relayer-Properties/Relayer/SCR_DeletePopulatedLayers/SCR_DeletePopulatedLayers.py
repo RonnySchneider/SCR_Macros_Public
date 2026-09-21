@@ -27,6 +27,7 @@ _OPTIONS = {
     "searchlayer": False,
     "searchtext": "",
     "multilayer": False,
+    "ticklistfilter": "",    # must be last — TextChanged fires SaveOptions via FilterChanged
 }
 
 def Setup(cmdData, macroFileFolder):
@@ -43,7 +44,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Delete Layers"
         cmdData.DefaultRibbonToolSize = 0 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.07
+        cmdData.Version = 1.071
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -76,12 +77,8 @@ class SCR_DeletePopulatedLayers(StackPanel): # this inherits from the WPF StackP
         buttons[2].Visibility = Visibility.Visible
         buttons[2].Click += self.HelpClicked
         self.Caption = cmd.Command.Caption
-        self.layerticklist.SearchContainer = Project.FixedSerial.LayerContainer
-        self.layerticklist.UseSelectionEngine = False
-        self.layerticklist.SetEntityType(clr.GetClrType(Layer), self.currentProject)
-        # Description is the actual property name inside the item in ticklist.Content.Items
-        sd = System.ComponentModel.SortDescription("Description", System.ComponentModel.ListSortDirection.Ascending)
-        self.layerticklist.Content.Items.SortDescriptions.Add(sd)
+        self.layerticklist, self.innerlist = SCREntityPicker.create_layers(self.layerlisthost)
+        self.ticklistfilter.TextChanged += self.FilterChanged
 		# after changing the input fields in a lot of macros from the old textboxes to floating point number or distance edits
 		# it could happen that old settings, saved as strings, would throw a type cast error
 		# hence it's better to have it in a try block
@@ -104,6 +101,24 @@ class SCR_DeletePopulatedLayers(StackPanel): # this inherits from the WPF StackP
 
     def SaveOptions(self):
         SCROptions.SaveMacroOptions(self, "SCR_DeletePopulatedLayers", _OPTIONS)
+
+    def FilterChanged(self, ctrl, e):
+
+        exclude = []
+        self.layerticklist.SetExcludedEntities(exclude)
+
+        tt = self.ticklistfilter.Text.lower()
+        ticklistfilter = tt.split()
+
+        for i in self.layerticklist.EntitySerialNumbers:
+            for f in ticklistfilter:
+               if not f in i.Key.Description.lower():
+                    exclude.Add(i.Value)
+
+        self.layerticklist.SetExcludedEntities(exclude)
+        SCREntityPicker.reapply_highlights(self.innerlist)
+
+        self.SaveOptions()
 
     def CancelClicked(self, cmd, args):
         cmd.CloseUICommand ()
@@ -135,9 +150,7 @@ class SCR_DeletePopulatedLayers(StackPanel): # this inherits from the WPF StackP
 
                 # get either just one layer serial from the layerpicker or multiple if they are ticked in the list
                 if self.multilayer.IsChecked:
-                    for item in self.layerticklist.Content.ItemsSource:
-                        if item.Checked:
-                            layerserials.Add(item.EntitySerialNumber)
+                    layerserials.extend(SCREntityPicker.get_selected_serials(self.layerticklist, self.innerlist))
                 
                 # one single layer from layerpicker
                 if self.picklayer.IsChecked:

@@ -89,6 +89,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ListBox x:Name="civFileList" Grid.Row="0" MinWidth="180"/>
             <StackPanel x:Name="civCreateNewLayerPanel" Grid.Row="1" Margin="0,4,0,0">
@@ -127,6 +128,12 @@
                     <Label Content="Spacing (m)" Padding="0,0,4,0" VerticalAlignment="Center" ToolTip="Target point spacing in meters"/>
                     <TextBox x:Name="civLazSpacingBox" Width="50" Text="10" VerticalAlignment="Center"/>
                 </StackPanel>
+            </StackPanel>
+            <StackPanel x:Name="civManualCrsPanel" Grid.Row="5" Margin="0,4,0,0">
+                <CheckBox x:Name="civManualCrsCheckbox" Content="Manually select CRS" VerticalAlignment="Center"
+                          ToolTip="Overrides the Civillo project's own default coordinate system with a specific EPSG code for this sync entry"/>
+                <TextBox x:Name="civCrsFilterBox" Margin="0,4,0,0" VerticalAlignment="Center" IsEnabled="{Binding IsChecked, ElementName=civManualCrsCheckbox}" ToolTip="Type to filter the CRS list below by code or name"/>
+                <ComboBox x:Name="civCrsCombo" Margin="0,4,0,0" MaxDropDownHeight="300" IsEnabled="{Binding IsChecked, ElementName=civManualCrsCheckbox}"/>
             </StackPanel>
         </Grid>
 
