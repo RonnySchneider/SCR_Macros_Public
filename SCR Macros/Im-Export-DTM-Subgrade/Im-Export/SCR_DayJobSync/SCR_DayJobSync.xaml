@@ -70,7 +70,7 @@
 
     <Grid Margin="8">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- 0 - "BETA Testing" banner -->
+            <RowDefinition Height="Auto"/> <!-- 0 - unused (was the "BETA Testing" banner) - kept so the row numbers below don't shift -->
             <RowDefinition Height="Auto"/> <!-- 1 - "Local Download Target" framed group -->
             <RowDefinition Height="Auto"/> <!-- 2 - "Local Excel Register" framed group -->
             <RowDefinition Height="Auto"/> <!-- 3 - reload / region -->
@@ -84,8 +84,6 @@
             <RowDefinition Height="Auto"/> <!-- 11 - error label -->
             <RowDefinition Height="Auto"/> <!-- 12 - sync button -->
         </Grid.RowDefinitions>
-
-        <TextBlock Grid.Row="0" Text="BETA Testing" FontWeight="Bold" FontStyle="Italic" Foreground="Red" HorizontalAlignment="Center" Margin="0,0,0,6"/>
 
         <GroupBox Grid.Row="1" Margin="0,0,0,8" Padding="4">
             <GroupBox.Header>

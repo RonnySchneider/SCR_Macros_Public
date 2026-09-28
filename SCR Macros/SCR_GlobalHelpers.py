@@ -7,7 +7,7 @@ class SCROverlayBag:
         if l1 is None:
             return pts
 
-        if l1.Normal.Horizon < math.pi / 2 - 1e-9:
+        if hasattr(l1, "Normal") and l1.Normal.Horizon < math.pi / 2 - 1e-9:
             # UCS line: flatten, linearise, transform chord back, walk segments for position + direction
             orgNormal = l1.Normal.Clone()
             centerp   = l1.OriginOfUcs
@@ -89,7 +89,7 @@ class SCROverlayBag:
 
         orgNormal = None
         matrixbackfromflat = None
-        if l.Normal.Horizon < math.pi / 2 - 1e-9:
+        if hasattr(l, "Normal") and l.Normal.Horizon < math.pi / 2 - 1e-9:
             orgNormal = l.Normal.Clone()
             centerp = l.OriginOfUcs
             nv = orgNormal.Clone()
@@ -893,17 +893,30 @@ class SCRExpanders:
         ])
     The XAML expanders must NOT use IsExpanded binding; set IsExpanded="True/False"
     directly to match the initial RadioButton state.
+
+    CheckBox pairs are supported too: collapsing the expander additionally unticks
+    its CheckBox (for RadioButtons collapsing is ignored, so the group never ends
+    up with nothing selected).
     """
 
     @staticmethod
     def wire_pairs(pairs):
         syncing = [False]
 
-        def make_expanded(rb):
-            def handler(*_):
-                if not syncing[0]:
+        # Expanded/Collapsed are bubbling routed events - ignore ones raised by nested expanders
+        def make_expanded(ex, rb):
+            def handler(sender, e):
+                if e.OriginalSource is ex and not syncing[0]:
                     syncing[0] = True
                     rb.IsChecked = True
+                    syncing[0] = False
+            return handler
+
+        def make_collapsed(ex, cb):
+            def handler(sender, e):
+                if e.OriginalSource is ex and not syncing[0]:
+                    syncing[0] = True
+                    cb.IsChecked = False
                     syncing[0] = False
             return handler
 
@@ -919,7 +932,9 @@ class SCRExpanders:
             return handler
 
         for expander, radiobutton in pairs:
-            expander.Expanded        += make_expanded(radiobutton)
+            expander.Expanded        += make_expanded(expander, radiobutton)
+            if type(radiobutton).__name__ == "CheckBox":
+                expander.Collapsed   += make_collapsed(expander, radiobutton)
             radiobutton.Checked      += make_checked(expander)
             radiobutton.Unchecked    += make_unchecked(expander)
 

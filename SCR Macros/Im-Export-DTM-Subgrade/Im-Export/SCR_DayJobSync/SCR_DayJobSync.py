@@ -815,7 +815,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version = 1.033
+        cmdData.Version = 1.035
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -1375,6 +1375,32 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
 
         filesFolder = next((c for c in siblings if c.IsFolder and str(c.FileName) == filesFolderName), None)
 
+        # a .job usually comes with a matching .jxl export (and vice versa) - if the other one sits next
+        # to the selected file with the same base name, it's downloaded and archived alongside it
+        companionFile = None
+        companionExtensions = {".job": ".jxl", ".jxl": ".job"}
+        companionExtension = companionExtensions.get(os.path.splitext(fileName)[1].lower())
+        if companionExtension is not None:
+            companionFile = next((c for c in siblings if not c.IsFolder
+                                  and os.path.splitext(str(c.FileName))[0].lower() == folderName.lower()
+                                  and os.path.splitext(str(c.FileName))[1].lower() == companionExtension), None)
+
+        if companionFile is not None:
+            companionFileName = str(companionFile.FileName)
+            companionDownloadPath = os.path.join(controllerDataFolder, companionFileName)
+            self.statusLabel.Text = "Downloading " + companionFileName + "..."
+            self.Dispatcher.Invoke(DispatcherPriority.Render, Action(lambda: None))
+            try:
+                self.trimbleConnectClient.download_file(companionFile, companionDownloadPath)
+            except Exception as ex:
+                self.syncBtn.IsEnabled = True
+                self.error.Content = fileName + " downloaded, but " + companionFileName + " download failed: " + str(ex)
+                return
+            if not self.wait_for_file(companionDownloadPath, expectedSize=companionFile.Size):
+                self.syncBtn.IsEnabled = True
+                self.error.Content = "Download reported success, but the file is not at: " + companionDownloadPath
+                return
+
         if filesFolder is not None:
             self.statusLabel.Text = "Downloading " + filesFolderName + "..."
             self.Dispatcher.Invoke(DispatcherPriority.Render, Action(lambda: None))
@@ -1399,6 +1425,8 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
             try:
                 oldJobFolder = self.trimbleConnectClient.get_or_create_child_folder(parentFolder, oldJobFolderName)
                 self.archive_item_on_connect(connectFile, False, fileName, parentFolder, oldJobFolder, downloadPath)
+                if companionFile is not None:
+                    self.archive_item_on_connect(companionFile, False, companionFileName, parentFolder, oldJobFolder, companionDownloadPath)
                 if filesFolder is not None:
                     self.archive_item_on_connect(filesFolder, True, filesFolderName, parentFolder, oldJobFolder,
                                                   os.path.join(controllerDataFolder, filesFolderName))
@@ -1430,6 +1458,8 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
 
         self.syncBtn.IsEnabled = True
         self.statusLabel.Text = "Downloaded to: " + downloadPath
+        if companionFile is not None:
+            self.statusLabel.Text += " (with " + companionFileName + ")"
         if filesFolder is not None:
             self.statusLabel.Text += " (with " + filesFolderName + ")"
         if oldJobFolderEnabled and oldJobFolderName:

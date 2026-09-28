@@ -260,42 +260,74 @@ def merge_ribbon_items(srcpath, dstpath, tab_captions, toolbar_names):
     # through unmodified rather than risk stripping something load-bearing.
     href_re = re.compile(r'href="#(ref-\d+)"')
 
+    # Every tool placed on a tab/toolbar is only an instance (IsClonedTool) of a
+    # root tool in the RootToolsCollection, which owns the Key and SharedProps
+    # (caption, image, tooltip). A default/fresh target export only contains
+    # root tools for what's on its own ribbon, so e.g. macro commands are
+    # missing entirely - the instance's Key can't be resolved there and the
+    # import fails. In that case the source's root tool gets grafted as well.
+    src_tools_m = re.search(r'<a1:UltraToolbarsStreamer id="ref-1".*?<Tools href="#(ref-\d+)"', src, re.S)
+    src_root_tools = set()
+    if src_tools_m:
+        rstart, rend = id_spans[src_tools_m.group(1)]
+        src_root_tools = set(href_re.findall(src[rstart:rend]))
+    grafted_root_tools = set()
+
+    # borrowed leaves that can neither be resolved in the target nor grafted
+    # with their owner, they get defined inline at their first reference
+    inline_leaves = {}
+
     def bfs_closure(seed_ids, apply_clean):
         visited_local = set(seed_ids)
         queue = list(seed_ids)
         while queue:
-            cur = queue.pop()
-            start, end = id_spans[cur]
-            raw = src[start:end]
-            block = clean_block(raw) if apply_clean else raw
-            for hm in href_re.finditer(block):
-                target = hm.group(1)
-                if target in external_resolve:
-                    continue
-                if target not in visited_local:
-                    visited_local.add(target)
-                    queue.append(target)
+            while queue:
+                cur = queue.pop()
+                start, end = id_spans[cur]
+                raw = src[start:end]
+                block = clean_block(raw) if apply_clean else raw
+                for hm in href_re.finditer(block):
+                    target = hm.group(1)
+                    if target in external_resolve or target in inline_leaves:
+                        continue
+                    if target not in visited_local:
+                        visited_local.add(target)
+                        queue.append(target)
 
-        # Post-pass for named (non-empty) borrowed Key/UnderlyingToolTypeID
-        # objects - see comment above. Both are always leaf nodes (no outgoing
-        # href of their own), so removing one here is always safe - nothing
-        # else becomes unreachable as a result.
-        for rid in list(visited_local):
-            if rid in external_resolve:
-                continue
-            ancestor = id_ancestor.get(rid)
-            if ancestor is None or ancestor in visited_local:
-                continue
-            start, end = id_spans[rid]
-            block = src[start:end]
-            tagm = re.match(r'<(\w+) id="ref-\d+">([^<]+)</\1>', block)
-            if not tagm or tagm.group(1) not in BORROWED_TAGS:
-                continue
-            tag, text = tagm.group(1), tagm.group(2)
-            dm = re.search(r'<' + tag + r' id="(ref-\d+)">' + re.escape(text) + r'</' + tag + r'>', dst)
-            if dm:
-                external_resolve[rid] = dm.group(1)
-                visited_local.discard(rid)
+            # Post-pass for borrowed text leaves, i.e. strings defined inline in
+            # an object outside the closure (named Key/UnderlyingToolTypeID, but
+            # also e.g. a SharedProps' <Category href> pointing at another tool's
+            # category string). These are always leaf nodes (no outgoing href of
+            # their own), so removing one here is always safe - nothing else
+            # becomes unreachable as a result. None of them may be emitted as a
+            # bare element directly under the SOAP Body.
+            for rid in list(visited_local):
+                if rid in external_resolve:
+                    continue
+                ancestor = id_ancestor.get(rid)
+                if ancestor is None or ancestor in visited_local:
+                    continue
+                start, end = id_spans[rid]
+                block = src[start:end]
+                tagm = re.match(r'<(\w+) id="ref-\d+">([^<]+)</\1>', block)
+                if not tagm or tagm.group(1) not in BORROWED_TAGS:
+                    inline_leaves[rid] = block
+                    visited_local.discard(rid)
+                    continue
+                tag, text = tagm.group(1), tagm.group(2)
+                dm = re.search(r'<' + tag + r' id="(ref-\d+)">' + re.escape(text) + r'</' + tag + r'>', dst)
+                if dm:
+                    external_resolve[rid] = dm.group(1)
+                    visited_local.discard(rid)
+                elif tag == 'Key' and ancestor in src_root_tools:
+                    # the Key stays inline in the grafted root tool, and the
+                    # root tool's own SharedProps etc. get pulled in by the BFS
+                    grafted_root_tools.add(ancestor)
+                    visited_local.add(ancestor)
+                    queue.append(ancestor)
+                else:
+                    inline_leaves[rid] = block
+                    visited_local.discard(rid)
 
         return visited_local
 
@@ -324,6 +356,17 @@ def merge_ribbon_items(srcpath, dstpath, tab_captions, toolbar_names):
             fragments[idx] = set_toolbar_name(fragments[idx], final_toolbar_names[name])
 
     blob = "\n\t\t".join(fragments)
+
+    # a bare <Key id=...> directly under the SOAP Body isn't a valid object,
+    # so define each such leaf at its first reference instead
+    # (the referencing field keeps its own name, e.g. <CustomizerCaption> for a <Caption> string)
+    for rid, leaf in inline_leaves.items():
+        hm = re.search(r'<(\w+) href="#' + rid + r'"/>', blob)
+        if hm:
+            leafm = re.match(r'<\w+ id="ref-\d+"(?:/>|>(.*)</\w+>)$', leaf, re.S)
+            content = leafm.group(1) if leafm and leafm.group(1) is not None else ''
+            field = hm.group(1)
+            blob = blob[:hm.start()] + '<' + field + ' id="' + rid + '">' + content + '</' + field + '>' + blob[hm.end():]
 
     external_nums = set(int(rid[4:]) for rid in external_resolve)
     all_nums = set()
@@ -444,13 +487,35 @@ def merge_ribbon_items(srcpath, dstpath, tab_captions, toolbar_names):
             new_streamer_body = '<Toolbars href="#ref-' + str(new_coll_id) + '"/>\n' + streamer_body
             dst = dst[:sm.start(2)] + new_streamer_body + dst[sm.end(2):]
 
+    # splice grafted root tools into the target's RootToolsCollection
+    if grafted_root_tools:
+        tm = re.search(r'<a1:UltraToolbarsStreamer id="ref-1".*?<Tools href="#(ref-\d+)"', dst, re.S)
+        if not tm:
+            raise Exception("Could not locate the root Tools collection in the target file.")
+        tag_name, coll_start, coll_end, coll_text = _find_collection(dst, tm.group(1))
+        old_count = int(re.search(r'<Count>(\d+)</Count>', coll_text).group(1))
+
+        new_entries = []
+        count = old_count
+        for rid in sorted(grafted_root_tools, key=lambda r: id_spans[r][0]):
+            new_entries.append("<" + encode_index(count) + ' href="#ref-' + str(remap[int(rid[4:])]) + '"/>\n')
+            count += 1
+
+        new_coll_text = coll_text.replace("<Count>" + str(old_count) + "</Count>", "<Count>" + str(count) + "</Count>", 1)
+        close_tag = "</a1:" + tag_name + ">"
+        insert_at = new_coll_text.rindex(close_tag)
+        new_coll_text = new_coll_text[:insert_at] + "".join(new_entries) + new_coll_text[insert_at:]
+
+        dst = dst[:coll_start] + new_coll_text + dst[coll_end:]
+
     body_close = "</SOAP-ENV:Body>"
     idx = dst.rindex(body_close)
     insertion = blob + "\n" + "".join(extra_blocks)
     dst = dst[:idx] + insertion + dst[idx:]
 
     tag_parts = [final_captions[c] for c in tab_captions] + [final_toolbar_names[n] for n in toolbar_names]
-    tag = "+".join(tag_parts)
+    # tab captions like "SCR ImExport/DTM/Subgrade" contain invalid filename characters
+    tag = re.sub(r'[\\/:*?"<>|]', '_', "+".join(tag_parts))
     base, ext = os.path.splitext(dstpath)
     outpath = base + " + " + tag + ext
 
@@ -475,7 +540,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
         cmdData.EnableNoProject = True
 
-        cmdData.Version = 1.015
+        cmdData.Version = 1.017
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 

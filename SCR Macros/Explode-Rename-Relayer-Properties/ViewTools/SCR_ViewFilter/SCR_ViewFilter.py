@@ -38,7 +38,7 @@ def Setup(cmdData, macroFileFolder):
     cmdData.HelpTopic = "22602"
 
     try:
-        cmdData.Version = 1.10
+        cmdData.Version = 1.101
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         

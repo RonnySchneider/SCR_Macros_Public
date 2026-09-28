@@ -147,6 +147,10 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>28/09/2026 – <a class="class2" href="#SCR_ImportRibbonTab">SCR_ImportRibbonTab</a> – fixed merging into a default (uncustomized) ribbon export, which previously produced a file TBC couldn't import</li>
+
+          <li>28/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> – no longer beta; when a .job file is synced, a matching .jxl file with the same name is downloaded and archived along with it (and vice versa)</li>
+
           <li>21/09/2026 – <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – both Add/Edit sync dialogs can now manually select a CRS to upload to Civillo with, instead of always using the project's own default</li>
 
           <li>19/09/2026 – <a class="class2" href="#SCR_DeletePopulatedLayers">SCR_DeletePopulatedLayers</a> – multi-layer selection changed to list-style selection with a pre-filter</li>
@@ -1472,11 +1476,11 @@
 
         <h3 id="SCR_DayJobSync" class="header3"><a id="SCR_DayJobSync"></a>SCR_DayJobSync</h3>
           <ul>
-              <li><span style="color:#CC0000; font-weight:bold;">BETA Testing</span> – a floating window that logs into Trimble Connect (reusing TBC's own signed-in Trimble ID session, no separate login) and browses its region/project/folder tree to pick a day job file to download</li>
-              <li>select the Job file itself (not a folder) – its filename must start with a 6-digit date (YYMMDD); if a matching "&lt;job name&gt; Files" subfolder exists alongside it on Connect, that gets downloaded too</li>
+              <li>a floating window that logs into Trimble Connect (reusing TBC's own signed-in Trimble ID session, no separate login) and browses its region/project/folder tree to pick a day job file to download</li>
+              <li>select the Job file itself (not a folder) – its filename must start with a 6-digit date (YYMMDD); if a matching "&lt;job name&gt; Files" subfolder exists alongside it on Connect, that gets downloaded too; if a .job file is selected and a .jxl file with the same name exists next to it (or the other way round), both are downloaded</li>
               <li>Local Download Target: choose a local sync folder and a Folder Structure template that defines the subfolder layout underneath it, using placeholders <span class="auto-style3">{YYYY}</span>, <span class="auto-style3">{YY}</span>, <span class="auto-style3">{MM}</span>, <span class="auto-style3">{YYMM}</span> and <span class="auto-style3">{Job}</span> (e.g. <span class="auto-style3">{YYYY}/{YYMM}/{Job}</span>) – optional Controller Data and TBC subfolders can each be created underneath, or unticked to place the files directly in that folder</li>
               <li>Local Excel Register: optionally logs the job name into the next empty row of a chosen column in an existing Excel workbook, then leaves that workbook open so the rest of the row can be filled in by hand</li>
-              <li>Connect old Job folder: optionally archives the job (and its Files subfolder) into an "old job" folder on Connect once downloaded – tries a real move through the Trimble Connect Web API first (fast, regardless of file size), falling back to an upload-then-delete if that isn't available</li>
+              <li>Connect old Job folder: optionally archives the job (plus its matching .job/.jxl file and its Files subfolder) into an "old job" folder on Connect once downloaded – tries a real move through the Trimble Connect Web API first (fast, regardless of file size), falling back to an upload-then-delete if that isn't available</li>
               <li>Field Data from synching straight out of Access: a second list next to the Connect browser shows the selected project's Field Data jobs – select one and Sync downloads its files into the same Controller Data folder a regular day job would use</li>
           </ul>
 
