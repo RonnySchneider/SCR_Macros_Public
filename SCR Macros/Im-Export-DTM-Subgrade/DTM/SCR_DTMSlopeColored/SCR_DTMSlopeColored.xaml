@@ -6,11 +6,11 @@
 
     <GroupBox>
         <StackPanel>
-            <RadioButton x:Name="pickonesurface" IsChecked="True" Content="select single Surface" GroupName="surfacesource" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+            <RadioButton x:Name="pickonesurface" IsChecked="True" Content="select single Surface" VerticalAlignment="Center" VerticalContentAlignment="Center" />
             <StackPanel IsEnabled="{Binding IsChecked, ElementName=pickonesurface, Mode=OneWay}">
                 <Wpf:ComboBoxEntityPicker x:Name="surfacepicker" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
             </StackPanel>
-            <RadioButton x:Name="pickmultiplesurfaces" Content="select multiple Surfaces" GroupName="surfacesource" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+            <RadioButton x:Name="pickmultiplesurfaces" Content="select multiple Surfaces" VerticalAlignment="Center" VerticalContentAlignment="Center" />
             <StackPanel IsEnabled="{Binding IsChecked, ElementName=pickmultiplesurfaces, Mode=OneWay}">
                 <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
                     <StackPanel>
@@ -31,14 +31,14 @@
         <GroupBox BorderThickness="2,2,2,2" Background="#FFDABB83" BorderBrush="#FFCD8025">
             <StackPanel>
                 <Label Content="Get Color Information"/>
-                <RadioButton x:Name="usecsv" IsChecked="True" Content="from CSV" GroupName="colorinput" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                <RadioButton x:Name="usecsv" IsChecked="True" Content="from CSV" VerticalAlignment="Center" VerticalContentAlignment="Center" />
                 <StackPanel IsEnabled="{Binding IsChecked, ElementName=usecsv}">
 
                     <Button x:Name="csvbutton" Content="Select CSV-File" Click="csvbutton_Click"/>
                     <TextBlock x:Name="csvfilename" Text="" TextWrapping="Wrap"/>
 
                 </StackPanel>
-                <RadioButton x:Name="usecmc" IsChecked="False" Content="use MSI Manager" GroupName="colorinput" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                <RadioButton x:Name="usecmc" IsChecked="False" Content="use MSI Manager" VerticalAlignment="Center" VerticalContentAlignment="Center" />
                 <StackPanel IsEnabled="{Binding IsChecked, ElementName=usecmc}">
                     <Label Content="Select Slope-Material-Category"/>
                     <Wpf:ComboBoxEntityPicker x:Name="hiddenmateriallist" Visibility="Hidden" Height="0"/>
@@ -51,9 +51,9 @@
 
 
 
-        <RadioButton x:Name="recolordtm" Content="colorize DTM with Materials" GroupName="draw" IsChecked="True" VerticalAlignment="Center" VerticalContentAlignment="Center" />
-        <RadioButton x:Name="drawifc" Content="draw Triangles as IFC Faces" GroupName="draw" VerticalAlignment="Center" VerticalContentAlignment="Center" />
-        <RadioButton x:Name="drawlines" Content="draw Triangles as filled Linestrings" GroupName="draw" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <RadioButton x:Name="recolordtm" Content="colorize DTM with Materials" IsChecked="True" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <RadioButton x:Name="drawifc" Content="draw Triangles as IFC Faces" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <RadioButton x:Name="drawlines" Content="draw Triangles as filled Linestrings" VerticalAlignment="Center" VerticalContentAlignment="Center" />
         <Label Content="select Layer for Stringlines/3D Faces"/>
         <Wpf:LayerPicker x:Name="layerpicker"/>
         <!--<CheckBox x:Name="remapcolor" Content="remap Colors between Min-Max" VerticalAlignment="Center" VerticalContentAlignment="Center" />-->

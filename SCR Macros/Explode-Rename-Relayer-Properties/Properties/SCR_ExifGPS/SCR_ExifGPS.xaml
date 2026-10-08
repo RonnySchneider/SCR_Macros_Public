@@ -7,7 +7,7 @@
 
         <Expander.Header>
             <WrapPanel>
-                <RadioButton x:Name="retrievegps" IsChecked="True" VerticalAlignment="Center" GroupName="group1" Checked="radiochange_Click"/>
+                <RadioButton x:Name="retrievegps" IsChecked="True" VerticalAlignment="Center" Checked="radiochange_Click"/>
                 <Label Content="Retrieve GPS location from image EXIF data" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
             </WrapPanel>
 
@@ -21,12 +21,12 @@
             <Label Content="Select alignment for chainage computation" Visibility="Hidden" Height="0"/>
             <Wpf:SelectEntity x:Name="linepicker1" Visibility="Hidden" Height="0"/>
 
-            <RadioButton Content="Use fixed point layer for all images" x:Name="usefixedlayer" IsChecked="True" VerticalAlignment="Center" GroupName="group2"/>
+            <RadioButton Content="Use fixed point layer for all images" x:Name="usefixedlayer" IsChecked="True" VerticalAlignment="Center"/>
                 <StackPanel IsEnabled="{Binding IsChecked, ElementName=usefixedlayer}">
                     <Label Content="Select output point layer:"/>
                     <Wpf:LayerPicker x:Name="layerpicker"/>
                 </StackPanel>
-            <RadioButton Content="Use separate point layer for each folder" x:Name="usefolderaslayer" IsChecked="False" VerticalAlignment="Center" GroupName="group2"/>
+            <RadioButton Content="Use separate point layer for each folder" x:Name="usefolderaslayer" IsChecked="False" VerticalAlignment="Center"/>
 
             <CheckBox x:Name="writechainagetofile" Visibility="Hidden" Height="0"  Content="Write chainage to file (untick if you just need the points on the screen" IsChecked="False"/>
         </StackPanel>
@@ -36,7 +36,7 @@
 
         <Expander.Header>
             <WrapPanel>
-                <RadioButton x:Name="copyfiles" IsChecked="False" VerticalAlignment="Center" GroupName="group1" Checked="radiochange_Click"/>
+                <RadioButton x:Name="copyfiles" IsChecked="False" VerticalAlignment="Center" Checked="radiochange_Click"/>
                 <Label Content="Copy files of selected points to" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
             </WrapPanel>
 
@@ -86,7 +86,7 @@
 
         <Expander.Header>
             <WrapPanel>
-                <RadioButton x:Name="checkduplicates" IsChecked="False" VerticalAlignment="Center" GroupName="group1" Checked="radiochange_Click"/>
+                <RadioButton x:Name="checkduplicates" IsChecked="False" VerticalAlignment="Center" Checked="radiochange_Click"/>
                 <Label Content="Check Duplicates" FontWeight="Bold" FontStyle="Italic" FontSize="13"/>
             </WrapPanel>
         </Expander.Header>
@@ -99,13 +99,13 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" x:Name="duplicatetolerancelabel" Content="Tolerance:" VerticalAlignment="Center"/>
-                <RadioButton Grid.Column="1" x:Name="dup2d" Content="2D" IsChecked="True" GroupName="group3" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                <RadioButton Grid.Column="2" x:Name="dup3d" Content="3D" IsChecked="False" GroupName="group3" VerticalAlignment="Center" Margin="0,2,8,2"/>
+                <RadioButton Grid.Column="1" x:Name="dup2d" Content="2D" IsChecked="True" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                <RadioButton Grid.Column="2" x:Name="dup3d" Content="3D" IsChecked="False" VerticalAlignment="Center" Margin="0,2,8,2"/>
                 <Wpf:DistanceEdit Grid.Column="3" x:Name="duplicatetolerance" Distance="5.00" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,3,0"/>
             </Grid>
             <UniformGrid Columns="2">
-                <RadioButton x:Name="checkperlayer" Content="Check per layer" IsChecked="True" GroupName="group4" VerticalAlignment="Center" Margin="0,2,0,2"/>
-                <RadioButton x:Name="checkwithinselection" Content="Check within selection" IsChecked="False" GroupName="group4" VerticalAlignment="Center" Margin="0,2,0,2"/>
+                <RadioButton x:Name="checkperlayer" Content="Check per layer" IsChecked="True" VerticalAlignment="Center" Margin="0,2,0,2"/>
+                <RadioButton x:Name="checkwithinselection" Content="Check within selection" IsChecked="False" VerticalAlignment="Center" Margin="0,2,0,2"/>
             </UniformGrid>
             <Wpf:MemberSelection x:Name="objs2" Height="30" Margin="0" UseLocalSelection="True" UpdateTextOnSelectionChange="False" PreviewGotKeyboardFocus="Selection_PreviewGotFocus"/>
             <Label x:Name="duplicatesgigapixels" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>

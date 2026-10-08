@@ -53,7 +53,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "EXIF GPS"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.20
+        cmdData.Version = 1.201
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -73,6 +73,10 @@ class SCR_ExifGPS(StackPanel): # this inherits from the WPF StackPanel control
     def __init__(self, currentProject, macroFileFolder):
         with StreamReader (macroFileFolder + r"\SCR_ExifGPS.xaml") as s:
             wpf.LoadComponent (self, s)
+        # radios sit in different expander headers, so they need a GroupName - set per instance after
+        # loading, a XAML GroupName is process-wide and would untick radios on old closed panels
+        for rb in (self.retrievegps, self.copyfiles, self.checkduplicates):
+            rb.GroupName = "mode" + str(id(self))
         self.currentProject = currentProject
         self.macroFileFolder = macroFileFolder
         self.exiftools_exists = False

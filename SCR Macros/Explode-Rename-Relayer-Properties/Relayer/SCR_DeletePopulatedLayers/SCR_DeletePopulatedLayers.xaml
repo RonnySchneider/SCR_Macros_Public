@@ -9,7 +9,7 @@
 
     <GroupBox>
         <GroupBox.Header>
-            <RadioButton x:Name="picklayer" Content="Clean 1 specific layer" GroupName="selection" IsChecked="True"/>
+            <RadioButton x:Name="picklayer" Content="Clean 1 specific layer" IsChecked="True"/>
         </GroupBox.Header>
         <Border IsEnabled="{Binding IsChecked, ElementName=picklayer}">
             <StackPanel>
@@ -21,7 +21,7 @@
 
     <GroupBox>
         <GroupBox.Header>
-            <RadioButton x:Name="searchlayer" Content="Clean if layer name contains the following text&#xA;(case sensitive)" GroupName="selection" IsChecked="False"/>
+            <RadioButton x:Name="searchlayer" Content="Clean if layer name contains the following text&#xA;(case sensitive)" IsChecked="False"/>
         </GroupBox.Header>
         <Border IsEnabled="{Binding IsChecked, ElementName=searchlayer}" Background="#FF97B9D9">
             <StackPanel>
@@ -32,7 +32,7 @@
 
     <GroupBox>
         <GroupBox.Header>
-            <RadioButton x:Name="multilayer" Content="Clean multiple layers" GroupName="selection" IsChecked="False"/>
+            <RadioButton x:Name="multilayer" Content="Clean multiple layers" IsChecked="False"/>
         </GroupBox.Header>
         <Border IsEnabled="{Binding IsChecked, ElementName=multilayer}" Background="#FF97B9D9">
             <StackPanel>

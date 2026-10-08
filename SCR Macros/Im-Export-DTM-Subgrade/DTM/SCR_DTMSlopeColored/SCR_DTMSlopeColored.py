@@ -51,7 +51,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Slope-Colored 3D-Faces"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.15
+        cmdData.Version = 1.151
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         

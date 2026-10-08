@@ -53,6 +53,8 @@
     <GroupBox>
         <Expander Header="Thresholds and Colors" IsExpanded="False">
             <StackPanel>
+                <CheckBox x:Name="checksqrt" Content="check tolerance as SQRT of XYZ components" IsChecked="False"/>
+                <TextBlock Text="(affects the text colour only, arrows are coloured by their own X/Y delta)" TextWrapping="Wrap" FontStyle="Italic" Margin="18,0,0,4"/>
                 <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9">
                     <StackPanel>
                         <Grid>
@@ -127,6 +129,7 @@
             <CheckBox x:Name="drawx" Content="draw/compute X-Direction" IsChecked="True"/>
             <CheckBox x:Name="drawy" Content="draw/compute Y-Direction" IsChecked="True"/>
             <CheckBox x:Name="search3d" Content="search/compare in 3D" IsChecked="True" Checked="search3dChanged" Unchecked="search3dChanged"/>
+            <CheckBox x:Name="drawsqrt" Content="draw SQRT value" IsChecked="False"/>
 
             <Border x:Name="dtmborder" BorderBrush="#FF7D7D7D" BorderThickness="1"  Background="#FF97B9D9">
                 <StackPanel>

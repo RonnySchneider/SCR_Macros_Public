@@ -44,7 +44,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Delete Layers"
         cmdData.DefaultRibbonToolSize = 0 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.071
+        cmdData.Version = 1.072
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -65,6 +65,10 @@ class SCR_DeletePopulatedLayers(StackPanel): # this inherits from the WPF StackP
     def __init__(self, currentProject, macroFileFolder):
         with StreamReader (macroFileFolder + r"\SCR_DeletePopulatedLayers.xaml") as s:
             wpf.LoadComponent (self, s)
+        # radios sit in different groupbox headers, so they need a GroupName - set per instance after
+        # loading, a XAML GroupName is process-wide and would untick radios on old closed panels
+        for rb in (self.picklayer, self.searchlayer, self.multilayer):
+            rb.GroupName = "selection" + str(id(self))
         self.currentProject = currentProject
         self.macroFileFolder = macroFileFolder
 

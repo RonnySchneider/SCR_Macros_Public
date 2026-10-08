@@ -147,6 +147,8 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>09/10/2026 – <a class="class2" href="#SCR_ABReportWithBearing">SCR_ABReportWithBearing</a> – added options to check the tolerance against, and to draw, the combined 2D/3D delta (√ of the XYZ components); fixed a crash with 2D points (no elevation) while "search/compare in 3D" is ticked, a single run now needs only one undo, and small block scale/text height values no longer display as 0</li>
+
           <li>28/09/2026 – <a class="class2" href="#SCR_ImportRibbonTab">SCR_ImportRibbonTab</a> – fixed merging into a default (uncustomized) ribbon export, which previously produced a file TBC couldn't import</li>
 
           <li>28/09/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> – no longer beta; when a .job file is synced, a matching .jxl file with the same name is downloaded and archived along with it (and vice versa)</li>
@@ -1530,6 +1532,15 @@
 			  <li>dx/dy is computed square to a chosen bearing<br><br>
 			  <img alt="" height="496" src="Media/SCR_ABReportWithBearing.png" width="542" border="1"><br><br>
 			  </li>
+			  <li>"check tolerance as SQRT of XYZ components" (in "Thresholds and Colors")<br>
+				  by default, the text color is based on the largest single delta (dx, dy or dz)<br>
+				  with this option ticked, and both X and Y directions ticked, the combined delta is used instead:<br>
+				  √(dx² + dy²), or √(dx² + dy² + dz²) if "search/compare in 3D" is ticked as well<br>
+				  this only affects the text color, the arrows are still colored by their own dx/dy</li>
+			  <li>"draw SQRT value" (in "search and compute parameters")<br>
+				  adds the combined delta as an extra text line, "d2D=" for √(dx² + dy²) or "d3D=" for √(dx² + dy² + dz²) if "search/compare in 3D" is ticked<br>
+				  requires both X and Y directions to be ticked<br>
+				  for 2D points without an elevation the 2D value is used, even if "search/compare in 3D" is ticked</li>
 			  <li><span class="auto-style2">the whole text can be colored in just one color</span><br class="auto-style2">
 			  </li>
 			  <li><span class="auto-style2">or, after exploding the multiline texts you can use

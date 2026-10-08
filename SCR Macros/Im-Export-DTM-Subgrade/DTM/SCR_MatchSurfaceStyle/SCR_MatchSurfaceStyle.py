@@ -48,7 +48,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Match Surface Style"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.08
+        cmdData.Version = 1.081
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         

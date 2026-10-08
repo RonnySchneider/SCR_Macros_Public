@@ -9,10 +9,10 @@
     <Label Content="select Source Surface:"  Margin="0" />
     <Wpf:ComboBoxEntityPicker x:Name="surfacepicker1"/>
     <Label Content="select Target Surface:"  Margin="0" />
-    <RadioButton x:Name="single" Content="change 1 specific Surface" GroupName="1" IsChecked="True"/>
+    <RadioButton x:Name="single" Content="change 1 specific Surface" IsChecked="True"/>
     <Wpf:ComboBoxEntityPicker x:Name="surfacepicker2" IsEnabled="{Binding IsChecked, ElementName=single}"/>
 
-    <RadioButton x:Name="multi" Content="change multiple Surfaces" GroupName="1"/>
+    <RadioButton x:Name="multi" Content="change multiple Surfaces"/>
     <Border BorderBrush="#FF7D7D7D" BorderThickness="1" Background="#FF97B9D9" IsEnabled="{Binding IsChecked, ElementName=multi}">
         <StackPanel>
             <UniformGrid Columns="2">

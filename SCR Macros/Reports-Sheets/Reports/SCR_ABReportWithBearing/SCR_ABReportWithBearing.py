@@ -29,7 +29,8 @@ _OPTIONS = {
     "addunitsuffix":        False,
     "textdecimals":         3.0,
     "textheight":           0.2,
-    "thresh1":              0.005,
+    "checksqrt":            False,
+    "thresh1":            0.005,
     "thresh2":              0.010,
     "thresh3":              0.015,
     "thresh1colorpicker":   Color.Green,
@@ -40,6 +41,7 @@ _OPTIONS = {
     "drawx":                True,
     "drawy":                True,
     "search3d":             True,
+    "drawsqrt":             False,
     "usedtm":               False,
     "designsurfacepicker":  0,
     "designlayerpicker":    8,
@@ -61,7 +63,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "relative to Bearing"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.19
+        cmdData.Version = 1.198
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -178,6 +180,21 @@ class SCR_ABReportWithBearing(StackPanel): # this inherits from the WPF StackPan
                 i[1].FormatProperty.AddSuffix = ControlBoolean(1)
                 i[1].FormatProperty.NumberOfDecimals = int(self.textdecimals.Value)
 
+        # small values would be displayed as 0 with the default decimals, increase them as needed
+        self.textheight.FormatProperty.NumberOfDecimals = self.decimalsneeded(self.textheight.Distance, int(self.textdecimals.Value))
+        # NumericEdit doesn't refresh its text when only the decimals change, force it by re-setting the value
+        v = self.blockscale.Value
+        self.blockscale.NumberOfDecimals = self.decimalsneeded(v, 2)
+        self.blockscale.Value = v + 1.0
+        self.blockscale.Value = v
+
+    def decimalsneeded(self, v, mindecimals):
+        # smallest number of decimals (>= mindecimals, <= 6) that shows the value without rounding it away
+        d = mindecimals
+        while d < 6 and abs(round(v, d) - v) > 1e-9:
+            d += 1
+        return d
+
     def decdecimals_Click(self, sender, e):
         if not self.textdecimals.Value == 0:
             self.textdecimals.Value -= 1
@@ -258,6 +275,9 @@ class SCR_ABReportWithBearing(StackPanel): # this inherits from the WPF StackPan
         # p2 - AB Point
         try:
             with TransactMethodCall(self.currentProject.TransactionCollector) as failGuard:
+                # project options are stored inside the project, saving them outside
+                # of the Begin/EndMark would create a second undo step
+                self.SaveOptions()
 
                 if self.objs.SelectedMembers(self.currentProject).Count>0 and thresholds==True:
                     for p2 in self.objs.SelectedMembers(self.currentProject): # go through all selected AB points
@@ -313,8 +333,13 @@ class SCR_ABReportWithBearing(StackPanel): # this inherits from the WPF StackPan
                                 if az2comp < 0: az2 = az2 + twopi
                                 
                                 # compute delta x/y values
-                                deltax = math.cos(az2comp-az1)*deltavector.Length2D
-                                deltay = math.sin(az2comp-az1)*deltavector.Length2D
+                                # if the points coincide in 2D the azimuth is NaN, deltas are 0 then
+                                if deltavector.Length2D == 0:
+                                    deltax = 0.0
+                                    deltay = 0.0
+                                else:
+                                    deltax = math.cos(az2comp-az1)*deltavector.Length2D
+                                    deltay = math.sin(az2comp-az1)*deltavector.Length2D
 
                                 # create the bearings for the x and y arrow block
                                 if deltax>=0: azx = az2 - pihalf
@@ -342,9 +367,22 @@ class SCR_ABReportWithBearing(StackPanel): # this inherits from the WPF StackPan
                                 else:
                                     deltazstring = ''
                                 
-                                deltahigh=0
-                                # find the highest delta
+                                # combined delta - 2D, or 3D if search3d is checked as well
+                                # 2D points have Z=NaN, fall back to 2D then
+                                deltasqrtstring = ''
                                 if self.drawx.IsChecked and self.drawy.IsChecked:
+                                    if self.search3d.IsChecked and not math.isnan(deltaz):
+                                        deltasqrt = math.sqrt(deltax**2 + deltay**2 + deltaz**2)
+                                        deltasqrtstring = "d3D=" + self.tooutputunit(deltasqrt)
+                                    else:
+                                        deltasqrt = math.sqrt(deltax**2 + deltay**2)
+                                        deltasqrtstring = "d2D=" + self.tooutputunit(deltasqrt)
+
+                                deltahigh=0
+                                if self.checksqrt.IsChecked and self.drawx.IsChecked and self.drawy.IsChecked:
+                                    deltahigh = deltasqrt
+                                # find the highest delta
+                                elif self.drawx.IsChecked and self.drawy.IsChecked:
                                     deltahigh=abs(deltax)
                                     if abs(deltay)>deltahigh: deltahigh=abs(deltay)
                                 if self.drawx.IsChecked and self.drawy.IsChecked==False:
@@ -354,20 +392,21 @@ class SCR_ABReportWithBearing(StackPanel): # this inherits from the WPF StackPan
                                 if self.search3d.IsChecked and abs(deltaz)>deltahigh: deltahigh=abs(deltaz)
 
                                 # find the right color
+                                # anything not within a threshold (incl. NaN) falls through to the last color
                                 if deltahigh <= thresh1: abcolor = self.thresh1colorpicker.SelectedColor
-                                if deltahigh > thresh1: abcolor = self.thresh2colorpicker.SelectedColor
-                                if deltahigh > thresh2: abcolor = self.thresh3colorpicker.SelectedColor
-                                if deltahigh > thresh3: abcolor = self.thresh4colorpicker.SelectedColor
+                                elif deltahigh <= thresh2: abcolor = self.thresh2colorpicker.SelectedColor
+                                elif deltahigh <= thresh3: abcolor = self.thresh3colorpicker.SelectedColor
+                                else: abcolor = self.thresh4colorpicker.SelectedColor
 
                                 if abs(deltax) <= thresh1: xcolor = self.thresh1colorpicker.SelectedColor
-                                if abs(deltax) > thresh1: xcolor = self.thresh2colorpicker.SelectedColor
-                                if abs(deltax) > thresh2: xcolor = self.thresh3colorpicker.SelectedColor
-                                if abs(deltax) > thresh3: xcolor = self.thresh4colorpicker.SelectedColor
+                                elif abs(deltax) <= thresh2: xcolor = self.thresh2colorpicker.SelectedColor
+                                elif abs(deltax) <= thresh3: xcolor = self.thresh3colorpicker.SelectedColor
+                                else: xcolor = self.thresh4colorpicker.SelectedColor
 
                                 if abs(deltay) <= thresh1: ycolor = self.thresh1colorpicker.SelectedColor
-                                if abs(deltay) > thresh1: ycolor = self.thresh2colorpicker.SelectedColor
-                                if abs(deltay) > thresh2: ycolor = self.thresh3colorpicker.SelectedColor
-                                if abs(deltay) > thresh3: ycolor = self.thresh4colorpicker.SelectedColor
+                                elif abs(deltay) <= thresh2: ycolor = self.thresh2colorpicker.SelectedColor
+                                elif abs(deltay) <= thresh3: ycolor = self.thresh3colorpicker.SelectedColor
+                                else: ycolor = self.thresh4colorpicker.SelectedColor
                                 
                                 # we draw the block
                                 if self.drawx.IsChecked:
@@ -417,6 +456,11 @@ class SCR_ABReportWithBearing(StackPanel): # this inherits from the WPF StackPan
                                         t.TextString += '\\P' + deltazstring
                                     else:
                                         t.TextString += deltazstring
+                                if self.drawsqrt.IsChecked and deltasqrtstring != '':
+                                    if len(t.TextString)>0:
+                                        t.TextString += '\\P' + deltasqrtstring
+                                    else:
+                                        t.TextString += deltasqrtstring
                                 t.Height = textheight
                                 t.Layer = self.ablayerpicker.SelectedSerialNumber
                                 t.Color = abcolor
@@ -442,6 +486,5 @@ class SCR_ABReportWithBearing(StackPanel): # this inherits from the WPF StackPan
 
         Keyboard.Focus(self.objs)
         GlobalSelection.Clear()
-        self.SaveOptions()           
 
         
