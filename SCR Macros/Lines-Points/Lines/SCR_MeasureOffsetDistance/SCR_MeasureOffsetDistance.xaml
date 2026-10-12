@@ -8,13 +8,33 @@
             <CheckBox x:Name="drawtext" Content="draw Text" IsChecked="False" VerticalAlignment="Center" />
         </Expander.Header>
         <StackPanel IsEnabled="{Binding IsChecked, ElementName=drawtext}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25*"/>
+                    <ColumnDefinition Width="45*"/>
+                    <ColumnDefinition Width="30*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Distance Units" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <ComboBox Grid.Column="1" x:Name="unitpicker" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <CheckBox Grid.Column="2" x:Name="addunitsuffix" Content="add&#xA;Output-Suffix" IsChecked="False" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Grid>
+            <UniformGrid Columns="4">
+                <Label Content="Text Decimals" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                <Wpf:NumericEdit x:Name="textdecimals" Value="4"/>
+                <Button x:Name="decdecimals" Content="-" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                <Button x:Name="incdecimals" Content="+" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            </UniformGrid>
             <UniformGrid Columns="2">
-                <Label Content="Textdecimals:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-                <Wpf:NumericEdit x:Name="textdecimals" />
+                <Label Content="Text Height" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                <Wpf:DistanceEdit x:Name="textheight" Distance="0.1" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
             </UniformGrid>
             <CheckBox x:Name="includedist" Content="include Distance" IsChecked="False" VerticalAlignment="Center" />
             <CheckBox x:Name="includeos" Content="include Offset" IsChecked="False" VerticalAlignment="Center" />
             <CheckBox x:Name="includedh" Content="include dH" IsChecked="False" VerticalAlignment="Center" />
+            <CheckBox x:Name="includedist3d" Content="include 3D Distance" IsChecked="False" VerticalAlignment="Center" />
+            <CheckBox x:Name="includeos3d" Content="include 3D Offset" IsChecked="False" VerticalAlignment="Center" />
+            <CheckBox x:Name="includeosperp" Content="include perp. Offset" IsChecked="False" VerticalAlignment="Center" />
+            <CheckBox x:Name="includedhperp" Content="include perp. dh" IsChecked="False" VerticalAlignment="Center" />
             <Label Content="select Textlayer:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
             <Wpf:LayerPicker x:Name="textlayerpicker"/>
         </StackPanel>
@@ -29,14 +49,64 @@
     <Wpf:CoordinateEdit x:Name="coordCtl3" ShowElevationIf3D="True" AutoTab="True"/>
 
     <Label Content=""/>
-    <UniformGrid Columns="2">
-        <Label x:Name="textdistancelabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="resultdistance" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
-        <Label x:Name="textoffsetlabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="resultoffset" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
-        <Label x:Name="textdhlabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="resultdh" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="45*"/>
+            <ColumnDefinition Width="30*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Column="0" Content="Result Units" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <ComboBox Grid.Column="1" x:Name="resultunitpicker" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    </Grid>
+    <UniformGrid Columns="4">
+        <Label Content="Result Decimals" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Wpf:NumericEdit x:Name="resultdecimals" Value="4"/>
+        <Button x:Name="decresultdecimals" Content="-" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Button x:Name="incresultdecimals" Content="+" Width="30" Height="20" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
     </UniformGrid>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.ColumnSpan="3" Content="2D (plan view)" FontWeight="Bold"/>
+        <Border Grid.Row="1" Grid.Column="0" x:Name="swatchdist2d" Width="12" Height="12" Margin="2,0,4,0" BorderBrush="Black" BorderThickness="1"/>
+        <Label Grid.Row="1" Grid.Column="1" x:Name="textdistancelabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="1" Grid.Column="2" x:Name="resultdistance" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Border Grid.Row="2" Grid.Column="0" x:Name="swatchos2d" Width="12" Height="12" Margin="2,0,4,0" BorderBrush="Black" BorderThickness="1"/>
+        <Label Grid.Row="2" Grid.Column="1" x:Name="textoffsetlabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="2" Grid.Column="2" x:Name="resultoffset" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Border Grid.Row="3" Grid.Column="0" x:Name="swatchdh" Width="12" Height="12" Margin="2,0,4,0" BorderBrush="Black" BorderThickness="1"/>
+        <Label Grid.Row="3" Grid.Column="1" x:Name="textdhlabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="3" Grid.Column="2" x:Name="resultdh" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label Grid.Row="4" Grid.ColumnSpan="3" Content="3D (along A-B vector)" FontWeight="Bold"/>
+        <Border Grid.Row="5" Grid.Column="0" x:Name="swatchdist3d" Width="12" Height="12" Margin="2,0,4,0" BorderBrush="Black" BorderThickness="1"/>
+        <Label Grid.Row="5" Grid.Column="1" x:Name="textdistance3dlabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="5" Grid.Column="2" x:Name="resultdistance3d" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Border Grid.Row="6" Grid.Column="0" x:Name="swatchos3d" Width="12" Height="12" Margin="2,0,4,0" BorderBrush="Black" BorderThickness="1"/>
+        <Label Grid.Row="6" Grid.Column="1" x:Name="textoffset3dlabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="6" Grid.Column="2" x:Name="resultoffset3d" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label Grid.Row="7" Grid.ColumnSpan="3" Content="perpendicular to the A-B plane" FontWeight="Bold"/>
+        <Border Grid.Row="8" Grid.Column="0" x:Name="swatchosperp" Width="12" Height="12" Margin="2,0,4,0" BorderBrush="Black" BorderThickness="1"/>
+        <Label Grid.Row="8" Grid.Column="1" x:Name="textoffsetperplabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="8" Grid.Column="2" x:Name="resultoffsetperp" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Border Grid.Row="9" Grid.Column="0" x:Name="swatchdhperp" Width="12" Height="12" Margin="2,0,4,0" BorderBrush="Black" BorderThickness="1"/>
+        <Label Grid.Row="9" Grid.Column="1" x:Name="textdhperplabel" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="9" Grid.Column="2" x:Name="resultdhperp" Text="" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+    </Grid>
 
     <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
     <Label x:Name="success" Content=""/>

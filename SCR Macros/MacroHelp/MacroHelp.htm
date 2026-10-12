@@ -143,9 +143,13 @@
   </head>
   <body>
     <div class="wrapper" id="sitewidewrapper" style="">
-      <div id ="macrohelp" style="padding-left: 2%; padding-right: 2%;position: absolute; height: 100%; width: 74%; z-index: 2; left: 24%; top: 0px; list-style-type: none; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; white-space: normal; font-size: medium; overflow-y: scroll;">
+      <div id ="macrohelp" style="padding-left: 2%; padding-right: 2%;position: absolute; height: 100%; width: 80%; z-index: 2; left: 18%; top: 0px; list-style-type: none; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; white-space: normal; font-size: medium; overflow-y: scroll;">
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
+
+          <li>12/10/2026 – <a class="class2" href="#SCR_MeasureOffsetDistance">SCR_MeasureOffsetDistance</a> – added 3D and perpendicular-to-plane results, colour-coded highlighting, and separate unit/decimal settings for results and text</li>
+
+          <li>12/10/2026 – <a class="class2" href="#SCR_AnalyzeCloudAlongLine">SCR_AnalyzeCloudAlongLine</a> – fixed a bug where Fit mode found no cloud points if the selection held fewer points than the downsampling Point-Count</li>
 
           <li>09/10/2026 – <a class="class2" href="#SCR_ABReportWithBearing">SCR_ABReportWithBearing</a> – added options to check the tolerance against, and to draw, the combined 2D/3D delta (√ of the XYZ components); fixed a crash with 2D points (no elevation) while "search/compare in 3D" is ticked, a single run now needs only one undo, and small block scale/text height values no longer display as 0</li>
 
@@ -1999,7 +2003,11 @@
 			  <br></li>
 			  <li>computes now a simple vertical dH to the “P1P2Line”as well; i.e. if you
         have 3 points on a girder and want to know the hog</li>
-			  <li>option added to draw the results as text<br><br></li>
+			  <li>option added to draw the results as text; the text can use a different distance unit (optionally with unit suffix), and has its own number of decimals and text height</li>
+			  <li>the result boxes have their own unit selection and decimals, independent from the text output; by default they use the project unit</li>
+			  <li>also computes the Distance along and the shortest Offset (“3D Offset”) to the 3D vector defined by A and B; the Offset sign follows the plan side (left negative, right positive)</li>
+			  <li>unless A and B are plumb above each other, they also define a plane: it contains A-B and the horizontal direction square to it. The Offset Point is projected perpendicular onto that plane; the distance between the two is shown as “perp. dh” (positive above the plane), and the shortest distance from the projected point to A-B as “perp. Offset”</li>
+			  <li>every dimension is highlighted in the views in the colour shown next to its result; the 2D and 3D Distance along A-B lie on top of each other, so the 2D one is drawn as a wider line underneath the 3D one<br><br></li>
 		  </ul>
         <h3 id="SCR_MergeLineProfile" class="header3"><a id="SCR_MergeLineProfile"></a>SCR_MergeLineProfile</h3>
           <ul>
@@ -2295,7 +2303,7 @@
 
 
 
-      <div id="sidebarnav" style="margin: 0px; position: absolute; width: 24%; height: 100%; z-index: 1; left: 0px; top: 0px; overflow-y: scroll; overflow-x: hidden; list-style: none">
+      <div id="sidebarnav" style="margin: 0px; position: absolute; width: 18%; height: 100%; z-index: 1; left: 0px; top: 0px; overflow-y: scroll; overflow-x: hidden; list-style: none">
         <ul id="mozToc" class="customListStyle">
           <!--mozToc h1 1 h2 2 h3 3 h4 4 h5 5 h6 6-->
           <li><a href="#News">News</a></li>
