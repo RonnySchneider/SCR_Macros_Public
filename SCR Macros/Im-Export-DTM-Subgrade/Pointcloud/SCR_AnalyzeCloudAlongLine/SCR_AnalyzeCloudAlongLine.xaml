@@ -23,9 +23,9 @@
                         <Label Content="Downsampling Parameters"/>
                         <UniformGrid Columns="2">
                             <Label Content="Spacing"/>
-                            <Wpf:DistanceEdit x:Name="samplingdistance"/>
+                            <Wpf:DistanceEdit x:Name="samplingdistance" Distance="0.005"/>
                             <Label Content="Point-Count"/>
-                            <Wpf:NumericEdit x:Name="samplingcount"/>
+                            <Wpf:NumericEdit x:Name="samplingcount" Value="15000"/>
                         </UniformGrid>
                     </StackPanel>
                 </Border>

@@ -57,7 +57,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Analyze along Line"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.14
+        cmdData.Version = 1.141
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -354,12 +354,14 @@ class SCR_AnalyzeCloudAlongLine(StackPanel): # this inherits from the WPF StackP
                         #lookupy = {}
                         #lookupz = {}
                         
-                if self.fitmode.IsChecked and cps.Count > 15000:
+                samplingcount = int(self.samplingcount.Value)
+
+                if self.fitmode.IsChecked and cps.Count > samplingcount:
 
                     ProgressBar.TBC_ProgressBar.Title = "downsampling Cloud-Points"
                     # throw that list of all the selected portions onto the sampling algorithm
                     # it returns another ID
-                    cpssampleid = cloudintegration.CreateSpatiallySampledCloud(cloudselectionids, 0.002, 15000)
+                    cpssampleid = cloudintegration.CreateSpatiallySampledCloud(cloudselectionids, abs(self.samplingdistance.Distance), samplingcount)
                     # now get the points from that specific subcloud
                     cps2 = cloudintegration.GetPoints(cpssampleid)
 
@@ -368,8 +370,8 @@ class SCR_AnalyzeCloudAlongLine(StackPanel): # this inherits from the WPF StackP
 
                     self.error.Content += '\nsampled to : ' + str(cloudpoints.Count)
 
-                elif self.averagemode.IsChecked:
-                    
+                else:
+                    # average mode, or fit mode with few enough points to use them all
                     for p in cps:
                         cloudpoints.Add(p)
 
