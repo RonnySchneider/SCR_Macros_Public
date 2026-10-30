@@ -147,6 +147,10 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>30/10/2026 – <a class="class2" href="#SCR_LocateDynaviewSource">SCR_LocateDynaviewSource</a> – fixed an error on start-up that also broke the Help button; picking a DynaView now only reruns the search for a new DynaView, not for every other entity clicked</li>
+          <li>30/10/2026 – <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – in the Add/Edit sync dialogs, browsing for local file 2 (e.g. a linestyle file) now starts in file 1's folder if file 2's folder was never set or can't be found</li>
+          <li>26/10/2026 – new<a class="class2" href="#SCR_ShowLineDirection">SCR_ShowLineDirection</a> – shows direction arrows and segment types on selected lines, and highlights tangent arcs TBC can't compute as specified</li>
+          <li>26/10/2026 – <a class="class2" href="#SCR_DayJobSync">SCR_DayJobSync</a> – every file whose name starts with the selected job's name (e.g. 261001SCR1.jxl, 261001SCR1.csv) is now downloaded and archived along with it, not just the matching .jxl/.job file</li>
           <li>12/10/2026 – <a class="class2" href="#SCR_MeasureOffsetDistance">SCR_MeasureOffsetDistance</a> – added 3D and perpendicular-to-plane results, colour-coded highlighting, and separate unit/decimal settings for results and text</li>
 
           <li>12/10/2026 – <a class="class2" href="#SCR_AnalyzeCloudAlongLine">SCR_AnalyzeCloudAlongLine</a> – fixed a bug where Fit mode found no cloud points if the selection held fewer points than the downsampling Point-Count</li>
@@ -835,6 +839,32 @@
 			  <br>
 		  </ul>
 
+      <h3 id="SCR_ShowLineDirection" class="header3"><a id="SCR_ShowLineDirection"></a>SCR_ShowLineDirection</h3>
+          <ul>
+			  <li>main purpose is finding tangent arcs that TBC can't compute properly</li>
+			  <ul>
+				<li>a tangent-tangent arc needs the tangents of the previous and next segment to intersect in front of the arc</li>
+				<li>if they don't, TBC can't build the arc as specified and draws something else</li>
+				<li>on slight direction changes that is very hard to spot in plan view</li>
+			  </ul>
+			  <li>everything is drawn as an overlay on the currently selected lines and updates automatically when the selection changes</li>
+			  <li>all changes are applied immediately; you can close the macro and the overlay stays active</li>
+			  <li>the settings are saved with the project and restored when TBC restarts</li>
+			  <li>three independent options:</li>
+			  <ul>
+				<li><b>Show arrows on selected lines</b> – direction arrows with a selectable maximum number per line and colour; if a line has fewer segments than that number, one arrow is placed at the middle of each segment</li>
+				<li><b>Show Segment Type</b> – colours each element by its type: straight, arc, smooth curve, spiral, and tangent arcs by tangent type (T-both, T-begin, T-end)</li>
+				<li><b>Highlight failed arcs</b> – draws a thick line and flags at the start, middle and end of each arc TBC can't compute as specified</li>
+				<ul>
+				  <li>red – tangent-tangent arc without a valid tangent intersection; the tangent lines to their intersection point are drawn as thin orange lines</li>
+				  <li>orange-red – radius arc whose radius is smaller than half the chord; that radius can't fit between the two points</li>
+				</ul>
+			  </ul>
+			  <li>line widths for segment types and failed-arc highlighting can be set separately (1–5)</li>
+			  <li><span class="auto-style1">segment types and failed-arc highlighting only work for linestrings, not for CAD lines/polylines</span>; CAD arcs are defined by their end points and don't depend on the neighbouring segments, so they can't fail this way</li>
+			   <br><br>
+		  </ul>
+
       <h3 id="SCR_SwitchSnapMode" class="header3"><a id="SCR_SwitchSnapMode"></a>SCR_SwitchSnapMode</h3>
           <ul>
 			  <li>best will be to apply a Keyboard-Shortcut like STRG+SHIFT+S to the macro</li>
@@ -1467,12 +1497,12 @@
               <li><b>LAZ point cloud resampling</b>
                 <ul>
                   <li>points are read directly from the downloaded LAZ, triangulated in memory and written as a LandXML surface – no point cloud database or project import involved</li>
-                  <li>since a raw drone LAZ is far denser than a surface needs, points are thinned first to the chosen Spacing (m), by one of three methods per platform, fastest to slowest:
+                  <li>since a raw drone LAZ is far denser than a surface needs, points are thinned first to the chosen Spacing (m), by one of four methods, fastest to slowest:
                     <ul>
-                      <li><b>Voxel</b> – buckets points per cell, keeps one per bucket; fastest, follows the cloud's own density</li>
+                      <li><b>PDAL</b> – thins and triangulates via an external PDAL install; fastest, and handles very large point counts without loading them all into memory</li>
+                      <li><b>Voxel</b> – buckets points per cell, keeps one per bucket; fastest of the built-in methods, follows the cloud's own density</li>
                       <li><b>Grid</b> – regular XY grid, keeps the closest real point per cell; most uniform spacing, but slower than Voxel</li>
                       <li><b>Octree</b> – true minimum spacing via a spatial index; slowest, but grid-position independent</li>
-                      <li><b>PDAL</b> – thins and triangulates via an external PDAL install; handles very large point counts without loading them all into memory</li>
                     </ul>
                   </li>
                   <li>triangulation caps outer edge length at 5x the spacing, avoiding long sliver triangles at the surface's edge</li>
@@ -1483,10 +1513,10 @@
         <h3 id="SCR_DayJobSync" class="header3"><a id="SCR_DayJobSync"></a>SCR_DayJobSync</h3>
           <ul>
               <li>a floating window that logs into Trimble Connect (reusing TBC's own signed-in Trimble ID session, no separate login) and browses its region/project/folder tree to pick a day job file to download</li>
-              <li>select the Job file itself (not a folder) – its filename must start with a 6-digit date (YYMMDD); if a matching "&lt;job name&gt; Files" subfolder exists alongside it on Connect, that gets downloaded too; if a .job file is selected and a .jxl file with the same name exists next to it (or the other way round), both are downloaded</li>
+              <li>select the Job file itself (not a folder) – its filename must start with a 6-digit date (YYMMDD); if a matching "&lt;job name&gt; Files" subfolder exists alongside it on Connect, that gets downloaded too; any other file next to it whose name starts with the job name (e.g. 261001SCR1.jxl or 261001SCR1_report.pdf for 261001SCR1.job) is downloaded as well – unless the next character is a digit, so 261001SCR10.job is treated as a different job</li>
               <li>Local Download Target: choose a local sync folder and a Folder Structure template that defines the subfolder layout underneath it, using placeholders <span class="auto-style3">{YYYY}</span>, <span class="auto-style3">{YY}</span>, <span class="auto-style3">{MM}</span>, <span class="auto-style3">{YYMM}</span> and <span class="auto-style3">{Job}</span> (e.g. <span class="auto-style3">{YYYY}/{YYMM}/{Job}</span>) – optional Controller Data and TBC subfolders can each be created underneath, or unticked to place the files directly in that folder</li>
               <li>Local Excel Register: optionally logs the job name into the next empty row of a chosen column in an existing Excel workbook, then leaves that workbook open so the rest of the row can be filled in by hand</li>
-              <li>Connect old Job folder: optionally archives the job (plus its matching .job/.jxl file and its Files subfolder) into an "old job" folder on Connect once downloaded – tries a real move through the Trimble Connect Web API first (fast, regardless of file size), falling back to an upload-then-delete if that isn't available</li>
+              <li>Connect old Job folder: optionally archives the job (plus all files starting with the job name and its Files subfolder) into an "old job" folder on Connect once downloaded – tries a real move through the Trimble Connect Web API first (fast, regardless of file size), falling back to an upload-then-delete if that isn't available</li>
               <li>Field Data from synching straight out of Access: a second list next to the Connect browser shows the selected project's Field Data jobs – select one and Sync downloads its files into the same Controller Data folder a regular day job would use</li>
           </ul>
 
@@ -2353,6 +2383,7 @@
                 <ul class="customListStyle">
                   <li><a href="#SCR_LockViews">SCR_LockViews</a></li>
                   <li><a href="#SCR_RotatePlanView">SCR_RotatePlanView</a></li>
+                  <li><a href="#SCR_ShowLineDirection">SCR_ShowLineDirection</a></li>
                   <li><a href="#SCR_SwitchSnapMode">SCR_SwitchSnapMode</a></li>
                   <li><a href="#SCR_ViewFilter">SCR_ViewFilter</a></li>
                 </ul>

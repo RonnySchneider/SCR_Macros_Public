@@ -39,7 +39,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Locate DynaView Source"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.06
+        cmdData.Version = 1.061
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -60,7 +60,10 @@ class SCR_LocateDynaviewSource(StackPanel): # this inherits from the WPF StackPa
         with StreamReader (macroFileFolder + r"\SCR_LocateDynaviewSource.xaml") as s:
             wpf.LoadComponent (self, s)
         self.currentProject = currentProject
+        self.lastdynaserial = None
 
+    def HelpClicked(self, cmd, e):
+        webbrowser.open("C:\ProgramData\Trimble\MacroCommands3\SCR Macros\MacroHelp\MacroHelp.htm#" + type(self).__name__)
 
     def OnLoad(self, cmd, buttons, event):
         self.okBtn = buttons[0]
@@ -91,7 +94,11 @@ class SCR_LocateDynaviewSource(StackPanel): # this inherits from the WPF StackPa
         return False
 
     def dynapickerChanged(self, ctrl, e):
-        
+        # only react to a newly picked DynaView - ignore other entities and
+        # re-fires caused by our own selection change in OkClicked
+        o = self.dynapicker.Entity
+        if not isinstance(o, DynaView) or o.SerialNumber == self.lastdynaserial:
+            return
         self.OkClicked(None, None)
 
 
@@ -107,6 +114,7 @@ class SCR_LocateDynaviewSource(StackPanel): # this inherits from the WPF StackPa
 
         if isinstance(o, DynaView):
 
+            self.lastdynaserial = o.SerialNumber
             dynaviewwindow = TrimbleOffice.TheOffice.MainWindow.AppViewManager.ActiveView
             GlobalSelection.Clear()
             GlobalSelection.Items(self.currentProject).Set([o.Boundary])

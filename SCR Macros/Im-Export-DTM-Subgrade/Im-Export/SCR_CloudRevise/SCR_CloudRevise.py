@@ -59,7 +59,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version = 1.220
+        cmdData.Version = 1.221
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -3215,9 +3215,11 @@ class SCR_CloudReviseAddSyncDialog(Window):
 
     def browse_local_folder2_clicked(self, sender, e):
         dlg = FolderBrowserDialog()
-        startFolder2 = self.localFolder2 or self.lastBrowseFolder2
-        if startFolder2 and os.path.isdir(startFolder2):
-            dlg.SelectedPath = startFolder2
+        # file 2's own folder first; if never set or no longer reachable, start where file 1 lives
+        for startFolder2 in (self.localFolder2, self.lastBrowseFolder2, self.localFolder1, self.lastBrowseFolder1):
+            if startFolder2 and os.path.isdir(startFolder2):
+                dlg.SelectedPath = startFolder2
+                break
         if dlg.ShowDialog() == DialogResult.OK:
             self.localFolder2 = dlg.SelectedPath
             self.error.Content = ""

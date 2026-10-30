@@ -1,0 +1,97 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+       xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls"
+       mc:Ignorable="d" HorizontalAlignment="Stretch" Margin="4"
+       d:DesignWidth="200" d:DesignHeight="800">
+
+    <Label Content="Line Direction Arrows" FontWeight="Bold"/>
+    <Separator/>
+
+    <CheckBox x:Name="enabled" Content="Show arrows on selected lines"
+              IsChecked="False" Margin="4,6,4,4"
+              VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+
+    <WrapPanel Margin="4,6,4,0" VerticalAlignment="Center">
+        <Label Content="Max arrows per line:" VerticalAlignment="Center" Padding="0,0,4,0"/>
+        <Label Content="{Binding Value, ElementName=arrow_interval, StringFormat={}{0:N0}}"
+               VerticalAlignment="Center" FontWeight="Bold"/>
+    </WrapPanel>
+    <Slider x:Name="arrow_interval" Minimum="1" Maximum="20" Value="5"
+            Margin="4,0,4,6" TickFrequency="1" IsSnapToTickEnabled="True"
+            TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight"
+            IsEnabled="{Binding IsChecked, ElementName=enabled}"/>
+
+    <Label Content="Arrow colour:" Margin="4,6,4,0"/>
+    <Wpf:ColorPicker x:Name="arrow_colour" Margin="4,0,4,6"
+                     IsEnabled="{Binding IsChecked, ElementName=enabled}"/>
+
+    <Separator Margin="0,4,0,4"/>
+
+    <CheckBox x:Name="show_seg_type" Content="Show Segment Type"
+              IsChecked="False" Margin="4,2,4,2"
+              VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    <WrapPanel Margin="16,2,4,2">
+        <Rectangle Fill="Cyan"        Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Straight"     Padding="0,0,8,0" VerticalAlignment="Center"/>
+        <Rectangle Fill="Orange"      Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Arc"          Padding="0,0,8,0" VerticalAlignment="Center"/>
+        <Rectangle Fill="Magenta"     Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Smooth"       Padding="0,0,8,0" VerticalAlignment="Center"/>
+        <Rectangle Fill="Yellow"      Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Spiral"       Padding="0,0,0,0"  VerticalAlignment="Center"/>
+    </WrapPanel>
+    <WrapPanel Margin="16,0,4,6">
+        <Rectangle Fill="MediumPurple" Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Arc T-both"   Padding="0,0,8,0" VerticalAlignment="Center"/>
+        <Rectangle Fill="LimeGreen"   Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Arc T-begin"  Padding="0,0,8,0" VerticalAlignment="Center"/>
+        <Rectangle Fill="DodgerBlue"  Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Arc T-end"    Padding="0,0,0,0"  VerticalAlignment="Center"/>
+    </WrapPanel>
+
+    <WrapPanel Margin="16,4,4,0" VerticalAlignment="Center">
+        <Label Content="Segment line width:" VerticalAlignment="Center" Padding="0,0,4,0"/>
+        <Label Content="{Binding Value, ElementName=seg_type_width, StringFormat={}{0:N0}}"
+               VerticalAlignment="Center" FontWeight="Bold"/>
+    </WrapPanel>
+    <Slider x:Name="seg_type_width" Minimum="1" Maximum="5" Value="3"
+            Margin="16,0,4,6" TickFrequency="1" IsSnapToTickEnabled="True"
+            TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight"
+            IsEnabled="{Binding IsChecked, ElementName=show_seg_type}"/>
+
+    <Separator Margin="0,4,0,4"/>
+
+    <CheckBox x:Name="show_tt_fail" Content="Highlight failed arcs"
+              IsChecked="False" Margin="4,2,4,2"
+              VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    <WrapPanel Margin="16,2,4,2">
+        <Rectangle Fill="Red"         Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Failed T-both arc" Padding="0,0,8,0" VerticalAlignment="Center"/>
+        <Rectangle Fill="Orange"      Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Tangent intersection" Padding="0,0,0,0" VerticalAlignment="Center"/>
+    </WrapPanel>
+    <WrapPanel Margin="16,0,4,6">
+        <Rectangle Fill="OrangeRed"   Width="12" Height="12" Margin="0,0,4,0" VerticalAlignment="Center"/>
+        <Label Content="Radius &lt; half chord" Padding="0,0,0,0" VerticalAlignment="Center"/>
+    </WrapPanel>
+
+    <WrapPanel Margin="16,4,4,0" VerticalAlignment="Center">
+        <Label Content="Highlight line width:" VerticalAlignment="Center" Padding="0,0,4,0"/>
+        <Label Content="{Binding Value, ElementName=tt_fail_width, StringFormat={}{0:N0}}"
+               VerticalAlignment="Center" FontWeight="Bold"/>
+    </WrapPanel>
+    <Slider x:Name="tt_fail_width" Minimum="1" Maximum="5" Value="5"
+            Margin="16,0,4,6" TickFrequency="1" IsSnapToTickEnabled="True"
+            TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight"
+            IsEnabled="{Binding IsChecked, ElementName=show_tt_fail}"/>
+
+    <TextBlock Text="Note: segment type and failed arc highlighting only work for linestrings, not for CAD (ForeignCad) lines/polylines."
+               TextWrapping="Wrap" FontStyle="Italic" Foreground="Gray" Margin="4,2,4,2"/>
+
+    <Label x:Name="status" Content="" Margin="4,2,4,2"/>
+    <Label x:Name="error" Content="" FontWeight="Bold" Foreground="Red" Margin="4,0,4,0"/>
+
+</StackPanel>

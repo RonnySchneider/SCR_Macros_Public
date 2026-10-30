@@ -815,7 +815,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version = 1.035
+        cmdData.Version = 1.037
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -1375,17 +1375,17 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
 
         filesFolder = next((c for c in siblings if c.IsFolder and str(c.FileName) == filesFolderName), None)
 
-        # a .job usually comes with a matching .jxl export (and vice versa) - if the other one sits next
-        # to the selected file with the same base name, it's downloaded and archived alongside it
-        companionFile = None
-        companionExtensions = {".job": ".jxl", ".jxl": ".job"}
-        companionExtension = companionExtensions.get(os.path.splitext(fileName)[1].lower())
-        if companionExtension is not None:
-            companionFile = next((c for c in siblings if not c.IsFolder
-                                  and os.path.splitext(str(c.FileName))[0].lower() == folderName.lower()
-                                  and os.path.splitext(str(c.FileName))[1].lower() == companionExtension), None)
+        # a job usually comes with related files next to it (.jxl export, .csv, reports, ...) - every other
+        # file whose name starts with the selected file's base name (e.g. "261001SCR1") is downloaded and
+        # archived alongside it. A digit straight after the prefix means a different job (e.g. "261001SCR10"
+        # for "261001SCR1"), so those are skipped.
+        companionFiles = [c for c in siblings if not c.IsFolder
+                          and str(c.FileName).lower().startswith(folderName.lower())
+                          and not str(c.FileName)[len(folderName):len(folderName) + 1].isdigit()
+                          and str(c.FileName) != fileName]
+        companionDownloadPaths = []
 
-        if companionFile is not None:
+        for companionFile in companionFiles:
             companionFileName = str(companionFile.FileName)
             companionDownloadPath = os.path.join(controllerDataFolder, companionFileName)
             self.statusLabel.Text = "Downloading " + companionFileName + "..."
@@ -1400,6 +1400,7 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
                 self.syncBtn.IsEnabled = True
                 self.error.Content = "Download reported success, but the file is not at: " + companionDownloadPath
                 return
+            companionDownloadPaths.append(companionDownloadPath)
 
         if filesFolder is not None:
             self.statusLabel.Text = "Downloading " + filesFolderName + "..."
@@ -1425,8 +1426,8 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
             try:
                 oldJobFolder = self.trimbleConnectClient.get_or_create_child_folder(parentFolder, oldJobFolderName)
                 self.archive_item_on_connect(connectFile, False, fileName, parentFolder, oldJobFolder, downloadPath)
-                if companionFile is not None:
-                    self.archive_item_on_connect(companionFile, False, companionFileName, parentFolder, oldJobFolder, companionDownloadPath)
+                for companionFile, companionDownloadPath in zip(companionFiles, companionDownloadPaths):
+                    self.archive_item_on_connect(companionFile, False, str(companionFile.FileName), parentFolder, oldJobFolder, companionDownloadPath)
                 if filesFolder is not None:
                     self.archive_item_on_connect(filesFolder, True, filesFolderName, parentFolder, oldJobFolder,
                                                   os.path.join(controllerDataFolder, filesFolderName))
@@ -1458,8 +1459,8 @@ class SCR_DayJobSyncDialog(Window): # this inherits from the WPF Window control 
 
         self.syncBtn.IsEnabled = True
         self.statusLabel.Text = "Downloaded to: " + downloadPath
-        if companionFile is not None:
-            self.statusLabel.Text += " (with " + companionFileName + ")"
+        if companionFiles:
+            self.statusLabel.Text += " (with " + ", ".join(str(c.FileName) for c in companionFiles) + ")"
         if filesFolder is not None:
             self.statusLabel.Text += " (with " + filesFolderName + ")"
         if oldJobFolderEnabled and oldJobFolderName:
