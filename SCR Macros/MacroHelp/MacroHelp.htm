@@ -147,6 +147,7 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>31/10/2026 – <a class="class2" href="#SCR_DuplicateSurface">SCR_DuplicateSurface</a> – fixed the original triangulation persisting in the duplicate after its dependencies were deleted or changed; surfaces with dependencies now only copy those dependencies</li>
           <li>30/10/2026 – <a class="class2" href="#SCR_LocateDynaviewSource">SCR_LocateDynaviewSource</a> – fixed an error on start-up that also broke the Help button; picking a DynaView now only reruns the search for a new DynaView, not for every other entity clicked</li>
           <li>30/10/2026 – <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – in the Add/Edit sync dialogs, browsing for local file 2 (e.g. a linestyle file) now starts in file 1's folder if file 2's folder was never set or can't be found</li>
           <li>26/10/2026 – new<a class="class2" href="#SCR_ShowLineDirection">SCR_ShowLineDirection</a> – shows direction arrows and segment types on selected lines, and highlights tangent arcs TBC can't compute as specified</li>
@@ -1063,6 +1064,8 @@
         <h3><a id="SCR_DuplicateSurface"></a> <span id="SCR_DuplicateSurface" class="header3">SCR_DuplicateSurface</span> </h3>
           <ul>
 			  <li>main purpose is to quickly duplicate Composites with lots of members</li>
+			  <li>surfaces with dependencies: only the dependencies are copied, TBC computes the triangulation from them when it recomputes</li>
+			  <li>surfaces without dependencies, e.g. imported ones: the geometry is copied, otherwise the duplicate would be empty</li>
 		  </ul>
 
         <h3><a id="SCR_ElevateToPlane"></a> <span id="SCR_ElevateToPlane" class="header3">SCR_ElevateToPlane</span> </h3>

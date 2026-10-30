@@ -3215,8 +3215,9 @@ class SCR_CloudReviseAddSyncDialog(Window):
 
     def browse_local_folder2_clicked(self, sender, e):
         dlg = FolderBrowserDialog()
-        # file 2's own folder first; if never set or no longer reachable, start where file 1 lives
-        for startFolder2 in (self.localFolder2, self.lastBrowseFolder2, self.localFolder1, self.lastBrowseFolder1):
+        # this schedule's file 2 folder first, then its file 1 folder - the remembered folders from
+        # earlier schedules are only a last resort, otherwise they'd win over the current file 1
+        for startFolder2 in (self.localFolder2, self.localFolder1, self.lastBrowseFolder2, self.lastBrowseFolder1):
             if startFolder2 and os.path.isdir(startFolder2):
                 dlg.SelectedPath = startFolder2
                 break

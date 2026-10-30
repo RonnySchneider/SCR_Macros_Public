@@ -35,7 +35,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Duplicate DTM"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.04
+        cmdData.Version = 1.041
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -138,13 +138,6 @@ class SCR_DuplicateSurface(StackPanel): # this inherits from the WPF StackPanel 
                         newsurface = o.GetSite().Add(clr.GetClrType(Model3D))
                         newsurface.Name = Model3D.GetUniqueName(o.Name, None, o.GetSite())
 
-                        # rebuild the surface from the source surface's own vertices and breaklines
-                        # (rather than a raw Gem copy), so it's reconstructed from its original data
-                        builder = newsurface.GetGemBatchBuilder()
-                        builder = self.addModel3D(builder, o)
-                        builder.Construction()
-                        builder.Commit()
-
                         # there's no direct getter for a surface's current Influences (source linework/points
                         # it was built from) - only Add/Remove/Replace/IsInfluencedBy - so recover the list by
                         # taking the entities this surface observes (GetIsObservedBy) and keeping only the
@@ -152,7 +145,15 @@ class SCR_DuplicateSurface(StackPanel): # this inherits from the WPF StackPanel 
                         observed = self.currentProject.Concordance.GetIsObservedBy(o.SerialNumber)
                         influences = [e for e in observed if o.IsInfluencedBy(e.SerialNumber)]
                         if influences:
+                            # the triangulation is computed from the influences, don't copy any geometry
+                            # the builder only adds internal data, which would persist on any later recompute
                             newsurface.AddInfluences(influences)
+                        else:
+                            # no influences (i.e. imported surface), the geometry is all there is to copy
+                            builder = newsurface.GetGemBatchBuilder()
+                            builder = self.addModel3D(builder, o)
+                            builder.Construction()
+                            builder.Commit()
 
                     if newsurface:
 
