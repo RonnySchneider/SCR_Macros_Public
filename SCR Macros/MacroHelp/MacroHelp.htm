@@ -147,7 +147,8 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
-          <li>31/10/2026 – <a class="class2" href="#SCR_DuplicateSurface">SCR_DuplicateSurface</a> – fixed the original triangulation persisting in the duplicate after its dependencies were deleted or changed; surfaces with dependencies now only copy those dependencies</li>
+          <li>03/11/2026 – new <a class="class2" href="#SCR_SphereClashCheck">SCR_SphereClashCheck</a> – creates a sphere around each selected point, as an IFC object and/or as two half-sphere DTMs, for visual clash checks</li>
+          <li>31/10/2026 –<a class="class2" href="#SCR_DuplicateSurface">SCR_DuplicateSurface</a> – fixed the original triangulation persisting in the duplicate after its dependencies were deleted or changed; surfaces with dependencies now only copy those dependencies</li>
           <li>30/10/2026 – <a class="class2" href="#SCR_LocateDynaviewSource">SCR_LocateDynaviewSource</a> – fixed an error on start-up that also broke the Help button; picking a DynaView now only reruns the search for a new DynaView, not for every other entity clicked</li>
           <li>30/10/2026 – <a class="class2" href="#SCR_CloudRevise">SCR_CloudRevise</a> – in the Add/Edit sync dialogs, browsing for local file 2 (e.g. a linestyle file) now starts in file 1's folder if file 2's folder was never set or can't be found</li>
           <li>26/10/2026 – new<a class="class2" href="#SCR_ShowLineDirection">SCR_ShowLineDirection</a> – shows direction arrows and segment types on selected lines, and highlights tangent arcs TBC can't compute as specified</li>
@@ -1810,6 +1811,24 @@
 			  <br><br></li>
 		  </ul>
 
+        <h3 id="SCR_SphereClashCheck" class="header3"><a id="SCR_SphereClashCheck"></a>SCR_SphereClashCheck</h3>
+          <ul>
+			  <li>the main purpose of this macro is to check whether foldable lamp posts would clash with other objects (e.g. trees, buildings, power lines) when they are lowered</li>
+			  <li>select the hinge points and use the length of the folding part as the radius; the sphere then shows the space the post's tip can reach</li>
+			  <li>creates a sphere with a given radius around each selected point (named or CAD points), to check visually for clashes with other objects</li>
+			  <li>an optional vertical offset moves the sphere centres up (positive) or down (negative); points without an elevation are skipped</li>
+			  <li>"Segments around Equator" sets how many segments make up the equator; it's rounded to a multiple of 4, and more segments give a smoother sphere</li>
+			  <li>the spheres can be created as:</li>
+			  <ul>
+				<li>IFC objects – one object per point, all collected in the IFC project "SCR_SphereClashCheck", using the selected colour and layer</li>
+				<li>Stockpile DTM – the top half of the sphere</li>
+				<li>Basin DTM – the bottom half of the sphere</li>
+			  </ul>
+			  <li>a DTM can't have overhangs, so a full sphere is split into those two halves; they share the same equator and meet without a gap</li>
+			  <li>objects are named after their point; unnamed points get the next unused name "Sphere 1", "Sphere 2" ...; the DTMs get " - stockpile" or " - basin" appended</li>
+			  <br>
+		  </ul>
+
         <h3 id="SCR_SplitCombineIFCMeshes" class="header3"><a id="SCR_SplitCombineIFCMeshes"></a>SCR_SplitCombineIFCMeshes</h3>
           <ul>
 			  <li>multiple ways to manipulate IFC objects and the BIM Entity tree in the Project Explorer</li>
@@ -2499,6 +2518,7 @@
                 <ul class="customListStyle">
                   <li><a href="#SCR_PlaceObjects">SCR_PlaceObjects</a></li>
                   <li><a href="#SCR_RotateIFC">SCR_RotateIFC</a></li>
+                  <li><a href="#SCR_SphereClashCheck">SCR_SphereClashCheck</a></li>
                   <li><a href="#SCR_SplitCombineIFCMeshes">SCR_SplitCombineIFCMeshes</a></li>
                 </ul>
               </li>

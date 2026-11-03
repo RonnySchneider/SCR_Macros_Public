@@ -1,0 +1,34 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="400">
+
+    <Label Content="select Points"/>
+    <Wpf:MemberSelection x:Name="objs"/>
+
+    <UniformGrid Columns="2">
+        <Label Content="Radius" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Wpf:DistanceEdit x:Name="radius" Distance="1.0" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Label Content="vertical Offset" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Wpf:DistanceEdit x:Name="verticaloffset" Distance="0.0" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Label Content="Segments around Equator" VerticalAlignment="Center" VerticalContentAlignment="Center" ToolTip="number of segments around the equator - rounded to a multiple of 4; more segments give a smoother sphere"/>
+        <Wpf:NumericEdit x:Name="segments" Value="24" MinValue="8" MaxValue="360" InputType="Integer" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Label Content="IFC Layer" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Wpf:LayerPicker x:Name="layerpicker" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+    </UniformGrid>
+
+    <GroupBox Header="Output">
+        <UniformGrid Columns="2">
+            <CheckBox x:Name="createifc" Content="IFC objects" IsChecked="True" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <Wpf:ColorPicker x:Name="ifccolorpicker" IsEnabled="{Binding IsChecked, ElementName=createifc}"/>
+            <CheckBox x:Name="createstockpile" Content="Stockpile DTM (top)" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <Label/>
+            <CheckBox x:Name="createbasin" Content="Basin DTM (bottom)" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <Label/>
+        </UniformGrid>
+    </GroupBox>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+</StackPanel>
