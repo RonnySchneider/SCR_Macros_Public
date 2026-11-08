@@ -147,6 +147,7 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>07/11/2026 – new <a class="class2" href="#SCR_SubgradeSmoothing">SCR_SubgradeSmoothing</a> (BETA) – creates a smooth road surface with gradual grade and crossfall changes from a rough road surface and a rough centreline</li>
           <li>03/11/2026 – new <a class="class2" href="#SCR_SphereClashCheck">SCR_SphereClashCheck</a> – creates a sphere around each selected point, as an IFC object and/or as two half-sphere DTMs, for visual clash checks</li>
           <li>31/10/2026 –<a class="class2" href="#SCR_DuplicateSurface">SCR_DuplicateSurface</a> – fixed the original triangulation persisting in the duplicate after its dependencies were deleted or changed; surfaces with dependencies now only copy those dependencies</li>
           <li>30/10/2026 – <a class="class2" href="#SCR_LocateDynaviewSource">SCR_LocateDynaviewSource</a> – fixed an error on start-up that also broke the Help button; picking a DynaView now only reruns the search for a new DynaView, not for every other entity clicked</li>
@@ -1369,6 +1370,99 @@
         will only work perfectly on dam like surfaces that run parallel to the
         alignment, with no side road tie-ins </span> <br></li>
 		  </ul>
+        <h3 id="SCR_SubgradeSmoothing" class="header3"><a id="SCR_SubgradeSmoothing"></a>SCR_SubgradeSmoothing</h3>
+          <ul>
+			  <li><span class="auto-style2">!!! BETA version – still in development, please check the results carefully !!!</span></li>
+			  <li>creates a new, smooth surface from a rough road surface (e.g. a survey of an existing road), following a rough centreline</li>
+			  <li>grade, crossfall, crown position and width change gradually along the road; bumps, dips and survey noise are removed</li>
+			  <li>typical uses are a regulating/overlay design over an existing road, or a smooth subgrade a set depth below or above the existing surface</li>
+			  <li>the centreline doesn't need to be exact – a quickly digitised polyline that stays within the road is enough</li>
+			  <li>the result is a new surface named "&lt;source surface&gt; - smoothed"; the source surface isn't changed</li>
+			  <br>
+			  <li><b>How it works</b></li>
+			  <ol>
+				<li>the centreline is densified, smoothed horizontally and resampled at the Station Interval (with "fixed Centreline" it is only sampled at the Station Interval, without smoothing)</li>
+				<li>every vertex of the source surface is projected onto that smoothed centreline and gets a station, offset and elevation; vertices beyond the start or end of the centreline are ignored</li>
+				<li>at every station, the vertices within the Fit Window are fitted with two planes meeting at the crown (or with one plane for a single crossfall); vertices close to the station count more than those further away</li>
+				<li>the left and right road widths come from the outermost vertices near each station</li>
+				<li>the crown position, crown elevation (grade), left and right crossfalls, and both widths are each smoothed along the road with their own Smoothing Length</li>
+				<li>optionally, the smoothed model is lifted just enough that no source vertex sticks out above it, and optionally kept within a maximum above the source</li>
+				<li>the vertical offset (global, or per section) is applied and the new surface is built as cross sections with breaklines</li>
+				<li>optionally, crown and edge lines and a CSV report are created</li>
+			  </ol>
+			  <br>
+			  <li><b>Settings</b></li>
+			  <ul>
+				<li><b>Source Surface</b> – the rough road surface; only triangles with a material are used</li>
+				<li><b>rough Centreline</b> – any line; its start and end define the extent of the new surface, and the section chainages refer to this line</li>
+				<li><b>fixed Centreline – Crown on the Line</b> – use this if the line is already the exact crown line, e.g. a design alignment or a surveyed crown string</li>
+				<ul>
+					<li>the line is used as it is – it isn't smoothed horizontally and the macro doesn't search for a crown; only the elevations (grade and crossfalls) are fitted and smoothed</li>
+					<li>"find Crown Position" and the Centreline and Crown Position smoothing lengths are greyed out; "find Crown" sections are treated as "Crown on CL", "single Crossfall" (default or in sections) still applies</li>
+					<li>if the line runs along a road edge, the road is widened slightly so the crown stays on the line</li>
+				</ul>
+				<li><b>Fitting</b></li>
+				<ul>
+					<li><b>Station Interval</b> – the distance between the cross sections of the result; smaller values give more detail but take longer; the interval is adjusted slightly so it fits evenly into the smoothed centreline</li>
+					<li><b>Fit Window Length</b> – the length of road used for each cross-section fit; longer windows give more stable crossfalls but blur short features, shorter windows follow the data more closely but need dense data</li>
+					<li>each fit needs at least 3 vertices on each side of the crown; stations without enough vertices are only interpolated from their neighbours – if the source is a survey with cross sections every 10 m, a 5 m window misses most of them, so use roughly 1–2 times the cross-section spacing</li>
+					<li><span class="auto-style2">keep the window short in tight bends – the window follows the centreline, so in a bend with a 15 m radius a 30 m window covers more than 100° of the bend and the cross sections can't be fitted properly; check "Source deviation RMS" in the summary – the larger it is, the more the result ends up above the source</span></li>
+				</ul>
+				<li><b>Crown</b></li>
+				<ul>
+					<li>the default applies everywhere except inside the sections listed in the table</li>
+					<li><b>find Crown Position</b> – searches for the best crown position at every station, within the middle half of the road; the edges are excluded so a roll-off at the edge isn't mistaken for a crown</li>
+					<li><b>Crown on Centreline</b> – the crown is fixed on the centreline; use this if the centreline was digitised along the crown</li>
+					<li><b>no Crown – single Crossfall</b> – one plane across the whole road, e.g. superelevated bends or one-way crossfall roads</li>
+					<li><b>Sections</b> – set a different crown mode, and optionally a different depth, for a chainage range: pick "from" and "to Chainage", click "add Section", then change the Mode in the table; "remove selected" deletes the selected rows</li>
+					<li>an empty Depth cell uses the global vertical Offset; if sections overlap, the one starting last wins</li>
+					<li>the sections are stored with the project, as they belong to a specific road</li>
+				</ul>
+				<li><b>Smoothing Lengths</b> – roughly the wavelength (in metres along the road) that gets reduced to half its height; much shorter bumps are removed, much longer changes are kept; 0 means hardly any smoothing</li>
+				<ul>
+					<li><b>Centreline</b> – horizontal smoothing of the centreline</li>
+					<li><b>Grade</b> – smoothing of the crown elevation along the road; also used for the lift of "never less than vertical Offset"</li>
+					<li><b>Crossfall</b> – smoothing of the left and right crossfalls</li>
+					<li><b>Crown Position</b> – smoothing of the sideways crown position; this also controls how gradually the crown moves between sections with different modes</li>
+					<li><b>Width</b> – smoothing of the left and right road edges</li>
+				</ul>
+				<li><b>Output</b></li>
+				<ul>
+					<li><b>vertical Offset</b> – moves the result up (positive) or down (negative) from the smoothed model</li>
+					<li><b>Depth Transition Length</b> – the length of the S-shaped transition where the depth changes between sections, centred on the section start or end; 0 gives a hard step</li>
+					<li><b>Edge Extension</b> – widens the result on both sides by this distance, beyond the outermost source vertices</li>
+					<li><b>max Cross Spacing</b> – the maximum point spacing across the road; every cross section has the same number of points, so narrower sections get a closer spacing</li>
+					<li><b>never less than vertical Offset</b> – without this option the smoothed model is a best fit, so source vertices lie both above and below it; with it, the model is lifted smoothly until no source vertex lies above it, so every source vertex is at least the vertical offset below the result (with a negative offset: the result is never deeper than that offset below any source vertex)</li>
+					<li>the source is also checked under every vertex of the new surface – between its own vertices the source is made of flat triangles, while the result is smooth, so without that check the result could get closer than the vertical offset there (e.g. in sags, or where the source has long triangles between surveyed cross sections)</li>
+					<li><b>max additional</b> – only available with "never less than vertical Offset"; limits how far the result may be above the source: every source vertex should end up between the vertical offset and the vertical offset plus this value below the result (e.g. vertical offset 0.2 and max additional 0.1 – between 0.2 and 0.3)</li>
+					<ul>
+						<li>without it, the lift is the same along the whole cross section, so in dips, ruts or at lower edges the result can end up several times the vertical offset above the source</li>
+						<li>with it, every cross section gets its own lift and crossfall correction, checked against the source under every vertex of the new surface; the crown lift is smoothed with the Grade length, the crossfalls with the Crossfall length</li>
+						<li>the cross-section shape is kept: one straight line in "single Crossfall" sections, two straight lines meeting at the crown otherwise</li>
+						<li><span class="auto-style2">the max takes priority over the Grade and Crossfall smoothing – the smaller the value, the more abrupt the grade and crossfall changes can get; check "max Grade change" and "max Crossfall change" in the summary</span></li>
+						<li>the minimum always wins: where the source cross section is too uneven to fit between both limits (e.g. deep ruts, a kerb), the result keeps the minimum and the summary reports how many vertices are still above the max</li>
+					</ul>
+					<li><b>draw Crown and Edge Lines</b> – creates a crown line and both edge lines on the chosen layer</li>
+					<li><b>write CSV Report to Downloads</b> – writes SCR_SubgradeSmoothing.csv with the raw and smoothed values per station: crown elevation, lift, depth, grade, crossfalls, crown and edge offsets, the lift at crown and edges, and fit quality; crossfalls are given outwards from the crown (negative = falling away from the crown); the file is overwritten on every run</li>
+				</ul>
+			  </ul>
+			  <br>
+			  <li><b>Result summary</b> – after each run, the macro shows the RMS and maximum deviation of the source vertices from the smoothed model, how much it was raised, the minimum and maximum clearance, how many vertices are still above the max, the largest crossfall change (%/m) and grade change (%/m), and how many points were skipped</li>
+			  <br>
+			  <li><b>Be aware of</b></li>
+			  <ul>
+				<li><span class="auto-style2">every source vertex is used – kerbs, verges, footpaths, driveways and side road tie-ins influence both the fit and the width; trim the source surface to the road first</span></li>
+				<li><span class="auto-style2">"never less than vertical Offset" is driven by the single highest vertex – a spike or bad shot lifts the whole area around it; clean the source surface first and check "raised by up to" in the summary</span></li>
+				<li>"find Crown Position" can find a false crown on one-way crossfall roads, e.g. in superelevated bends; use a "single Crossfall" section there</li>
+				<li>a large Centreline smoothing length cuts the inside of tight bends; the cross sections there can overlap and fold back, those points are skipped and reported in the summary – this can also happen with a fixed centreline if it has sharp kinks</li>
+				<li>the section chainages refer to the selected centreline; if you pick a different line, check the sections again</li>
+				<li>large source surfaces can take a while – the progress bar can be cancelled</li>
+				<li>every run creates a new surface, earlier results are not replaced</li>
+			  </ul>
+			  <br>
+			  <li><img alt="" height="400" src="Media/SCR_SubgradeSmoothing-1.png" border="1"> <img alt="" height="400" src="Media/SCR_SubgradeSmoothing-2.png" border="1"></li>
+			  <br>
+		  </ul>
         <h3 id="SCR_SweepBetweenLines" class="header3"><a id="SCR_SweepBetweenLines"></a>SCR_SweepBetweenLines</h3>
           <ul>
 			  <li>use 2 given lines and compute cross connections at a chosen interval</li>
@@ -2459,6 +2553,7 @@
                 <ul class="customListStyle">
                   <li><a href="#SCR_PavementStep">SCR_PavementStep</a></li>
                   <li><a href="#SCR_SubgradeFromFSL">SCR_SubgradeFromFSL</a></li>
+                  <li><a href="#SCR_SubgradeSmoothing">SCR_SubgradeSmoothing</a></li>
                   <li><a href="#SCR_SweepBetweenLines">SCR_SweepBetweenLines</a></li>
                 </ul>
               </li>

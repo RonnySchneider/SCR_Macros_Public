@@ -1,0 +1,114 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="222" d:DesignHeight="760">
+    <Label Content="!!! BETA version - still in development !!!" Background="Red"/>
+    <Label Content="smooth a rough road surface"/>
+
+    <Label Content="Source Surface"/>
+    <Wpf:ComboBoxEntityPicker x:Name="surfacepicker" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+
+    <Label Content="rough Centreline"/>
+    <Wpf:SelectEntity x:Name="linepicker"/>
+    <CheckBox x:Name="fixcl" Content="fixed Centreline - Crown on the Line" IsChecked="False" Margin="0,2,0,2"
+              ToolTip="use the line as it is, no horizontal smoothing and no crown search - only the elevations get optimized"/>
+
+    <GroupBox Header="Fitting">
+        <StackPanel>
+            <UniformGrid Columns="2">
+                <Label Content="Station Interval"/>
+                <Wpf:DistanceEdit x:Name="interval" Distance="1.0"/>
+                <Label Content="Fit Window Length"/>
+                <Wpf:DistanceEdit x:Name="fitwindow" Distance="5.0"/>
+            </UniformGrid>
+        </StackPanel>
+    </GroupBox>
+
+    <GroupBox Header="Crown">
+        <StackPanel>
+            <Label Content="default - outside of the Sections"/>
+            <StackPanel x:Name="crowndefault" Margin="10,0,0,0">
+                <RadioButton x:Name="crownfit" Content="find Crown Position" IsChecked="True"/>
+                <RadioButton x:Name="crowncl" Content="Crown on Centreline" IsChecked="False"/>
+                <RadioButton x:Name="crownnone" Content="no Crown - single Crossfall" IsChecked="False"/>
+            </StackPanel>
+
+            <Label Content="Sections"/>
+            <DataGrid x:Name="sectiongrid" ItemsSource="{Binding}" AutoGenerateColumns="False"
+                      CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False"
+                      HeadersVisibility="Column" SelectionMode="Extended" MinHeight="60" MaxHeight="200">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="from" Binding="{Binding [from], StringFormat=F3}" Width="*"/>
+                    <DataGridTextColumn Header="to" Binding="{Binding [to], StringFormat=F3}" Width="*"/>
+                    <DataGridTemplateColumn Header="Mode" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox SelectedValuePath="Content"
+                                          SelectedValue="{Binding [mode], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="find Crown"/>
+                                    <ComboBoxItem Content="Crown on CL"/>
+                                    <ComboBoxItem Content="single Crossfall"/>
+                                </ComboBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Depth" Binding="{Binding [depth]}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <UniformGrid Columns="2">
+                <Label Content="from Chainage"/>
+                <Wpf:StationEdit x:Name="fromstation"/>
+                <Label Content="to Chainage"/>
+                <Wpf:StationEdit x:Name="tostation"/>
+                <Button x:Name="addsection" Content="add Section" Margin="0,2,2,2"/>
+                <Button x:Name="removesection" Content="remove selected" Margin="2,2,0,2"/>
+            </UniformGrid>
+        </StackPanel>
+    </GroupBox>
+
+    <GroupBox Header="Smoothing Lengths">
+        <UniformGrid Columns="2">
+            <Label Content="Centreline"/>
+            <Wpf:DistanceEdit x:Name="smoothcl" Distance="10.0"/>
+            <Label Content="Grade"/>
+            <Wpf:DistanceEdit x:Name="smoothgrade" Distance="20.0"/>
+            <Label Content="Crossfall"/>
+            <Wpf:DistanceEdit x:Name="smoothxfall" Distance="20.0"/>
+            <Label Content="Crown Position"/>
+            <Wpf:DistanceEdit x:Name="smoothcrown" Distance="30.0"/>
+            <Label Content="Width"/>
+            <Wpf:DistanceEdit x:Name="smoothwidth" Distance="10.0"/>
+        </UniformGrid>
+    </GroupBox>
+
+    <GroupBox Header="Output">
+        <StackPanel>
+            <UniformGrid Columns="2">
+                <Label Content="vertical Offset"/>
+                <Wpf:DistanceEdit x:Name="voffset" Distance="0.2"/>
+                <Label Content="Depth Transition Length"/>
+                <Wpf:DistanceEdit x:Name="depthtransition" Distance="20.0"/>
+                <Label Content="Edge Extension"/>
+                <Wpf:DistanceEdit x:Name="extension" Distance="0.0"/>
+                <Label Content="max Cross Spacing"/>
+                <Wpf:DistanceEdit x:Name="crossspacing" Distance="1.5"/>
+            </UniformGrid>
+            <CheckBox x:Name="keepabove" Content="never less than vertical Offset" IsChecked="True"/>
+            <UniformGrid Columns="2" Margin="16,0,0,0" IsEnabled="{Binding IsChecked, ElementName=keepabove}">
+                <CheckBox x:Name="limitmax" Content="max additional" IsChecked="False" VerticalAlignment="Center"
+                          ToolTip="the result stays between the vertical Offset and the vertical Offset plus this value above every source vertex"/>
+                <Wpf:DistanceEdit x:Name="maxextra" Distance="0.1" IsEnabled="{Binding IsChecked, ElementName=limitmax}"/>
+            </UniformGrid>
+            <CheckBox x:Name="drawlines" Content="draw Crown and Edge Lines" IsChecked="False"/>
+            <StackPanel IsEnabled="{Binding IsChecked, ElementName=drawlines}">
+                <Label Content="Line Layer"/>
+                <Wpf:LayerPicker x:Name="layerpicker"/>
+            </StackPanel>
+            <CheckBox x:Name="writecsv" Content="write CSV Report to Downloads" IsChecked="True"/>
+        </StackPanel>
+    </GroupBox>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+</StackPanel>

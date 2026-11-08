@@ -132,11 +132,14 @@ class SCROverlayBag:
         polyseg = None
         polyseg_v = None
 
-        if l != None and not math.isnan(startstation) and not math.isnan(endstation):
+        # NaN start/end (e.g. a Sideslope without EndStation) means "from begin"/"to end of line"
+        if l != None:
             polyseg = l.ComputePolySeg().Clone()
             polyseg = polyseg.ToWorld()
-            
+
             if polyseg:
+                if math.isnan(startstation):
+                    startstation = polyseg.BeginStation
                 if math.isnan(endstation):
                     endstation = polyseg.ComputeStationing()
                 polyseg.ClipStationRange(startstation, endstation, True)
@@ -150,14 +153,17 @@ class SCROverlayBag:
                     polyseg_v.Add(Point3D(polyseg.BeginStation,0,0))
                     polyseg_v.Add(Point3D(polyseg.ComputeStationing(), 0, 0))
 
-                minmax = CommandHelper.GetMinMaxElevations(l)
-                # MinMax is used on the original object; if it doesn't have elevations we'll get NaN back
-                if math.isnan(minmax[1]): lmin = 0
-                else:                     lmin = minmax[1]
-                if math.isnan(minmax[2]): lmax = 0
-                else:                     lmax = minmax[2]
-                polyseg_v.Clip(Limits3D(Point3D(startstation, lmin-1, 0), Point3D(endstation, lmax+1, 0)), Side.Out)
-                polyseg_v.Trim()
+                # 3D polylines (e.g. ForeignCad Poly3D) carry Z in the horizontal polyseg and have no
+                # vertical polyseg - ClipStationRange above already trimmed them, nothing more to clip
+                if polyseg_v:
+                    minmax = CommandHelper.GetMinMaxElevations(l)
+                    # MinMax is used on the original object; if it doesn't have elevations we'll get NaN back
+                    if math.isnan(minmax[1]): lmin = 0
+                    else:                     lmin = minmax[1]
+                    if math.isnan(minmax[2]): lmax = 0
+                    else:                     lmax = minmax[2]
+                    polyseg_v.Clip(Limits3D(Point3D(startstation, lmin-1, 0), Point3D(endstation, lmax+1, 0)), Side.Out)
+                    polyseg_v.Trim()
 
                 chord = polyseg.Linearize(0.001, 0.001, 50, polyseg_v, False)
 
