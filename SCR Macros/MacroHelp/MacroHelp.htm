@@ -147,6 +147,7 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>15/11/2026 – new <a class="class2" href="#SCR_RecurvePolyline">SCR_RecurvePolyline</a> <span class="auto-style2">(BETA)</span> – re-engineers chorded polylines back into straights, tangent arcs, grades and vertical curves, so the lines can be edited again</li>
           <li>07/11/2026 – new <a class="class2" href="#SCR_SubgradeSmoothing">SCR_SubgradeSmoothing</a> (BETA) – creates a smooth road surface with gradual grade and crossfall changes from a rough road surface and a rough centreline</li>
           <li>03/11/2026 – new <a class="class2" href="#SCR_SphereClashCheck">SCR_SphereClashCheck</a> – creates a sphere around each selected point, as an IFC object and/or as two half-sphere DTMs, for visual clash checks</li>
           <li>31/10/2026 –<a class="class2" href="#SCR_DuplicateSurface">SCR_DuplicateSurface</a> – fixed the original triangulation persisting in the duplicate after its dependencies were deleted or changed; surfaces with dependencies now only copy those dependencies</li>
@@ -2217,6 +2218,88 @@
 			  <source src="./Media/SCR_PowerlineSway.mp4" type="video/mp4">Your browser does not support the video tag.</video><br></li>
 		  </ul>
 
+        <h3 id="SCR_RecurvePolyline" class="header3"><a id="SCR_RecurvePolyline"></a>SCR_RecurvePolyline</h3>
+          <ul>
+			  <li><span class="auto-style2">!!! BETA version – still in development, please check the results carefully !!!</span></li>
+			  <li>re-engineers lines that consist only of straight segments back into straights, arcs, grades and vertical curves</li>
+			  <li>made for chorded design data – e.g. after an export or conversion, the arcs and vertical curves were replaced by many short chords and can't be edited efficiently anymore</li>
+			  <li>the aim is as few elements as possible, while every original vertex stays within the tolerance</li>
+			  <li>the result is a new linestring with the original name on the chosen layer; the original line isn't changed</li>
+			  <li>works with any line type; if the source already contains curves, they are chorded tightly first</li>
+			  <br>
+			  <li><b>How it works</b></li>
+			  <ol>
+				<li>the vertices are read including the vertical profile of the line; consecutive vertices at the same position are dropped</li>
+				<li>horizontal: starting at the first vertex, the macro extends a straight and an arc as far as all vertices stay within the tolerance; the longer one is used, and a straight wins a tie; then it continues from the end of that element</li>
+				<li>an arc always passes exactly through its first and last vertex – those are shared with the neighbouring elements, so all elements connect; the radius is fitted to all vertices in between</li>
+				<li>clean-up of the result</li>
+				<ul>
+					<li>neighbouring elements that fit as one element are merged</li>
+					<li>a single chord left over next to an arc (e.g. the closing chord of a full circle – one arc can't be 360°) splits that arc into two arcs</li>
+					<li>every boundary between two elements is moved up to 10 vertices forward and back, to the position where both elements fit best – without this step an element could swallow the first vertices of the next one, as long as they are within the tolerance</li>
+				</ul>
+				<li>optionally, the radii are rounded</li>
+				<li>vertical: the chainage of every vertex is computed along the new horizontal geometry – the summed chord lengths would be too short in curves; the profile is then rebuilt the same way, with grades and parabolic vertical curves</li>
+				<li>the linestring is created: straights as straight elements, arcs as tangent arcs (see below), and the profile as VPIs with vertical curves</li>
+			  </ol>
+			  <br>
+			  <li><b>Tangent arcs</b></li>
+			  <ul>
+				<li>arcs in design data are normally tangent to their neighbours; the macro uses TBC's tangent arc elements, so the arcs stay tangent when the line is edited later</li>
+				<li>a single arc between two straights becomes a tangent arc "tangent at start and end"</li>
+				<li>several arcs in a row between two straights (compound or reverse curves): every arc becomes "tangent at start", only the last one before the next straight becomes "tangent at start and end"</li>
+				<li>arcs at the start or end of a line, without a straight on one side, stay ordinary arcs with radius and direction</li>
+				<li>TBC computes tangent arcs from the tangency and their end point, not from the fitted radius – the radius in TBC can differ slightly from the one in the CSV report</li>
+				<li><span class="auto-style2">arcs between straights are always made tangent, even if the source shows a kink at the joint</span></li>
+				<ul>
+					<li>if forcing the tangency moves the arc further than the horizontal tolerance (roughly kink angle × arc length / 4), a warning is shown and the arc is marked "(forced)" in the CSV report</li>
+					<li>check those places – a real angle point next to an arc gets changed into a tangent joint</li>
+				</ul>
+				<li>if the length of the finished linestring differs by more than 5 mm from the fitted geometry, a warning is shown as well</li>
+			  </ul>
+			  <br>
+			  <li><b>Settings</b></li>
+			  <ul>
+				<li><b>Lines</b> – one or more lines to re-engineer</li>
+				<li><b>Horizontal</b></li>
+				<ul>
+					<li><b>Tolerance</b> – the maximum distance of the original vertices from the new straights and arcs; set it just above the rounding of the source coordinates, e.g. 2 mm for coordinates rounded to the millimetre</li>
+					<li>a tolerance that is too large lets straights swallow the first chords of flat arcs; one that is too small (below the coordinate rounding) breaks the line into many short elements</li>
+					<li><b>min Chords per Arc</b> – three vertices always lie on a circle, so an arc with only one or two chords can't be told apart from an angle point; such short arcs are only accepted if they are tangent to the previous element, otherwise they stay straights</li>
+					<li><b>max Radius</b> – flatter curves are treated as straights</li>
+					<li><b>round Radii to</b> – 0 means no rounding; a rounded radius is only used if all vertices still stay within the tolerance, e.g. with 1 m a fitted radius of 249.998 becomes 250</li>
+				</ul>
+				<li><b>Vertical</b></li>
+				<ul>
+					<li><b>fit Grades and Vertical Curves</b> – unticked, the original elevations are kept and every vertex becomes a VPI</li>
+					<li><b>Tolerance</b> – the maximum height difference of the original vertices from the new grades and vertical curves</li>
+					<li><b>min Chords per Curve</b> – same as for the arcs: shorter vertical curves are only accepted if they are tangent to the previous grade</li>
+				</ul>
+				<li><b>Output</b></li>
+				<ul>
+					<li><b>Line Layer</b> – the layer for the new linestrings</li>
+					<li><b>write CSV Report to Downloads</b> – writes SCR_RecurvePolyline.csv with one row per element; the file is overwritten on every run</li>
+					<ul>
+						<li>horizontal rows (H): type, linestring element type, start and end chainage, length, radius, direction, start and end coordinates, kink to the previous element in degrees, number of vertices and maximum deviation</li>
+						<li>vertical rows (V): type, start and end chainage, length, grade in and out, K-value, number of vertices and maximum deviation</li>
+						<li>the kink at a true tangent joint is close to 0; a larger value points to an angle point or a forced tangency</li>
+					</ul>
+				</ul>
+			  </ul>
+			  <br>
+			  <li><b>Result summary</b> – after each run, the macro shows the number of lines, straights, arcs and vertical curves, and the largest horizontal and vertical deviation</li>
+			  <br>
+			  <li><b>Be aware of</b></li>
+			  <ul>
+				<li><span class="auto-style2">the macro expects the vertices to lie exactly on the original geometry, as in chorded design data; surveyed lines with scatter aren't supported yet</span></li>
+				<li>spirals aren't supported yet – a chorded spiral becomes a series of short arcs</li>
+				<li>vertical curves are always parabolas; circular vertical curves are approximated within the tolerance</li>
+				<li>the start and end of closed lines are treated like the ends of an open line, so arcs at that point stay ordinary arcs</li>
+				<li>every run creates new linestrings; earlier results are not replaced</li>
+			  </ul>
+			  <br>
+		  </ul>
+
         <h3 id="SCR_SweepShape" class="header3"><a id="SCR_SweepShape"></a>SCR_SweepShape</h3>
           <ul>
 			  <li>sweep an outline along an alignment and use a second line to rotate it<br>
@@ -2638,6 +2721,7 @@
                   <li><a href="#SCR_MinimumRectangle">SCR_MinimumRectangle</a></li>
                   <li><a href="#SCR_MultiOffset">SCR_MultiOffset</a></li>
                   <li><a href="#SCR_PowerlineSway">SCR_PowerlineSway</a></li>
+                  <li><a href="#SCR_RecurvePolyline">SCR_RecurvePolyline</a></li>
                   <li><a href="#SCR_SweepShape">SCR_SweepShape</a></li>
                   <li><a href="#SCR_VPath">SCR_VPath</a></li>
                 </ul>

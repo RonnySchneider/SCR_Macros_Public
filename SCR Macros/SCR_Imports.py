@@ -124,8 +124,8 @@ try:
 except:
     LinestringHelper = None
 
-from Trimble.Vce.Alignment.Linestring import ArcTangentType, IArcSegment, IBestFitArcSegment, IPIArcSegment, ISmoothCurveSegment, IStationVerticalLocation, IStraightSegment, \
-                                             ITangentArcSegment, IVerticalCurve, IVerticalNoCurve
+from Trimble.Vce.Alignment.Linestring import ArcLargeSmall, ArcTangentType, IArcSegment, IBestFitArcSegment, IPIArcSegment, ISmoothCurveSegment, IStationVerticalLocation, \
+                                             IStraightSegment, ITangentArcSegment, IVerticalCurve, IVerticalNoCurve
 
 from Trimble.Vce.Collections import DynArray, Point3DArray
 

@@ -1,0 +1,54 @@
+<StackPanel Background="#FFF3F3F7"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Wpf="clr-namespace:Trimble.Vce.UI.Controls.Wpf;assembly=Trimble.Vce.UI.Controls" mc:Ignorable="d"  HorizontalAlignment="Stretch"  Margin="4"
+       d:DesignWidth="260" d:DesignHeight="520">
+    <Label Content="!!! BETA version - still in development !!!" Background="Red"/>
+    <TextBlock Text="rebuild Straights/Arcs and Grades/Vertical Curves from chorded Polylines" TextWrapping="Wrap" Margin="5,2,5,4"/>
+
+    <Label Content="Lines"/>
+    <Wpf:MemberSelection x:Name="objs" Height="30" Margin="0"/>
+
+    <GroupBox Header="Horizontal">
+        <UniformGrid Columns="2">
+            <Label Content="Tolerance" VerticalAlignment="Center"/>
+            <Wpf:DistanceEdit x:Name="htol" Distance="0.002"
+                              ToolTip="max distance of the original Vertices from the new Straights/Arcs"/>
+            <Label Content="min Chords per Arc" VerticalAlignment="Center"/>
+            <Wpf:NumericEdit x:Name="minarcchords" Value="3"
+                             ToolTip="shorter Arcs are only accepted if they are tangent to the previous Element - otherwise they are treated as Angle Points"/>
+            <Label Content="max Radius" VerticalAlignment="Center"/>
+            <Wpf:DistanceEdit x:Name="maxradius" Distance="10000"
+                              ToolTip="flatter Curves are treated as Straights"/>
+            <Label Content="round Radii to" VerticalAlignment="Center"/>
+            <Wpf:DistanceEdit x:Name="roundradius" Distance="0"
+                              ToolTip="0 = no rounding&#x0a;a rounded Radius is only used if all Vertices stay within the Tolerance"/>
+        </UniformGrid>
+    </GroupBox>
+
+    <GroupBox Header="Vertical">
+        <StackPanel>
+            <CheckBox x:Name="fitvertical" Content="fit Grades and Vertical Curves" IsChecked="True" Margin="0,2,0,2"
+                      ToolTip="unticked - the original Elevations are kept, every Vertex becomes a VPI"/>
+            <UniformGrid Columns="2" IsEnabled="{Binding IsChecked, ElementName=fitvertical}">
+                <Label Content="Tolerance" VerticalAlignment="Center"/>
+                <Wpf:DistanceEdit x:Name="vtol" Distance="0.002"
+                                  ToolTip="max height difference of the original Vertices from the new Grades/Vertical Curves"/>
+                <Label Content="min Chords per Curve" VerticalAlignment="Center"/>
+                <Wpf:NumericEdit x:Name="minvcchords" Value="3"
+                                 ToolTip="shorter Vertical Curves are only accepted if they are tangent to the previous Grade"/>
+            </UniformGrid>
+        </StackPanel>
+    </GroupBox>
+
+    <GroupBox Header="Output">
+        <StackPanel>
+            <Label Content="Line Layer"/>
+            <Wpf:LayerPicker x:Name="layerpicker"/>
+            <CheckBox x:Name="writecsv" Content="write CSV Report to Downloads" IsChecked="True" Margin="0,4,0,0"/>
+        </StackPanel>
+    </GroupBox>
+
+    <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
+    <Label x:Name="success" Content=""/>
+
+</StackPanel>
