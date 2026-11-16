@@ -47,7 +47,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Recurve Polyline"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.005
+        cmdData.Version = 1.009
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -475,8 +475,18 @@ def segmentvertical(s, z, tol, minchords):
 
     mergeneighbours(elems, make)
     refineboundaries(elems, make, lambda e: vsse(s, z, e), 10)
+    flattenparabolas(s, z, elems, tol)
     mergeneighbours(elems, make)
     return elems
+
+
+def flattenparabolas(s, z, elems, tol):
+    # a parabola that bows less than tol off its chord is a grade
+    # (TBC derives the VPI from the in/out tangents, nearly parallel ones break the linestring vertical
+    # and the profile ends at that curve, the rest of the line gets extrapolated)
+    for k, e in enumerate(elems):
+        if e["t"] == "P" and abs(e["c"]) * (s[e["j"]] - s[e["i"]]) ** 2 / 4.0 <= tol and vlinefits(s, z, e["i"], e["j"], tol):
+            elems[k] = {"t": "G", "i": e["i"], "j": e["j"]}
 
 
 def vresiduals(s, z, e):
@@ -642,27 +652,6 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
         s = stationing(x, y, helems)
         hlength = s[-1]
 
-        # ---- vertical, based on the arc length along the recovered horizontal
-        velems = []
-        if is3d:
-            if self.fitvertical.IsChecked:
-                velems = segmentvertical(s, z, vtol, int(self.minvcchords.Value))
-            else:
-                # keep the original elevations - every vertex becomes a VPI
-                velems = [{"t": "G", "i": k, "j": k + 1} for k in range(len(s) - 1)]
-
-        vpoly = None
-        if velems:
-            vpoly = PolySeg.PolySeg()
-            for e in velems:
-                i = e["i"]; j = e["j"]
-                if e["t"] == "G":
-                    vpoly.Add(SegmentLine(Point3D(s[i], z[i], 0), Point3D(s[j], z[j], 0)))
-                else:
-                    half = (s[j] - s[i]) / 2.0
-                    vpi = Point3D(s[i] + half, z[i] + e["b"] * half, 0)
-                    vpoly.Add(ParabolaSegment(Point3D(s[i], z[i], 0), vpi, Point3D(s[j], z[j], 0)))
-
         # ---- horizontal as linestring elements, 2D - the elevations go into the vertical tab
         etypes, forced = arctangency(x, y, helems, htol)
         if any(forced):
@@ -690,14 +679,41 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
             el.Position = Point3D(x[e["j"]] + ox, y[e["j"]] + oy)
             newline.AppendElement(el)
 
-        if vpoly is not None:
-            Linestring.ConvertPolySegToLinestringVertical(newline, vpoly, 0)
-
         # TBC computes the tangent arcs from the tangency, the result should only differ marginally from the fit
         polyseg = newline.ComputePolySeg()
         lengthdiff = polyseg.ComputeStationing() - polyseg.BeginStation - hlength
         if abs(lengthdiff) > 0.005:
             self.error.Content += '\n"{}" - Linestring length differs by {:.3f} from the fit'.format(name, lengthdiff)
+
+        # ---- vertical, on the new horizontal
+        # every original 3D vertex is projected onto the linestring TBC computed, giving its chainage
+        # the vertical is then fitted to those chainages/elevations, so it covers the real line from start to end
+        # (TBC computes the tangent arcs from the tangency, the length can differ from the horizontal fit)
+        vs = []; vz = []; velems = []
+        if is3d:
+            vs, vz, dropped, maxoffset = self.projectvertices(polyseg, x, y, z, ox, oy)
+            if dropped:
+                self.error.Content += '\n"{}" - {} Vertices not used for the Vertical, Chainage not increasing'.format(name, dropped)
+            if maxoffset > htol * 2:
+                self.error.Content += '\n"{}" - Vertices up to {:.3f} off the new Linestring'.format(name, maxoffset)
+            if len(vs) >= 2:
+                if self.fitvertical.IsChecked:
+                    velems = segmentvertical(vs, vz, vtol, int(self.minvcchords.Value))
+                else:
+                    # keep the original elevations - every vertex becomes a VPI
+                    velems = [{"t": "G", "i": k, "j": k + 1} for k in range(len(vs) - 1)]
+
+        if velems:
+            vpoly = PolySeg.PolySeg()
+            for e in velems:
+                i = e["i"]; j = e["j"]
+                if e["t"] == "G":
+                    vpoly.Add(SegmentLine(Point3D(vs[i], vz[i], 0), Point3D(vs[j], vz[j], 0)))
+                else:
+                    half = (vs[j] - vs[i]) / 2.0
+                    vpi = Point3D(vs[i] + half, vz[i] + e["b"] * half, 0)
+                    vpoly.Add(ParabolaSegment(Point3D(vs[i], vz[i], 0), vpi, Point3D(vs[j], vz[j], 0)))
+            Linestring.ConvertPolySegToLinestringVertical(newline, vpoly, 0)
 
         # ---- report
         totals[0] += 1
@@ -717,16 +733,40 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
                 x[i] + ox, y[i] + oy, x[j] + ox, y[j] + oy, kink, j - i + 1, dev))
 
         for k, e in enumerate(velems if self.fitvertical.IsChecked else []):
-            dev = vdeviation(s, z, e)
+            dev = vdeviation(vs, vz, e)
             totals[5] = max(totals[5], dev)
             i = e["i"]; j = e["j"]
-            gin, gout = vgrades(s, z, e)
+            gin, gout = vgrades(vs, vz, e)
             if e["t"] == "G":
                 typ = "Grade"; kvalue = ""
             else:
                 totals[3] += 1
                 typ = "Vertical Curve"
-                kvalue = "{:.3f}".format((s[j] - s[i]) / abs((gout - gin) * 100.0)) if abs(gout - gin) > 1e-12 else ""
+                kvalue = "{:.3f}".format((vs[j] - vs[i]) / abs((gout - gin) * 100.0)) if abs(gout - gin) > 1e-12 else ""
             report.append('"{}",V{},{},,{:.4f},{:.4f},{:.4f},,,{:.4f},{:.4f},{},{:.4f},{:.4f},{:.4f},{:.4f},,{},{:.5f}'.format(
-                name, k + 1, typ, s[i], s[j], s[j] - s[i], gin * 100.0, gout * 100.0, kvalue,
-                s[i], z[i], s[j], z[j], j - i + 1, dev))
+                name, k + 1, typ, vs[i], vs[j], vs[j] - vs[i], gin * 100.0, gout * 100.0, kvalue,
+                vs[i], vz[i], vs[j], vz[j], j - i + 1, dev))
+
+    def projectvertices(self, polyseg, x, y, z, ox, oy):
+        # chainage of every original vertex on the new horizontal, relative to its begin station
+        # first/last vertex are the line ends, vertices whose chainage doesn't increase are dropped
+        begin = polyseg.BeginStation
+        total = polyseg.ComputeStationing() - begin
+        onl = clr.StrongBox[Point3D]()
+        sta = clr.StrongBox[float]()
+        n = len(x)
+        vs = [0.0]; vz = [z[0]]
+        dropped = 0; maxoffset = 0.0
+        for k in range(1, n - 1):
+            px = x[k] + ox; py = y[k] + oy
+            if not polyseg.FindPointFromPoint(Point3D(px, py, 0), onl, sta):
+                dropped += 1
+                continue
+            c = sta.Value - begin
+            if c <= vs[-1] + 1e-4 or c >= total - 1e-4:
+                dropped += 1
+                continue
+            maxoffset = max(maxoffset, math.hypot(onl.Value.X - px, onl.Value.Y - py))
+            vs.append(c); vz.append(z[k])
+        vs.append(total); vz.append(z[-1])
+        return vs, vz, dropped, maxoffset
