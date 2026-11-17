@@ -171,9 +171,8 @@ except: # from 2026.10
 clr.AddReference ("Trimble.Vce.Data.SDE")
 from Trimble.Vce.Data.SDE import ColorizationState, GridScaledScan, Importer as SDEImporter
 clr.AddReference ("SDE.NET")
-from Trimble.Sde import Cloud as SdeCloud, CloudId as SdeCloudId, FilterByBox as SdeFilterByBox, GutterPicker as SdeGutterPicker, \
-                        List as SdeList, PointUV as SdePickerPointUV, ScanId as SdeScanId, SdeCloudOperator, SdeElevationType, SdePointInfo, SdePointSource, \
-                        SpatialSamplingParameters as SdeSpatialSamplingParameters
+from Trimble.Sde import Cloud as SdeCloud, CloudId as SdeCloudId, FilterByBox as SdeFilterByBox, GutterPicker as SdeGutterPicker, List as SdeList, PointUV as SdePickerPointUV, \
+                        ScanId as SdeScanId, SdeCloudOperator, SdeElevationType, SdePointInfo, SdePointSource, SpatialSamplingParameters as SdeSpatialSamplingParameters
 try: # not available in 2024.01, or assembly location has changed
     from Trimble.Sde import FilterByRadius as SdeFilterByRadius
 except:
@@ -187,12 +186,12 @@ from Trimble.Vce.Features.FeatureCoding import FeatureCodeManager
 
 from Trimble.Vce.ForeignCad import Arc as ArcObject, Circle as CadCircle, Face3D, Poly3D as CadPoly3D # we are also using Arc from geometry, PolyLine, PolyLineBase
 
-from Trimble.Vce.ForeignCad import AttachmentPoint, BlockReference, DimArrowheadType, Hatch, Leader, LeaderType, MText, Point as CadPoint, PointLabelEntity as CadLabel, \
-                                   RasterImage, Text as CadText, TextUtilities
+from Trimble.Vce.ForeignCad import AttachmentPoint, BlockReference, DimArrowheadType, Hatch, Leader, LeaderType, MText, Point as CadPoint, PointLabelEntity as CadLabel, RasterImage, \
+                                   Text as CadText, TextUtilities
 
 from Trimble.Vce.Gem import CompositeSurface, ConstructionMaterialCollection, DisplayMode, DtmVolumes, ElevationSlopeTypes, Filer, Gem, GemMaterialMap, GemMaterials, GemVertexType, \
-                            Model3D, Model3DCompSettings, Model3DContours, Model3DContoursBuilder, Model3DQuickContours, ModelBoundaries, ProjectedSurface, SiteImprovementMaterialCollection, \
-                            SlopingLevelSurface, SurfaceClassification, VextexAndTriangleList
+                            Model3D, Model3DCompSettings, Model3DContours, Model3DContoursBuilder, Model3DQuickContours, ModelBoundaries, ProjectedSurface, \
+                            SiteImprovementMaterialCollection, SlopingLevelSurface, SurfaceClassification, VextexAndTriangleList
 
 clr.AddReference ("Trimble.Vce.Scanning")
 from Trimble.Vce.Geometry import Point3DExtensions
@@ -331,6 +330,8 @@ except:
 #from Sitech.Data.D12D import ProjectHeader as D12dProjectHeader
 
 exec(open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\SCR_GlobalHelpers.py").read())
+
+
 
 
 

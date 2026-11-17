@@ -147,6 +147,7 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>18/11/2026 – new <a class="class2" href="#SCR_IFCUnderside">SCR_IFCUnderside</a> <span class="auto-style2">(BETA)</span> – creates a surface along the underside of the selected IFC objects; vertical steps between objects become steep slopes</li>
           <li>15/11/2026 – new <a class="class2" href="#SCR_RecurvePolyline">SCR_RecurvePolyline</a> <span class="auto-style2">(BETA)</span> – re-engineers chorded polylines back into straights, tangent arcs, grades and vertical curves, so the lines can be edited again</li>
           <li>07/11/2026 – new <a class="class2" href="#SCR_SubgradeSmoothing">SCR_SubgradeSmoothing</a> (BETA) – creates a smooth road surface with gradual grade and crossfall changes from a rough road surface and a rough centreline</li>
           <li>03/11/2026 – new <a class="class2" href="#SCR_SphereClashCheck">SCR_SphereClashCheck</a> – creates a sphere around each selected point, as an IFC object and/or as two half-sphere DTMs, for visual clash checks</li>
@@ -1875,6 +1876,34 @@
 
         <h1 id="LinesPoints" class="header1">LinesPoints</h1>
         <h2 id="IFC" class="header2">IFC</h2>
+        <h3 id="SCR_IFCUnderside" class="header3"><a id="SCR_IFCUnderside"></a>SCR_IFCUnderside</h3>
+          <ul>
+			  <li><span class="auto-style2">!!! BETA version – still in development, please check the results carefully !!!</span></li>
+			  <li>creates a surface along the underside of the selected IFC objects – for every position in plan, the surface follows the lowest object there</li>
+			  <li>objects may overlap, touch or even cut into each other; objects that are completely covered from below (e.g. something sitting on top of a slab) drop out automatically</li>
+			  <li>the surface is built from the actual mesh vertices of the objects, not sampled on a grid; where two sloped undersides cross, the crossing line is added as well</li>
+			  <li>selecting a parent entry in the BIM tree includes all its child objects</li>
+			  <br>
+			  <li><b>Vertical steps</b></li>
+			  <ul>
+				<li>a surface can't have vertical faces, so where the underside jumps from one height to another, the upper edge is moved into the higher object by the <b>Step Width</b>; the step then becomes a very steep slope</li>
+				<li>the lower edge always stays where it is, so the surface never lies above an object; it can only dip slightly below the higher object within the step width</li>
+				<li>the new upper edge gets its height from the higher object's underside at its new position</li>
+				<li>height differences below 1 mm aren't treated as steps</li>
+				<li>if TBC merges the points of a step and you get vertical faces again, increase the step width</li>
+			  </ul>
+			  <br>
+			  <li><b>Options</b></li>
+			  <ul>
+				<li><b>Step Width</b> – how far the upper edge of a step is moved into the higher object; default 2 mm</li>
+				<li><b>Surface Name</b> – name of the new surface; if it already exists, a number is added</li>
+				<li><b>gaps between objects as voids</b> – ticked: areas that aren't covered by any object (gaps between objects, courtyards, the outside of a concave outline) are holes in the surface; unticked: the surface is interpolated across them</li>
+			  </ul>
+			  <br>
+			  <li>large models with finely curved objects (pipes, round columns) contain many triangles and can take a while; the progress bar shows the current step and can be cancelled</li>
+			  <br>
+		  </ul>
+
         <h3 id="SCR_PlaceObjects" class="header3"><a id="SCR_PlaceObjects"></a>SCR_PlaceObjects</h3>
           <ul>
 			  <li>place IFC Objects along a Linestring or at point locations</li>
@@ -2694,6 +2723,7 @@
             <ul class="customListStyle">
               <li><a href="#IFC">IFC</a>
                 <ul class="customListStyle">
+                  <li><a href="#SCR_IFCUnderside">SCR_IFCUnderside</a></li>
                   <li><a href="#SCR_PlaceObjects">SCR_PlaceObjects</a></li>
                   <li><a href="#SCR_RotateIFC">SCR_RotateIFC</a></li>
                   <li><a href="#SCR_SphereClashCheck">SCR_SphereClashCheck</a></li>
