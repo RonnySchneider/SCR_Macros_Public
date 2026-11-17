@@ -13,7 +13,6 @@
         <Label Content="Surface Name" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
         <TextBox x:Name="surfacename" Text="IFC Underside" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
     </UniformGrid>
-    <CheckBox x:Name="gapvoids" Content="gaps between objects as voids" IsChecked="True" Margin="4" ToolTip="ticked - areas not covered by any object are holes in the surface&#x0a;unticked - the surface is interpolated across them"/>
 
     <Label x:Name="error" Content="" VerticalAlignment="Center" VerticalContentAlignment="Center" Background="#00000000" FontWeight="Bold" Foreground="Red"/>
     <Label x:Name="success" Content=""/>

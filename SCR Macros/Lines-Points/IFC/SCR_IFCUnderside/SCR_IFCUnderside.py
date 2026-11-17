@@ -24,8 +24,11 @@ exec(open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\SCR_Imports.py").re
 _OPTIONS = {
     "stepwidth":   0.002,
     "surfacename": "IFC Underside",
-    "gapvoids":    True,
 }
+
+# gaps between objects: True = null material (holes), False = interpolated across
+# the option was removed from the dialog for now, the code is kept for later
+GAPVOIDS = False
 
 # all tolerances in metres
 VERTICALTOL = 1e-3     # |nz| of the unit normal below this = vertical face, ignored
@@ -50,7 +53,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "IFC Underside"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.000
+        cmdData.Version = 1.002
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
@@ -127,7 +130,7 @@ class SCR_IFCUnderside(StackPanel): # this inherits from the WPF StackPanel cont
             self.error.Content = 'enter a surface name'
             return
 
-        gapvoids = self.gapvoids.IsChecked
+        gapvoids = GAPVOIDS
 
         wv = self.currentProject [Project.FixedSerial.WorldView]
 
@@ -202,6 +205,7 @@ class SCR_IFCUnderside(StackPanel): # this inherits from the WPF StackPanel cont
                 walk(o)
 
         tris = []
+        self.origin = None
         ProgressBar.TBC_ProgressBar.Title = "reading IFC meshes"
         last_t = timer()
         for m, meshinstance in enumerate(meshes):
@@ -213,7 +217,14 @@ class SCR_IFCUnderside(StackPanel): # this inherits from the WPF StackPanel cont
             vertexlist = shellmeshdata.GetVertexList(meshinstance.GlobalTransformation)
             # triangulationContext 0 - NonTriangulated; 1 - Triangulated; 2 - TriangulatedImplicit without the length entry 3
             indices = shellmeshdata.GetIndices(TriangulationContext(1))
-            pts = [(p.X, p.Y, p.Z) for p in vertexlist]
+            # all geometry is computed around a local origin, real world coordinates would cost
+            # several digits of precision in the plane and half-plane maths
+            if vertexlist.Count == 0:
+                continue
+            if self.origin is None:
+                self.origin = (vertexlist[0].X, vertexlist[0].Y)
+            ox, oy = self.origin
+            pts = [(p.X - ox, p.Y - oy, p.Z) for p in vertexlist]
             idx = list(indices)
             for i in range(0, len(idx) - 3, 4):
                 t = maketriangle(pts[idx[i + 1]], pts[idx[i + 2]], pts[idx[i + 3]], len(tris))
@@ -229,10 +240,11 @@ class SCR_IFCUnderside(StackPanel): # this inherits from the WPF StackPanel cont
         # SmoothShading | ElevationContours | ShowBackfaces | FilledTriangles | ElevationContours_2D | FilledTriangles_2D
         newSurface.Mode = DisplayMode(1 + 64 + 128 + 512 + 1024 + 65536)
 
+        ox, oy = self.origin
         builder = newSurface.GetGemBatchBuilder()
         builderindex = []
         for x, y, z in vertices:
-            builderindex.Add(builder.AddVertex(Point3D(x, y, z))[0])
+            builderindex.Add(builder.AddVertex(Point3D(x + ox, y + oy, z))[0])
         soft = Byte(DTMSharpness.eSoft)
         for v0, v1 in breaklines:
             builder.AddBreakline(soft, builderindex[v0], builderindex[v1])
@@ -252,7 +264,7 @@ class SCR_IFCUnderside(StackPanel): # this inherits from the WPF StackPanel cont
                     p = builder.GetTriangleVertex(t, s)[-1]
                     cx += p.X
                     cy += p.Y
-                if not cover.covered(cx / 3.0, cy / 3.0):
+                if not cover.covered(cx / 3.0 - ox, cy / 3.0 - oy):
                     builder.AttachMaterial(0, gemmap, t)
                     nvoid += 1
 
@@ -305,11 +317,14 @@ def polybbox(poly):
 
 
 def polyarea(poly):
+    # relative to the first vertex - with absolute coordinates the products would be in the order of 1e12
+    # at real world coordinates and the rounding error alone would be larger than a small piece
+    ox, oy = poly[0]
     s = 0.0
     n = len(poly)
-    for i in range(n):
-        x0, y0 = poly[i]
-        x1, y1 = poly[(i + 1) % n]
+    for i in range(1, n - 1):
+        x0, y0 = poly[i][0] - ox, poly[i][1] - oy
+        x1, y1 = poly[i + 1][0] - ox, poly[i + 1][1] - oy
         s += x0 * y1 - x1 * y0
     return s * 0.5
 
