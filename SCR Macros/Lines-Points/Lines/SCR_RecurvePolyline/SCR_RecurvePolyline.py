@@ -22,13 +22,19 @@ from System.Collections.Generic import List, IEnumerable
 exec(open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\SCR_Imports.py").read())
 
 _OPTIONS = {
+    "modedesign":    True,
+    "modesurvey":    False,
     "htol":          0.002,
     "minarcchords":  3.0,
+    "hscatter":      0.05,
+    "hminlength":    20.0,
     "maxradius":     10000.0,
     "roundradius":   0.0,
     "fitvertical":   True,
     "vtol":          0.002,
     "minvcchords":   3.0,
+    "vscatter":      0.02,
+    "vminlength":    20.0,
     "layerpicker":   8,
     "writecsv":      True,
 }
@@ -47,12 +53,12 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Recurve Polyline"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.009
+        cmdData.Version = 1.011
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
 
         cmdData.ToolTipTitle = "Recurve Polyline"
-        cmdData.ToolTipTextFormatted = "re-engineer chorded polylines into Straights/Arcs and Grades/Vertical Curves"
+        cmdData.ToolTipTextFormatted = "re-engineer chorded or surveyed polylines into Straights/Arcs and Grades/Vertical Curves"
 
     except:
         pass
@@ -285,6 +291,26 @@ def arctangency(x, y, elems, tol):
     return types, forced
 
 
+def tangenttypes(kinds):
+    # linestring element type per element for a chain that is tangent everywhere ('L' straight, 'A' arc)
+    # a run of arcs between two straights: Begin, ..., TangentTangent, arcs at the line ends stay plain arcs
+    n = len(kinds)
+    types = ["Straight" if t == 'L' else "Arc" for t in kinds]
+    k = 0
+    while k < n:
+        if kinds[k] != 'A':
+            k += 1
+            continue
+        a = k
+        while k < n and kinds[k] == 'A':
+            k += 1
+        if a > 0 and k < n:
+            for q in range(a, k):
+                types[q] = "Begin"
+            types[k - 1] = "TangentTangent"
+    return types
+
+
 def segmenthorizontal(x, y, tol, rmax, minchords):
     n = len(x)
     elems = []
@@ -504,6 +530,749 @@ def vdeviation(s, z, e):
 def vsse(s, z, e):
     return sum(r * r for r in vresiduals(s, z, e))
 
+# ---- survey mode
+# the elements are fitted by least squares, they don't have to pass through any vertex
+# 1. segmentation of the heading (grade) diagram by dynamic programming, constant pieces = straights (grades),
+#    linear pieces = arcs (vertical curves)
+# 2. adjustment of the whole chain by a robust Levenberg-Marquardt: start pose + length/curvature per element,
+#    the chain is tangent continuous by construction
+# 3. elements that shrink away are removed, the chain is refitted
+
+
+def chorddiagram(s, v):
+    # value per chord (heading or grade) at the chord middle, with weight
+    # the noise of a chord value is ~ sqrt(2) * scatter / chord length, the weight makes the residuals comparable to the scatter
+    ms = []; mv = []; mw = []
+    for k in range(len(s) - 1):
+        ds = s[k + 1] - s[k]
+        if ds < 1e-6:
+            continue
+        ms.append((s[k] + s[k + 1]) / 2.0); mv.append(v[k]); mw.append(ds * ds / 2.0)
+    return ms, mv, mw
+
+
+def segmentdiagram(ms, mv, mw, sigma, minlen, kmin, maxchords=1500):
+    # optimal partition of the diagram into constant and linear pieces
+    # cost = weighted squared residuals / sigma^2 + penalty per parameter
+    # two constant pieces in a row aren't allowed (that would be an angle point), linear pieces flatter than kmin aren't allowed
+    # returns a list of (type 0 const / 1 linear, start, end, value at start, slope)
+    n = len(ms)
+    penalty = 2.0 * math.log(max(n, 2))
+    cw = [0.0]; cs = [0.0]; css = [0.0]; cv = [0.0]; cvv = [0.0]; csv = [0.0]
+    s0 = ms[0]
+    for k in range(n):
+        w = mw[k]; t = ms[k] - s0; v = mv[k]
+        cw.append(cw[-1] + w); cs.append(cs[-1] + w * t); css.append(css[-1] + w * t * t)
+        cv.append(cv[-1] + w * v); cvv.append(cvv[-1] + w * v * v); csv.append(csv[-1] + w * t * v)
+    s2 = sigma * sigma
+
+    def edge(k):
+        if n == 1:
+            return ms[0] if k == 0 else ms[0] + 1e-3
+        if k == 0:
+            return ms[0] - (ms[1] - ms[0]) / 2.0
+        if k == n:
+            return ms[-1] + (ms[-1] - ms[-2]) / 2.0
+        return (ms[k - 1] + ms[k]) / 2.0
+
+    edges = [edge(k) for k in range(n + 1)]
+    INF = float("inf")
+    best0 = [INF] * (n + 1); best1 = [INF] * (n + 1)     # cost of chords 0..b-1 ending with a constant/linear piece
+    back0 = [None] * (n + 1); back1 = [None] * (n + 1)
+    best0[0] = 0.0; best1[0] = 0.0
+    for b in range(1, n + 1):
+        sb = edges[b]
+        for a in range(b - 1, max(-1, b - 1 - maxchords), -1):
+            if sb - edges[a] < minlen and not (a == 0 and b == n):
+                continue
+            W = cw[b] - cw[a]; S = cs[b] - cs[a]; SS = css[b] - css[a]
+            V = cv[b] - cv[a]; VV = cvv[b] - cvv[a]; SV = csv[b] - csv[a]
+            mean = V / W
+            ssec = max(VV - V * mean, 0.0)
+            prevlin = best1[a] if a > 0 else 0.0
+            c = prevlin + ssec / s2 + penalty
+            if c < best0[b]:
+                best0[b] = c; back0[b] = (a, 1, mean, 0.0, S / W)
+            den = SS - S * S / W
+            if b - a >= 3 and den > 1e-12:
+                slope = (SV - S * V / W) / den
+                if abs(slope) >= kmin:
+                    ssel = max(ssec - slope * slope * den, 0.0)
+                    prevany = min(best0[a], best1[a]) if a > 0 else 0.0
+                    c = prevany + ssel / s2 + 2.0 * penalty
+                    if c < best1[b]:
+                        best1[b] = c
+                        back1[b] = (a, (0 if best0[a] <= best1[a] else 1) if a > 0 else 0, mean, slope, S / W)
+    out = []
+    b = n; t = 0 if best0[n] <= best1[n] else 1
+    while b > 0:
+        a, pt, mean, slope, sm = back0[b] if t == 0 else back1[b]
+        sa = edges[a]; sb = edges[b]
+        out.append((t, sa, sb, mean + slope * (sa - s0 - sm), slope))
+        b = a; t = pt
+    out.reverse()
+    return out
+
+
+def jointvalues(pieces):
+    # value (heading/grade) at every joint, a constant piece dictates it, between linear pieces the mean is used
+    n = len(pieces)
+    jv = []
+    for k in range(n + 1):
+        if k > 0 and pieces[k - 1][0] == 0:
+            jv.append(pieces[k - 1][3])
+        elif k < n and pieces[k][0] == 0:
+            jv.append(pieces[k][3])
+        else:
+            vals = []
+            if k > 0:
+                t, sa, sb, v0, sl = pieces[k - 1]; vals.append(v0 + sl * (sb - sa))
+            if k < n:
+                vals.append(pieces[k][3])
+            jv.append(sum(vals) / len(vals))
+    return jv
+
+
+def solvelinear(A, b):
+    # Gaussian elimination with partial pivoting, A and b are modified
+    n = len(b)
+    for c in range(n):
+        p = c
+        for r in range(c + 1, n):
+            if abs(A[r][c]) > abs(A[p][c]):
+                p = r
+        if abs(A[p][c]) < 1e-300:
+            return None
+        A[c], A[p] = A[p], A[c]; b[c], b[p] = b[p], b[c]
+        Ac = A[c]
+        for r in range(c + 1, n):
+            f = A[r][c] / Ac[c]
+            if f != 0.0:
+                Ar = A[r]
+                for q in range(c, n):
+                    Ar[q] -= f * Ac[q]
+                b[r] -= f * b[c]
+    xs = [0.0] * n
+    for c in range(n - 1, -1, -1):
+        s = b[c]
+        Ac = A[c]
+        for q in range(c + 1, n):
+            s -= Ac[q] * xs[q]
+        xs[c] = s / Ac[c]
+    return xs
+
+
+def lmrobust(p, model, sigma, iterations):
+    # robust (Huber) Levenberg-Marquardt
+    # model.residuals(p, store) -> residual list or None, model.jacobian(p) -> list of (lo, column from lo) per parameter
+    # (store=True keeps the point/element assignment and whatever the Jacobian needs)
+    r = model.residuals(p, True)
+    lam = 1e-3
+    npar = len(p)
+    n = len(r)
+    for it in range(iterations):
+        med = sorted(abs(v) for v in r)[n // 2]
+        cth = 2.0 * max(sigma, 1.4826 * med)       # tightens towards 2 sigma as the fit converges
+        w = [1.0 if abs(v) <= cth else cth / abs(v) for v in r]
+        c0 = 0.0
+        for wi, v in zip(w, r):
+            c0 += wi * v * v
+        cols = model.jacobian(p)
+        JtJ = [[0.0] * npar for q in range(npar)]
+        Jtr = [0.0] * npar
+        wcols = []
+        for q in range(npar):
+            lo, col = cols[q]
+            wc = [w[lo + i] * v for i, v in enumerate(col)]
+            wcols.append(wc)
+            s = 0.0
+            for i, v in enumerate(wc):
+                s += v * r[lo + i]
+            Jtr[q] = s
+        for q1 in range(npar):
+            lo1, c1 = cols[q1]; wc1 = wcols[q1]
+            for q2 in range(q1, npar):
+                lo2, c2 = cols[q2]
+                lo = max(lo1, lo2)
+                s = 0.0
+                o1 = lo - lo1; o2 = lo - lo2
+                for i in range(min(len(c1) - o1, len(c2) - o2)):
+                    s += wc1[o1 + i] * c2[o2 + i]
+                JtJ[q1][q2] = s; JtJ[q2][q1] = s
+        improved = False
+        for attempt in range(10):
+            A = [row[:] for row in JtJ]
+            for q in range(npar):
+                A[q][q] += lam * max(JtJ[q][q], 1e-12)
+            d = solvelinear(A, [-v for v in Jtr])
+            if d is not None:
+                pn = [a + b for a, b in zip(p, d)]
+                rn = model.residuals(pn, False)
+                if rn is not None:
+                    c1 = 0.0
+                    for wi, v in zip(w, rn):
+                        c1 += wi * v * v
+                    if c1 < c0:
+                        p = pn; lam = max(lam / 3.0, 1e-9); improved = True
+                        break
+            lam *= 4.0
+        if not improved:
+            break
+        r = model.residuals(p, True)
+        c1 = 0.0
+        for wi, v in zip(w, r):
+            c1 += wi * v * v
+        if c0 - c1 < 1e-5 * c0:
+            break
+    return p, r
+
+
+# -- horizontal chain: start pose (x, y, heading), elements with length and curvature (0 = straight)
+# the first element extends backwards, the last one is open ended
+
+def elementend(pose, L, k):
+    # chord length 2 sin(kL/2) / k in the direction h + kL/2, stable for tiny curvatures
+    x, y, h = pose
+    a = k * L / 2.0
+    chord = L * (math.sin(a) / a if abs(a) > 1e-6 else 1.0 - a * a / 6.0)
+    return x + chord * math.cos(h + a), y + chord * math.sin(h + a), h + 2.0 * a
+
+
+def chainposes(pose, lengths, curvs):
+    out = [pose]
+    for L, k in zip(lengths, curvs):
+        out.append(elementend(out[-1], L, k))
+    return out
+
+
+def elementproject(px, py, pose, L, k, first, last):
+    # station u along the element and signed offset (left positive), None if the foot is outside the element
+    x, y, h = pose
+    if abs(k) < 1e-9:
+        dx = px - x; dy = py - y
+        c = math.cos(h); sn = math.sin(h)
+        u = dx * c + dy * sn
+        off = dy * c - dx * sn
+    else:
+        r = 1.0 / k
+        xc = x - math.sin(h) * r; yc = y + math.cos(h) * r
+        sg = 1.0 if k > 0 else -1.0
+        da = (math.atan2(py - yc, px - xc) - math.atan2(y - yc, x - xc)) * sg
+        mid = abs(k) * L / 2.0
+        da = (da - mid + math.pi) % TWOPI - math.pi + mid     # angle along the direction of travel, centred on the element middle
+        u = da / abs(k)
+        off = r - sg * math.hypot(px - xc, py - yc)
+    if (u < 0 and not first) or (u > L and not last):
+        return None
+    return u, off
+
+
+def chainfoot(px, py, poses, lengths, curvs, guess):
+    # foot of a point on the chain, searching the elements around guess
+    # returns (offset, element, station on the element, foot x, foot y, normal x, normal y)
+    m = len(lengths)
+    best = None
+    for e in range(max(0, guess - 1), min(m, guess + 2)):
+        r = elementproject(px, py, poses[e], lengths[e], curvs[e], e == 0, e == m - 1)
+        if r is not None and (best is None or abs(r[1]) < abs(best[0])):
+            best = (r[1], e, r[0])
+    if best is None:
+        for e in (guess - 2, guess + 2):
+            if 0 <= e < m:
+                r = elementproject(px, py, poses[e], lengths[e], curvs[e], e == 0, e == m - 1)
+                if r is not None and (best is None or abs(r[1]) < abs(best[0])):
+                    best = (r[1], e, r[0])
+    if best is not None:
+        off, e, u = best
+        fx, fy, h = elementend(poses[e], u, curvs[e])
+        return off, e, u, fx, fy, -math.sin(h), math.cos(h)
+    # outside the corner between two elements, the nearest joint is the foot
+    for e in range(max(1, guess - 2), min(m, guess + 3)):
+        x, y, h = poses[e]
+        d = math.hypot(px - x, py - y)
+        if best is None or d < best[0]:
+            best = (d, e, x, y, h)
+    d, e, x, y, h = best
+    if d < 1e-12:
+        return 0.0, e, 0.0, x, y, -math.sin(h), math.cos(h)
+    side = 1.0 if (px - x) * -math.sin(h) + (py - y) * math.cos(h) >= 0 else -1.0
+    return side * d, e, 0.0, x, y, side * (px - x) / d, side * (py - y) / d
+
+
+class HChain(object):
+    # parameters: x0, y0, h0, log of every length but the last, curvature * 1000 of the free arcs
+    def __init__(self, x, y, types, fixed):
+        self.x = x; self.y = y
+        self.types = types
+        self.fixed = fixed            # {element: curvature} for rounded radii
+        self.guess = [0] * len(x)
+        self.feet = None
+
+    def unpack(self, p):
+        m = len(self.types)
+        lengths = [math.exp(min(v, 12.0)) for v in p[3:3 + m - 1]] + [0.0]
+        curvs = []
+        q = 3 + m - 1
+        for k, t in enumerate(self.types):
+            if t == 'L':
+                curvs.append(0.0)
+            elif k in self.fixed:
+                curvs.append(self.fixed[k])
+            else:
+                curvs.append(p[q] / 1000.0); q += 1
+        lengths[-1] = 1e9 if curvs[-1] == 0.0 else (TWOPI - 0.1) / abs(curvs[-1])
+        return (p[0], p[1], p[2]), lengths, curvs
+
+    def pack(self, pose, lengths, curvs):
+        p = list(pose) + [math.log(max(L, 1e-3)) for L in lengths[:-1]]
+        for k, t in enumerate(self.types):
+            if t == 'A' and k not in self.fixed:
+                p.append(curvs[k] * 1000.0)
+        return p
+
+    def residuals(self, p, store):
+        pose, lengths, curvs = self.unpack(p)
+        poses = chainposes(pose, lengths, curvs)
+        out = []
+        feet = []
+        for i in range(len(self.x)):
+            f = chainfoot(self.x[i], self.y[i], poses, lengths, curvs, self.guess[i])
+            out.append(f[0])
+            feet.append(f)
+        if store:
+            self.feet = feet
+            self.poses = poses
+            for i in range(len(self.x)):
+                self.guess[i] = feet[i][1]
+        return out
+
+    def jacobian(self, p):
+        # a change of an element moves everything after it rigidly: translation d and rotation w about the element end E
+        # d offset = -(d + w * perp(F - E)) . n   (F foot, n left normal at the foot)
+        pose, lengths, curvs = self.unpack(p)
+        poses = self.poses
+        feet = self.feet
+        npt = len(feet)
+        m = len(self.types)
+
+        def rigid(lo, dx, dy, w, ex, ey):
+            col = []
+            for i in range(lo, npt):
+                f = feet[i]
+                if f[1] < lo_el[0]:
+                    col.append(0.0)
+                    continue
+                fx = f[3] - ex; fy = f[4] - ey
+                col.append(-((dx - w * fy) * f[5] + (dy + w * fx) * f[6]))
+            return col
+
+        # first point index per element (points are roughly in order)
+        firstpt = [npt] * (m + 1)
+        for i in range(npt - 1, -1, -1):
+            e = feet[i][1]
+            for k in range(e, -1, -1):
+                if firstpt[k] > i:
+                    firstpt[k] = i
+                else:
+                    break
+        cols = []
+        lo_el = [0]
+        cols.append((0, [-f[5] for f in feet]))
+        cols.append((0, [-f[6] for f in feet]))
+        cols.append((0, rigid(0, 0.0, 0.0, 1.0, pose[0], pose[1])))
+        for k in range(m - 1):
+            # log length: the end moves along the end tangent, an arc also turns the rest
+            ex, ey, eh = poses[k + 1]
+            L = lengths[k]
+            lo_el[0] = k + 1
+            lo = firstpt[k + 1] if k + 1 < m else npt
+            lo = min(lo, firstpt[k])
+            cols.append((lo, rigid(lo, L * math.cos(eh), L * math.sin(eh), curvs[k] * L, ex, ey)))
+        for k, t in enumerate(self.types):
+            if t != 'A' or k in self.fixed:
+                continue
+            # curvature: the points on the arc numerically, the rest rigidly
+            eps = 1e-9
+            L = lengths[k]
+            ex, ey, eh = poses[k + 1] if k + 1 < len(poses) else elementend(poses[k], L, curvs[k])
+            ex2, ey2, eh2 = elementend(poses[k], L, curvs[k] + eps)
+            scale = 1e-3 / eps
+            lo = firstpt[k]
+            lo_el[0] = k + 1
+            col = rigid(lo, (ex2 - ex) * 1e-3 / eps, (ey2 - ey) * 1e-3 / eps, (eh2 - eh) * 1e-3 / eps, ex, ey) if k < m - 1 else [0.0] * (npt - lo)
+            for i in range(lo, npt):
+                f = feet[i]
+                if f[1] == k:
+                    r = elementproject(self.x[i], self.y[i], poses[k], L, curvs[k] + eps, k == 0, k == m - 1)
+                    col[i - lo] = (r[1] - f[0]) * scale if r is not None else 0.0
+            cols.append((lo, col))
+        return cols
+
+
+def hfit(x, y, types, pose, lengths, curvs, sigma, fixed, iterations):
+    ch = HChain(x, y, types, fixed)
+    # initial assignment: walk forward, the points are roughly in order
+    poses = chainposes(pose, lengths[:-1] + [1e9], curvs)
+    e = 0
+    for i in range(len(x)):
+        while e + 1 < len(types):
+            f1 = chainfoot(x[i], y[i], poses, lengths, curvs, e)
+            if f1[1] > e:
+                e = f1[1]
+            else:
+                break
+        ch.guess[i] = e
+    p = ch.pack(pose, lengths, curvs)
+    p, r = lmrobust(p, ch, sigma, iterations)
+    pose, lengths, curvs = ch.unpack(p)
+    return pose, lengths, curvs, r, [f[1] for f in ch.feet], ch.feet
+
+
+def prunechain(types, lengths, curvs, minlen, kmin, kinks=True):
+    # removes elements shorter than minlen without disturbing the chain: the length goes to the neighbours,
+    # the turn of a removed arc to the neighbouring arcs (a short arc between two straights is an angle point,
+    # it's removed too if kinks, the refit has to absorb its turn)
+    # arcs flatter than kmin become straights, neighbouring straights are merged
+    # works for horizontal (curvature) and vertical (rate of grade change) alike, returns (types, lengths, curvs) or None
+    els = [[t, L, c * L] for t, L, c in zip(types, lengths, curvs)]
+    lastc = curvs[-1]
+    els[-1][1] = 0.0; els[-1][2] = 0.0
+    changed = False
+    k = 0
+    while k < len(els) - 1 and len(els) > 1:
+        e = els[k]
+        nb = [j for j in (k - 1, k + 1) if 0 <= j < len(els)]
+        arcs = [j for j in nb if els[j][0] == 'A' and j < len(els) - 1]
+        if e[1] < minlen and (e[0] == 'L' or arcs or kinks):
+            for j in nb:
+                els[j][1] += e[1] / len(nb)
+            if e[0] == 'A':
+                for j in arcs:
+                    els[j][2] += e[2] / len(arcs)
+            del els[k]
+            changed = True
+            k = max(k - 1, 0)
+            continue
+        k += 1
+    for e in els[:-1]:
+        if e[0] == 'A' and abs(e[2]) < kmin * e[1]:
+            e[0] = 'L'; e[2] = 0.0; changed = True
+    out = []
+    for e in els:
+        if out and out[-1][0] == 'L' and e[0] == 'L':
+            out[-1][1] += e[1]
+            changed = True
+        else:
+            out.append(e)
+    if not changed:
+        return None
+    return ([e[0] for e in out], [e[1] for e in out],
+            [(e[2] / e[1] if e[1] > 0 else lastc) if e[0] == 'A' else 0.0 for e in out])
+
+
+def trimchain(pose, lengths, curvs, types, first, last):
+    # cut the chain at the feet of the first and the last point, first/last = (element, station on it)
+    e0, u0 = first; e1, u1 = last
+    poses = chainposes(pose, lengths, curvs)
+    newpose = elementend(poses[e0], u0, curvs[e0])
+    lengths = list(lengths); curvs = list(curvs); types = list(types)
+    if e1 == e0:
+        lengths[e0] = u1 - u0
+    else:
+        lengths[e0] -= u0
+        lengths[e1] = u1
+    return newpose, types[e0:e1 + 1], lengths[e0:e1 + 1], curvs[e0:e1 + 1]
+
+
+def hfitprune(x, y, types, pose, lengths, curvs, sigma, minlen, rmax, iterations):
+    # fit, drop elements that shrink away, refit until the structure is stable
+    for rnd in range(8):
+        pose, lengths, curvs, r, el, feet = hfit(x, y, types, pose, lengths, curvs, sigma, {}, 30)
+        new = prunechain(types, lengths, curvs, minlen / 2.0, 1.0 / rmax)
+        if new is None:
+            break
+        types, lengths, curvs = new
+    pose, lengths, curvs, r, el, feet = hfit(x, y, types, pose, lengths, curvs, sigma, {}, iterations)
+    new = prunechain(types, lengths, curvs, minlen / 2.0, 1.0 / rmax)
+    if new is not None:
+        types, lengths, curvs = new
+        pose, lengths, curvs, r, el, feet = hfit(x, y, types, pose, lengths, curvs, sigma, {}, iterations)
+    return pose, types, lengths, curvs, r, feet
+
+
+def worstrun(r, sigma, tried):
+    # the heaviest run of at least 3 consecutive residuals beyond 2.5 sigma on the same side, (first, last) or None
+    # runs whose middle is in tried are skipped
+    best = None
+    i = 0
+    n = len(r)
+    lim = 2.5 * sigma
+    while i < n:
+        if abs(r[i]) <= lim:
+            i += 1
+            continue
+        j = i
+        while j + 1 < n and abs(r[j + 1]) > lim and (r[j + 1] > 0) == (r[i] > 0):
+            j += 1
+        if j - i >= 2 and (i + j) // 2 not in tried:
+            w = sum(abs(v) for v in r[i:j + 1])
+            if best is None or w > best[0]:
+                best = (w, i, j)
+        i = j + 1
+    return None if best is None else (best[1], best[2])
+
+
+def hcost(r, sigma):
+    # robust cost (Huber at 2 sigma)
+    c = 2.0 * sigma
+    return sum(v * v if abs(v) <= c else c * (2 * abs(v) - c) for v in r)
+
+
+def surveyhorizontal(x, y, sigma, minlen, rmax, roundstep, iterations=150):
+    # returns (start pose, types, lengths, curvatures, residuals, element per point)
+    n = len(x)
+    s = [0.0]
+    for k in range(1, n):
+        s.append(s[-1] + math.hypot(x[k] - x[k - 1], y[k] - y[k - 1]))
+    hd = []
+    for k in range(n - 1):
+        a = math.atan2(y[k + 1] - y[k], x[k + 1] - x[k])
+        if hd:
+            a = hd[-1] + (a - hd[-1] + math.pi) % TWOPI - math.pi
+        hd.append(a)
+    ms, mv, mw = chorddiagram(s, hd)
+    if len(ms) < 2:
+        types = ['L']; lengths = [s[-1]]; curvs = [0.0]; pose = (x[0], y[0], hd[0] if hd else 0.0)
+    else:
+        pieces = segmentdiagram(ms, mv, mw, sigma, minlen, 1.0 / rmax)
+        jh = jointvalues(pieces)
+        types = ['L' if pc[0] == 0 else 'A' for pc in pieces]
+        lengths = [pc[2] - pc[1] for pc in pieces]
+        curvs = [0.0 if pc[0] == 0 else (jh[k + 1] - jh[k]) / (pc[2] - pc[1]) for k, pc in enumerate(pieces)]
+        pose = (x[0], y[0], jh[0])
+    fixed = {}
+    pose, types, lengths, curvs, r, feet = hfitprune(x, y, types, pose, lengths, curvs, sigma, minlen, rmax, iterations)
+    # systematic misfits the segmentation missed (it sees heading errors, not their sum): split the element there and refit
+    tried = set()
+    ins = 0
+    for ins in range(20):
+        run = worstrun(r, sigma, tried)
+        if run is None:
+            break
+        i0, i1 = run
+        tried.add((i0 + i1) // 2)
+        e = feet[(i0 + i1) // 2][1]
+        ua = max(feet[i0][2] if feet[i0][1] == e else 0.0, 0.0)
+        ub = feet[i1][2] if feet[i1][1] == e else lengths[e]
+        if e == len(types) - 1 and feet[i1][1] == e:
+            ub = feet[i1][2]
+        # curvature that bends the chain by the peak misfit over the run (positive misfit = points left of the chain)
+        peak = max(r[i0:i1 + 1], key=abs)
+        kins = 8.0 * peak / max(ub - ua, 1.0) ** 2
+        kins = math.copysign(min(max(abs(kins), 2.0 / rmax), 0.01), peak)
+        if types[e] == 'L':
+            # straight -> straight, short arc, straight
+            ua = max(ua, 1.0); ub = max(ub, ua + 2.0)
+            nt = ['L', 'A', 'L']; nl = [ua, ub - ua, lengths[e] - ub]; nc = [0.0, kins, 0.0]
+            if e == len(types) - 1:
+                nl[2] = 1e9
+        else:
+            um = (ua + ub) / 2.0
+            nt = ['A', 'A']; nl = [um, lengths[e] - um]; nc = [curvs[e], curvs[e]]
+        if e == 0 and ua <= 1.0 and types[e] == 'L':
+            nt = ['A', 'L']; nl = [ub, lengths[e] - ub]; nc = [kins, 0.0]
+        t2 = types[:e] + nt + types[e + 1:]
+        l2 = lengths[:e] + nl + lengths[e + 1:]
+        c2 = curvs[:e] + nc + curvs[e + 1:]
+        res = hfitprune(x, y, t2, pose, l2, c2, sigma, minlen, rmax, 40)
+        if hcost(res[4], sigma) < hcost(r, sigma) * 0.98:
+            pose, types, lengths, curvs, r, feet = res
+            tried = set()
+    if ins > 0:
+        pose, types, lengths, curvs, r, feet = hfitprune(x, y, types, pose, lengths, curvs, sigma, minlen, rmax, iterations)
+    if roundstep > 0:
+        for k, t in enumerate(types[:-1] if types[-1] == 'L' else types):
+            if t == 'A':
+                rr = round(1.0 / abs(curvs[k]) / roundstep) * roundstep
+                if rr > 0:
+                    fixed[k] = math.copysign(1.0 / rr, curvs[k])
+        if fixed:
+            pose, lengths, curvs, r, el, feet = hfit(x, y, types, pose, lengths, curvs, sigma, fixed, iterations)
+    pose, types, lengths, curvs = trimchain(pose, lengths, curvs, types, (feet[0][1], feet[0][2]), (feet[-1][1], feet[-1][2]))
+    el = [f[1] - feet[0][1] for f in feet]
+    return pose, types, lengths, curvs, r, el
+
+
+# -- vertical chain: z0, g0 at s0, elements with length and rate of grade change (0 = grade)
+# z = Z + G u + c u^2 / 2 along an element
+
+class VChain(object):
+    def __init__(self, s, z, types):
+        self.s = s; self.z = z; self.types = types
+        self.state = None
+
+    def unpack(self, p):
+        m = len(self.types)
+        lengths = [math.exp(min(v, 12.0)) for v in p[2:2 + m - 1]] + [1e9]
+        curvs = []
+        q = 2 + m - 1
+        for t in self.types:
+            if t == 'L':
+                curvs.append(0.0)
+            else:
+                curvs.append(p[q] / 1e4); q += 1
+        return p[0], p[1], lengths, curvs
+
+    def pack(self, z0, g0, lengths, curvs):
+        p = [z0, g0] + [math.log(max(L, 1e-3)) for L in lengths[:-1]]
+        for k, t in enumerate(self.types):
+            if t == 'A':
+                p.append(curvs[k] * 1e4)
+        return p
+
+    def evaluate(self, z0, g0, lengths, curvs):
+        # element start station/height/grade, element and model height/grade per point
+        S = [self.s[0]]; Z = [z0]; G = [g0]
+        for L, c in zip(lengths[:-1], curvs[:-1]):
+            Z.append(Z[-1] + G[-1] * L + c * L * L / 2.0); G.append(G[-1] + c * L); S.append(S[-1] + L)
+        el = []; zm = []; gm = []
+        e = 0
+        m = len(lengths)
+        for si in self.s:
+            while e + 1 < m and si >= S[e + 1]:
+                e += 1
+            u = si - S[e]
+            el.append(e); zm.append(Z[e] + G[e] * u + curvs[e] * u * u / 2.0); gm.append(G[e] + curvs[e] * u)
+        return S, Z, G, el, zm, gm
+
+    def residuals(self, p, store):
+        z0, g0, lengths, curvs = self.unpack(p)
+        st = self.evaluate(z0, g0, lengths, curvs)
+        if store:
+            self.state = (lengths, curvs) + st
+        return [a - b for a, b in zip(st[4], self.z)]
+
+    def jacobian(self, p):
+        lengths, curvs, S, Z, G, el, zm, gm = self.state
+        n = len(self.s); m = len(self.types)
+        s = self.s
+        firstpt = [n] * (m + 1)
+        for i in range(n - 1, -1, -1):
+            for k in range(el[i], -1, -1):
+                if firstpt[k] > i:
+                    firstpt[k] = i
+                else:
+                    break
+        cols = [(0, [1.0] * n), (0, [si - S[0] for si in s])]
+        for k in range(m - 1):
+            # log length: everything after the element end shifts along, d/dL = -z'(s) + G_E + c_k (s - S_E)
+            L = lengths[k]; se = S[k + 1]; ge = G[k + 1]; ck = curvs[k]
+            lo = firstpt[k + 1]
+            cols.append((lo, [L * (-gm[i] + ge + ck * (s[i] - se)) if el[i] > k else 0.0 for i in range(lo, n)]))
+        for k, t in enumerate(self.types):
+            if t != 'A':
+                continue
+            L = lengths[k]; se = S[k + 1] if k + 1 < m else 0.0; sk = S[k]
+            lo = firstpt[k]
+            col = []
+            for i in range(lo, n):
+                if el[i] == k:
+                    u = s[i] - sk
+                    col.append(u * u / 2.0 / 1e4)
+                elif el[i] > k:
+                    col.append((L * L / 2.0 + L * (s[i] - se)) / 1e4)
+                else:
+                    col.append(0.0)
+            cols.append((lo, col))
+        return cols
+
+
+def vfit(s, z, types, z0, g0, lengths, curvs, sigma, iterations):
+    ch = VChain(s, z, types)
+    p = ch.pack(z0, g0, lengths, curvs)
+    p, r = lmrobust(p, ch, sigma, iterations)
+    z0, g0, lengths, curvs = ch.unpack(p)
+    return z0, g0, lengths, curvs, r, ch.state[5], ch.state[2]
+
+
+def vfitprune(s, z, types, z0, g0, lengths, curvs, sigma, minlen, iterations):
+    # fit, drop elements that shrink away or end up beyond the last point, flatten curves TBC can't handle, refit
+    for rnd in range(8):
+        z0, g0, lengths, curvs, r, el, S = vfit(s, z, types, z0, g0, lengths, curvs, sigma, 30 if rnd < 7 else iterations)
+        changed = False
+        # elements starting beyond the last point
+        while len(types) > 1 and S[len(types) - 1] >= s[-1]:
+            types = types[:-1]; lengths = lengths[:-1]; curvs = curvs[:-1]
+            changed = True
+        new = prunechain(types, lengths, curvs, minlen / 2.0, 0.0)
+        if new is not None:
+            types, lengths, curvs = new
+            changed = True
+        # a curve that bows less than 1mm off its chord becomes a grade (TBC can't handle flat parabolas)
+        types = list(types); curvs = list(curvs)
+        for k in range(len(types) - 1):
+            if types[k] == 'A' and abs(curvs[k]) * lengths[k] ** 2 / 8.0 < 0.001:
+                types[k] = 'L'; curvs[k] = 0.0; changed = True
+        merged = prunechain(types, lengths, curvs, 0.0, 0.0, False)
+        if merged is not None:
+            types, lengths, curvs = merged
+        if not changed:
+            break
+    z0, g0, lengths, curvs, r, el, S = vfit(s, z, types, z0, g0, lengths, curvs, sigma, iterations)
+    return z0, g0, list(types), list(lengths), list(curvs), r, el, S
+
+
+def surveyvertical(s, z, sigma, minlen, iterations=100):
+    # s must be increasing, returns (z0, g0, types, lengths, curvs, residuals, element per point)
+    gr = []
+    for k in range(len(s) - 1):
+        ds = s[k + 1] - s[k]
+        gr.append((z[k + 1] - z[k]) / ds if ds > 1e-6 else 0.0)
+    ms, mv, mw = chorddiagram(s, gr)
+    if len(ms) < 2:
+        types = ['L']; lengths = [1e9]; curvs = [0.0]; z0 = z[0]; g0 = gr[0] if gr else 0.0
+    else:
+        pieces = segmentdiagram(ms, mv, mw, sigma, minlen, 0.0)
+        jg = jointvalues(pieces)
+        types = ['L' if pc[0] == 0 else 'A' for pc in pieces]
+        lengths = [pc[2] - pc[1] for pc in pieces]
+        curvs = [0.0 if pc[0] == 0 else (jg[k + 1] - jg[k]) / (pc[2] - pc[1]) for k, pc in enumerate(pieces)]
+        z0 = z[0]; g0 = jg[0]
+        lengths[0] -= s[0] - pieces[0][1]
+    z0, g0, types, lengths, curvs, r, el, S = vfitprune(s, z, types, z0, g0, lengths, curvs, sigma, minlen, 40)
+    # systematic misfits the segmentation missed: split the element there and refit
+    tried = set()
+    ins = 0
+    for ins in range(20):
+        run = worstrun(r, sigma, tried)
+        if run is None:
+            break
+        i0, i1 = run
+        tried.add((i0 + i1) // 2)
+        e = el[(i0 + i1) // 2]
+        ua = max(s[i0] - S[e], 0.0)
+        ub = min(s[i1] - S[e], lengths[e] if e < len(types) - 1 else 1e9)
+        peak = max(r[i0:i1 + 1], key=abs)
+        # the model is above the points (positive residual) -> the curve has to bend down
+        cins = -8.0 * peak / max(ub - ua, 1.0) ** 2
+        if types[e] == 'L':
+            ua = max(ua, 1.0); ub = max(ub, ua + 2.0)
+            nt = ['L', 'A', 'L']; nl = [ua, ub - ua, lengths[e] - ub]; nc = [0.0, cins, 0.0]
+            if e == 0 and ua <= 1.0:
+                nt = ['A', 'L']; nl = [ub, lengths[e] - ub]; nc = [cins, 0.0]
+        else:
+            um = (ua + ub) / 2.0
+            nt = ['A', 'A']; nl = [um, lengths[e] - um]; nc = [curvs[e], curvs[e]]
+        res = vfitprune(s, z, types[:e] + nt + types[e + 1:], z0, g0, lengths[:e] + nl + lengths[e + 1:],
+                        curvs[:e] + nc + curvs[e + 1:], sigma, minlen, 40)
+        if hcost(res[5], sigma) < hcost(r, sigma) * 0.98:
+            z0, g0, types, lengths, curvs, r, el, S = res
+            tried = set()
+    if ins > 0:
+        z0, g0, types, lengths, curvs, r, el, S = vfitprune(s, z, types, z0, g0, lengths, curvs, sigma, minlen, iterations)
+    lengths[-1] = s[-1] - S[-1]
+    return z0, g0, types, lengths, curvs, r, el
+
 # ---- end of geometry core
 
 
@@ -529,6 +1298,10 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
 
         self.htol.DistanceMin = 0.00001
         self.vtol.DistanceMin = 0.00001
+        self.hscatter.DistanceMin = 0.0001
+        self.vscatter.DistanceMin = 0.0001
+        self.hminlength.DistanceMin = 0.1
+        self.vminlength.DistanceMin = 0.1
         self.maxradius.DistanceMin = 1.0
         self.roundradius.DistanceMin = 0.0
         for c in [self.minarcchords, self.minvcchords]:
@@ -536,10 +1309,22 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
             c.MinValue = 2
             c.MaxValue = 1000
 
+        self.modedesign.Checked += self.ModeChanged
+        self.modesurvey.Checked += self.ModeChanged
+
         try:
             self.SetDefaultOptions()
         except:
             pass
+        self.ModeChanged(None, None)
+
+    def ModeChanged(self, sender, e):
+        # Design mode: interpolating fit with a hard tolerance, Survey mode: least squares fit to the point scatter
+        survey = self.modesurvey.IsChecked == True
+        for c in [self.designh, self.designv]:
+            c.Visibility = Visibility.Collapsed if survey else Visibility.Visible
+        for c in [self.surveyh, self.surveyv, self.surveynote]:
+            c.Visibility = Visibility.Visible if survey else Visibility.Collapsed
 
     def SetDefaultOptions(self):
         SCROptions.LoadMacroOptions(self, "SCR_RecurvePolyline", _OPTIONS, self.currentProject)
@@ -571,7 +1356,8 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
         wv.PauseGraphicsCache(True)
 
         report = []
-        totals = [0, 0, 0, 0, 0.0, 0.0]   # lines, straights, arcs, vertical curves, max dev H, max dev V
+        # lines, straights, arcs, vertical curves, max dev H, max dev V, sum of squares H, count H, sum of squares V, count V
+        totals = [0, 0, 0, 0, 0.0, 0.0, 0.0, 0, 0.0, 0]
         try:
             with TransactMethodCall(self.currentProject.TransactionCollector) as failGuard:
 
@@ -601,6 +1387,10 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
 
         self.success.Content += '{} Lines recurved\n{} Straights, {} Arcs, {} Vertical Curves\nmax Deviation H {:.4f} / V {:.4f}'.format(
             totals[0], totals[1], totals[2], totals[3], totals[4], totals[5])
+        if totals[7] > 0:
+            self.success.Content += '\nRMS H {:.4f}'.format(math.sqrt(totals[6] / totals[7]))
+            if totals[9] > 0:
+                self.success.Content += ' / V {:.4f}'.format(math.sqrt(totals[8] / totals[9]))
 
         if self.writecsv.IsChecked and report:
             csvname = os.path.expanduser('~/Downloads/SCR_RecurvePolyline.csv')
@@ -640,44 +1430,14 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
             self.error.Content += '\nskipped "{}" - not enough Vertices'.format(name)
             return
 
-        htol = self.htol.Distance
-        vtol = self.vtol.Distance
+        survey = self.modesurvey.IsChecked == True
+        totals[0] += 1
 
-        # ---- horizontal
-        helems = segmenthorizontal(x, y, htol, self.maxradius.Distance, int(self.minarcchords.Value))
-        if self.roundradius.Distance > 0:
-            for e in helems:
-                if e["t"] == "A":
-                    roundarc(x, y, e, self.roundradius.Distance, htol)
-        s = stationing(x, y, helems)
-        hlength = s[-1]
-
-        # ---- horizontal as linestring elements, 2D - the elevations go into the vertical tab
-        etypes, forced = arctangency(x, y, helems, htol)
-        if any(forced):
-            self.error.Content += '\n"{}" - {} Arc(s) made tangent although the kink exceeds the Tolerance - see CSV'.format(name, sum(forced))
-        newline = wv.Add(clr.GetClrType(Linestring))
-        newline.Name = name
-        newline.Layer = self.layerpicker.SelectedSerialNumber
-
-        el = ElementFactory.Create(clr.GetClrType(IStraightSegment), clr.GetClrType(IXYZLocation))
-        el.Position = Point3D(x[0] + ox, y[0] + oy)
-        newline.AppendElement(el)
-        for e, etype in zip(helems, etypes):
-            if etype == "Straight":
-                el = ElementFactory.Create(clr.GetClrType(IStraightSegment), clr.GetClrType(IXYZLocation))
-            elif etype == "Arc":
-                el = ElementFactory.Create(clr.GetClrType(IArcSegment), clr.GetClrType(IXYZLocation))
-                el.Radius = e["r"]
-                # LeftRight is a Direction enum, take the type straight from the property instead of importing it
-                directiontype = clr.GetClrType(IArcSegment).GetProperty("LeftRight").PropertyType
-                el.LeftRight = System.Enum.Parse(directiontype, "Left" if e["side"] > 0 else "Right")
-                el.LargeSmall = ArcLargeSmall.Large if e["sweep"] > math.pi else ArcLargeSmall.Small
-            else:
-                el = ElementFactory.Create(clr.GetClrType(ITangentArcSegment), clr.GetClrType(IXYZLocation))
-                el.TangentType = ArcTangentType.Begin if etype == "Begin" else ArcTangentType.TangentTangent
-            el.Position = Point3D(x[e["j"]] + ox, y[e["j"]] + oy)
-            newline.AppendElement(el)
+        # ---- horizontal, as a 2D linestring - the elevations go into the vertical tab
+        if survey:
+            newline, hlength = self.horizontalsurvey(wv, name, x, y, ox, oy, report, totals)
+        else:
+            newline, hlength = self.horizontaldesign(wv, name, x, y, ox, oy, report, totals)
 
         # TBC computes the tangent arcs from the tangency, the result should only differ marginally from the fit
         polyseg = newline.ComputePolySeg()
@@ -689,34 +1449,84 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
         # every original 3D vertex is projected onto the linestring TBC computed, giving its chainage
         # the vertical is then fitted to those chainages/elevations, so it covers the real line from start to end
         # (TBC computes the tangent arcs from the tangency, the length can differ from the horizontal fit)
-        vs = []; vz = []; velems = []
-        if is3d:
-            vs, vz, dropped, maxoffset = self.projectvertices(polyseg, x, y, z, ox, oy)
-            if dropped:
-                self.error.Content += '\n"{}" - {} Vertices not used for the Vertical, Chainage not increasing'.format(name, dropped)
-            if maxoffset > htol * 2:
+        if not is3d:
+            return
+        if survey:
+            vs, vz, dropped, maxoffset = self.projectall(polyseg, x, y, z, ox, oy)
+            if maxoffset > 6.0 * self.hscatter.Distance:
                 self.error.Content += '\n"{}" - Vertices up to {:.3f} off the new Linestring'.format(name, maxoffset)
-            if len(vs) >= 2:
-                if self.fitvertical.IsChecked:
-                    velems = segmentvertical(vs, vz, vtol, int(self.minvcchords.Value))
-                else:
-                    # keep the original elevations - every vertex becomes a VPI
-                    velems = [{"t": "G", "i": k, "j": k + 1} for k in range(len(vs) - 1)]
+        else:
+            vs, vz, dropped, maxoffset = self.projectvertices(polyseg, x, y, z, ox, oy)
+            if maxoffset > self.htol.Distance * 2:
+                self.error.Content += '\n"{}" - Vertices up to {:.3f} off the new Linestring'.format(name, maxoffset)
+        if dropped:
+            self.error.Content += '\n"{}" - {} Vertices not used for the Vertical, Chainage not increasing'.format(name, dropped)
+        if len(vs) < 2:
+            return
 
-        if velems:
-            vpoly = PolySeg.PolySeg()
-            for e in velems:
-                i = e["i"]; j = e["j"]
-                if e["t"] == "G":
-                    vpoly.Add(SegmentLine(Point3D(vs[i], vz[i], 0), Point3D(vs[j], vz[j], 0)))
-                else:
-                    half = (vs[j] - vs[i]) / 2.0
-                    vpi = Point3D(vs[i] + half, vz[i] + e["b"] * half, 0)
-                    vpoly.Add(ParabolaSegment(Point3D(vs[i], vz[i], 0), vpi, Point3D(vs[j], vz[j], 0)))
-            Linestring.ConvertPolySegToLinestringVertical(newline, vpoly, 0)
+        # vertical elements: (type 'G' grade / 'P' parabola, start chainage, start height, end chainage, end height, grade at start)
+        if not self.fitvertical.IsChecked:
+            # keep the original elevations - every vertex becomes a VPI
+            vitems = [('G', vs[k], vz[k], vs[k + 1], vz[k + 1], 0.0) for k in range(len(vs) - 1)]
+        elif survey:
+            vitems = self.verticalsurvey(name, vs, vz, report, totals)
+        else:
+            vitems = self.verticaldesign(name, vs, vz, report, totals)
 
-        # ---- report
-        totals[0] += 1
+        vpoly = PolySeg.PolySeg()
+        for t, sa, za, sb, zb, ga in vitems:
+            if t == 'G':
+                vpoly.Add(SegmentLine(Point3D(sa, za, 0), Point3D(sb, zb, 0)))
+            else:
+                half = (sb - sa) / 2.0
+                vpi = Point3D(sa + half, za + ga * half, 0)
+                vpoly.Add(ParabolaSegment(Point3D(sa, za, 0), vpi, Point3D(sb, zb, 0)))
+        Linestring.ConvertPolySegToLinestringVertical(newline, vpoly, 0)
+
+    def buildlinestring(self, wv, name, startx, starty, items):
+        # items: (linestring element type, end x, end y, radius, side, sweep) in world coordinates
+        # element types: Straight, Arc (radius and direction), Begin / TangentTangent (tangent arcs, TBC computes the radius)
+        newline = wv.Add(clr.GetClrType(Linestring))
+        newline.Name = name
+        newline.Layer = self.layerpicker.SelectedSerialNumber
+
+        el = ElementFactory.Create(clr.GetClrType(IStraightSegment), clr.GetClrType(IXYZLocation))
+        el.Position = Point3D(startx, starty)
+        newline.AppendElement(el)
+        for etype, ex, ey, radius, side, sweep in items:
+            if etype == "Straight":
+                el = ElementFactory.Create(clr.GetClrType(IStraightSegment), clr.GetClrType(IXYZLocation))
+            elif etype == "Arc":
+                el = ElementFactory.Create(clr.GetClrType(IArcSegment), clr.GetClrType(IXYZLocation))
+                el.Radius = radius
+                # LeftRight is a Direction enum, take the type straight from the property instead of importing it
+                directiontype = clr.GetClrType(IArcSegment).GetProperty("LeftRight").PropertyType
+                el.LeftRight = System.Enum.Parse(directiontype, "Left" if side > 0 else "Right")
+                el.LargeSmall = ArcLargeSmall.Large if sweep > math.pi else ArcLargeSmall.Small
+            else:
+                el = ElementFactory.Create(clr.GetClrType(ITangentArcSegment), clr.GetClrType(IXYZLocation))
+                el.TangentType = ArcTangentType.Begin if etype == "Begin" else ArcTangentType.TangentTangent
+            el.Position = Point3D(ex, ey)
+            newline.AppendElement(el)
+        return newline
+
+    def horizontaldesign(self, wv, name, x, y, ox, oy, report, totals):
+        htol = self.htol.Distance
+        helems = segmenthorizontal(x, y, htol, self.maxradius.Distance, int(self.minarcchords.Value))
+        if self.roundradius.Distance > 0:
+            for e in helems:
+                if e["t"] == "A":
+                    roundarc(x, y, e, self.roundradius.Distance, htol)
+        s = stationing(x, y, helems)
+
+        etypes, forced = arctangency(x, y, helems, htol)
+        if any(forced):
+            self.error.Content += '\n"{}" - {} Arc(s) made tangent although the kink exceeds the Tolerance - see CSV'.format(name, sum(forced))
+        items = []
+        for e, etype in zip(helems, etypes):
+            items.append((etype, x[e["j"]] + ox, y[e["j"]] + oy, e.get("r", 0.0), e.get("side", 1), e.get("sweep", 0.0)))
+        newline = self.buildlinestring(wv, name, x[0] + ox, y[0] + oy, items)
+
         for k, e in enumerate(helems):
             dev = hdeviation(x, y, e)
             totals[4] = max(totals[4], dev)
@@ -731,12 +1541,50 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
             report.append('"{}",H{},{},{},{:.4f},{:.4f},{:.4f},{},{},,,,{:.4f},{:.4f},{:.4f},{:.4f},{:.6f},{},{:.5f}'.format(
                 name, k + 1, typ, etypes[k] + (" (forced)" if forced[k] else ""), e["s0"], e["s0"] + e["length"], e["length"], radius, direction,
                 x[i] + ox, y[i] + oy, x[j] + ox, y[j] + oy, kink, j - i + 1, dev))
+        return newline, s[-1]
 
-        for k, e in enumerate(velems if self.fitvertical.IsChecked else []):
-            dev = vdeviation(vs, vz, e)
-            totals[5] = max(totals[5], dev)
+    def horizontalsurvey(self, wv, name, x, y, ox, oy, report, totals):
+        # least squares fit, the chain is tangent continuous by construction, so every joint is a tangent joint
+        pose, types, lengths, curvs, r, el = surveyhorizontal(x, y, self.hscatter.Distance, self.hminlength.Distance,
+                                                              self.maxradius.Distance, self.roundradius.Distance)
+        types = ['A' if t == 'A' and c != 0.0 else 'L' for t, c in zip(types, curvs)]
+        poses = chainposes(pose, lengths, curvs)
+        etypes = tangenttypes(types)
+        items = []
+        for k in range(len(types)):
+            ex, ey, eh = poses[k + 1]
+            radius = 1.0 / abs(curvs[k]) if types[k] == 'A' else 0.0
+            items.append((etypes[k], ex + ox, ey + oy, radius, 1 if curvs[k] > 0 else -1, abs(curvs[k]) * lengths[k]))
+        newline = self.buildlinestring(wv, name, pose[0] + ox, pose[1] + oy, items)
+
+        m = len(types)
+        st = 0.0
+        for k in range(m):
+            res = [abs(r[i]) for i in range(len(r)) if min(max(el[i], 0), m - 1) == k]
+            dev = max(res) if res else 0.0
+            totals[4] = max(totals[4], dev)
+            if types[k] == 'L':
+                totals[1] += 1
+                typ = "Straight"; radius = ""; direction = ""
+            else:
+                totals[2] += 1
+                typ = "Arc"; radius = "{:.4f}".format(1.0 / abs(curvs[k])); direction = "Left" if curvs[k] > 0 else "Right"
+            report.append('"{}",H{},{},{},{:.4f},{:.4f},{:.4f},{},{},,,,{:.4f},{:.4f},{:.4f},{:.4f},{:.6f},{},{:.5f}'.format(
+                name, k + 1, typ, etypes[k], st, st + lengths[k], lengths[k], radius, direction,
+                poses[k][0] + ox, poses[k][1] + oy, poses[k + 1][0] + ox, poses[k + 1][1] + oy, 0.0, len(res), dev))
+            st += lengths[k]
+        totals[6] += sum(v * v for v in r); totals[7] += len(r)
+        return newline, st
+
+    def verticaldesign(self, name, vs, vz, report, totals):
+        velems = segmentvertical(vs, vz, self.vtol.Distance, int(self.minvcchords.Value))
+        vitems = []
+        for k, e in enumerate(velems):
             i = e["i"]; j = e["j"]
             gin, gout = vgrades(vs, vz, e)
+            vitems.append(('G' if e["t"] == "G" else 'P', vs[i], vz[i], vs[j], vz[j], gin))
+            dev = vdeviation(vs, vz, e)
+            totals[5] = max(totals[5], dev)
             if e["t"] == "G":
                 typ = "Grade"; kvalue = ""
             else:
@@ -746,6 +1594,62 @@ class SCR_RecurvePolyline(StackPanel): # this inherits from the WPF StackPanel c
             report.append('"{}",V{},{},,{:.4f},{:.4f},{:.4f},,,{:.4f},{:.4f},{},{:.4f},{:.4f},{:.4f},{:.4f},,{},{:.5f}'.format(
                 name, k + 1, typ, vs[i], vs[j], vs[j] - vs[i], gin * 100.0, gout * 100.0, kvalue,
                 vs[i], vz[i], vs[j], vz[j], j - i + 1, dev))
+        return vitems
+
+    def verticalsurvey(self, name, vs, vz, report, totals):
+        z0, g0, types, lengths, curvs, r, el = surveyvertical(vs, vz, self.vscatter.Distance, self.vminlength.Distance)
+        # the profile starts at chainage 0, the first vertex can sit a bit further along
+        s0 = vs[0]
+        za = z0 - g0 * s0 + curvs[0] * s0 * s0 / 2.0
+        ga = g0 - curvs[0] * s0
+        lengths = list(lengths)
+        lengths[0] += s0
+        sa = 0.0
+        vitems = []
+        m = len(types)
+        for k in range(m):
+            L = lengths[k]; c = curvs[k]
+            sb = sa + L; zb = za + ga * L + c * L * L / 2.0; gb = ga + c * L
+            vitems.append(('G' if types[k] == 'L' else 'P', sa, za, sb, zb, ga))
+            res = [abs(r[i]) for i in range(len(r)) if el[i] == k]
+            dev = max(res) if res else 0.0
+            totals[5] = max(totals[5], dev)
+            if types[k] == 'L':
+                typ = "Grade"; kvalue = ""
+            else:
+                totals[3] += 1
+                typ = "Vertical Curve"
+                kvalue = "{:.3f}".format(L / abs((gb - ga) * 100.0)) if abs(gb - ga) > 1e-12 else ""
+            report.append('"{}",V{},{},,{:.4f},{:.4f},{:.4f},,,{:.4f},{:.4f},{},{:.4f},{:.4f},{:.4f},{:.4f},,{},{:.5f}'.format(
+                name, k + 1, typ, sa, sb, L, ga * 100.0, gb * 100.0, kvalue, sa, za, sb, zb, len(res), dev))
+            sa = sb; za = zb; ga = gb
+        totals[8] += sum(v * v for v in r); totals[9] += len(r)
+        return vitems
+
+    def projectall(self, polyseg, x, y, z, ox, oy):
+        # chainage of every original vertex on the new horizontal, relative to its begin station, sorted
+        # a survey pickup can step back a little, vertices with the same chainage as the previous one are dropped
+        begin = polyseg.BeginStation
+        total = polyseg.ComputeStationing() - begin
+        onl = clr.StrongBox[Point3D]()
+        sta = clr.StrongBox[float]()
+        pairs = []
+        dropped = 0; maxoffset = 0.0
+        for k in range(len(x)):
+            px = x[k] + ox; py = y[k] + oy
+            if not polyseg.FindPointFromPoint(Point3D(px, py, 0), onl, sta):
+                dropped += 1
+                continue
+            maxoffset = max(maxoffset, math.hypot(onl.Value.X - px, onl.Value.Y - py))
+            pairs.append((min(max(sta.Value - begin, 0.0), total), z[k]))
+        pairs.sort()
+        vs = []; vz = []
+        for c, h in pairs:
+            if vs and c <= vs[-1] + 1e-4:
+                dropped += 1
+                continue
+            vs.append(c); vz.append(h)
+        return vs, vz, dropped, maxoffset
 
     def projectvertices(self, polyseg, x, y, z, ox, oy):
         # chainage of every original vertex on the new horizontal, relative to its begin station

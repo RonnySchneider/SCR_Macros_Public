@@ -147,6 +147,7 @@
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>18/11/2026 – <a class="class2" href="#SCR_RecurvePolyline">SCR_RecurvePolyline</a> <span class="auto-style2">(BETA)</span> – new Survey mode for picked-up lines, e.g. a surveyed centreline; the elements are fitted by least squares instead of passing through the vertices</li>
           <li>18/11/2026 – new <a class="class2" href="#SCR_IFCUnderside">SCR_IFCUnderside</a> <span class="auto-style2">(BETA)</span> – creates a surface along the underside of the selected IFC objects; vertical steps between objects become steep slopes</li>
           <li>15/11/2026 – new <a class="class2" href="#SCR_RecurvePolyline">SCR_RecurvePolyline</a> <span class="auto-style2">(BETA)</span> – re-engineers chorded polylines back into straights, tangent arcs, grades and vertical curves, so the lines can be edited again</li>
           <li>07/11/2026 – new <a class="class2" href="#SCR_SubgradeSmoothing">SCR_SubgradeSmoothing</a> (BETA) – creates a smooth road surface with gradual grade and crossfall changes from a rough road surface and a rough centreline</li>
@@ -2250,12 +2251,15 @@
           <ul>
 			  <li><span class="auto-style2">!!! BETA version – still in development, please check the results carefully !!!</span></li>
 			  <li>re-engineers lines that consist only of straight segments back into straights, arcs, grades and vertical curves</li>
-			  <li>made for chorded design data – e.g. after an export or conversion, the arcs and vertical curves were replaced by many short chords and can't be edited efficiently anymore</li>
-			  <li>the aim is as few elements as possible, while every original vertex stays within the tolerance</li>
+			  <li>two modes, selected under <b>Source Data</b> at the top</li>
+			  <ul>
+			  	<li><b>Design</b> – for chorded design data, e.g. after an export or conversion, the arcs and vertical curves were replaced by many short chords and can't be edited efficiently anymore; the aim is as few elements as possible, while every original vertex stays within the tolerance</li>
+			  	<li><b>Survey</b> – for picked-up lines, e.g. a surveyed centreline or kerb; the vertices scatter around the real line, so the elements are fitted by least squares and don't pass through the vertices – see <b>How it works – Survey mode</b> below</li>
+			  </ul>
 			  <li>the result is a new linestring with the original name on the chosen layer; the original line isn't changed</li>
 			  <li>works with any line type; if the source already contains curves, they are chorded tightly first</li>
 			  <br>
-			  <li><b>How it works</b></li>
+			  <li><b>How it works – Design mode</b></li>
 			  <ol>
 				<li>the vertices are read including the vertical profile of the line; consecutive vertices at the same position are dropped</li>
 				<li>horizontal: starting at the first vertex, the macro extends a straight and an arc as far as all vertices stay within the tolerance; the longer one is used, and a straight wins a tie; then it continues from the end of that element</li>
@@ -2286,22 +2290,42 @@
 				<li>if the length of the finished linestring differs by more than 5 mm from the fitted geometry, a warning is shown as well</li>
 			  </ul>
 			  <br>
+			  <li><b>How it works – Survey mode</b></li>
+			  <ol>
+			  	<li>the direction of every chord is plotted against the chainage (the curvature diagram): a straight shows up as a flat line, an arc as a sloped line; the diagram is split into the fewest flat and sloped pieces that match the point scatter</li>
+			  	<li>this gives a first set of straights and arcs; the whole line is then fitted by least squares – the start point, the start direction, and the length and radius of every element are adjusted together</li>
+			  	<li>the line is tangent continuous by construction – every arc is tangent to its neighbours, so there are no forced tangencies like in Design mode</li>
+			  	<li>the fit is robust: single outliers (e.g. a shot in the wrong spot) are down-weighted and don't pull the line away</li>
+			  	<li>elements that shrink below half the minimum element length are removed and the line is fitted again</li>
+			  	<li>wherever three or more consecutive vertices sit more than 2.5 × the point scatter off the line on the same side, the element there is split and the line is fitted again – as long as that improves the fit</li>
+			  	<li>optionally, the radii are rounded and the rest of the line is fitted again around them</li>
+			  	<li>the new line starts and ends opposite the first and the last vertex</li>
+			  	<li>vertical: the same procedure with grades and parabolic vertical curves; a vertical curve that bows less than 1 mm off its chord becomes a grade</li>
+			  	<li>the result summary also shows the RMS of the deviations; it should come out close to the point scatter – a much larger value means that the line isn't made of straights and arcs only (e.g. it has transition spirals), or that the scatter setting is too large</li>
+			  	<li><span class="auto-style2">the fit takes a few seconds per line, longer with a small scatter setting and many vertices</span></li>
+			  </ol>
+			  <br>
 			  <li><b>Settings</b></li>
 			  <ul>
+				<li><b>Source Data</b> – Design or Survey mode, see above</li>
 				<li><b>Lines</b> – one or more lines to re-engineer</li>
 				<li><b>Horizontal</b></li>
 				<ul>
-					<li><b>Tolerance</b> – the maximum distance of the original vertices from the new straights and arcs; set it just above the rounding of the source coordinates, e.g. 2 mm for coordinates rounded to the millimetre</li>
+					<li><b>Point Scatter</b> (Survey) – the expected sideways scatter of the vertices around the real line (1 sigma); a smaller value gives more elements, a larger one fewer elements</li>
+					<li><b>min Element Length</b> (Survey) – the shortest straight or arc; shorter elements are absorbed by their neighbours</li>
+					<li><b>Tolerance</b> (Design) – the maximum distance of the original vertices from the new straights and arcs; set it just above the rounding of the source coordinates, e.g. 2 mm for coordinates rounded to the millimetre</li>
 					<li>a tolerance that is too large lets straights swallow the first chords of flat arcs; one that is too small (below the coordinate rounding) breaks the line into many short elements</li>
-					<li><b>min Chords per Arc</b> – three vertices always lie on a circle, so an arc with only one or two chords can't be told apart from an angle point; such short arcs are only accepted if they are tangent to the previous element, otherwise they stay straights</li>
+					<li><b>min Chords per Arc</b> (Design) – three vertices always lie on a circle, so an arc with only one or two chords can't be told apart from an angle point; such short arcs are only accepted if they are tangent to the previous element, otherwise they stay straights</li>
 					<li><b>max Radius</b> – flatter curves are treated as straights</li>
-					<li><b>round Radii to</b> – 0 means no rounding; a rounded radius is only used if all vertices still stay within the tolerance, e.g. with 1 m a fitted radius of 249.998 becomes 250</li>
+					<li><b>round Radii to</b> – 0 means no rounding; in Design mode a rounded radius is only used if all vertices still stay within the tolerance, e.g. with 1 m a fitted radius of 249.998 becomes 250; in Survey mode all radii are rounded and the rest of the line is fitted again around them</li>
 				</ul>
 				<li><b>Vertical</b></li>
 				<ul>
 					<li><b>fit Grades and Vertical Curves</b> – unticked, the original elevations are kept and every vertex becomes a VPI</li>
-					<li><b>Tolerance</b> – the maximum height difference of the original vertices from the new grades and vertical curves</li>
-					<li><b>min Chords per Curve</b> – same as for the arcs: shorter vertical curves are only accepted if they are tangent to the previous grade</li>
+					<li><b>Tolerance</b> (Design) – the maximum height difference of the original vertices from the new grades and vertical curves</li>
+					<li><b>min Chords per Curve</b> (Design) – same as for the arcs: shorter vertical curves are only accepted if they are tangent to the previous grade</li>
+					<li><b>Height Scatter</b> (Survey) – the expected height scatter of the vertices around the real profile (1 sigma)</li>
+					<li><b>min Element Length</b> (Survey) – the shortest grade or vertical curve</li>
 				</ul>
 				<li><b>Output</b></li>
 				<ul>
@@ -2315,7 +2339,7 @@
 				</ul>
 			  </ul>
 			  <br>
-			  <li><b>Result summary</b> – after each run, the macro shows the number of lines, straights, arcs and vertical curves, and the largest horizontal and vertical deviation</li>
+			  <li><b>Result summary</b> – after each run, the macro shows the number of lines, straights, arcs and vertical curves, and the largest horizontal and vertical deviation; in Survey mode also the RMS of the deviations</li>
 			  <br>
 			  <li><b>Be aware of</b></li>
 			  <ul>

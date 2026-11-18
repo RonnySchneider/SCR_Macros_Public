@@ -42,7 +42,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "Chord Lines"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.13
+        cmdData.Version = 1.131
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -176,7 +176,9 @@ class SCR_ChordLines(StackPanel): # this inherits from the WPF StackPanel contro
 
                         polyseg1_v = None
 
-                        if o.Normal == Vector3D(0, 0, 1):
+                        # alignments (ProfileView) have no Normal/UCS - they are always flat
+                        onormal = getattr(o, 'Normal', None)
+                        if onormal is None or onormal == Vector3D(0, 0, 1):
 
                             polyseg1 = o.ComputePolySeg()
                             polyseg1 = polyseg1.ToWorld()
