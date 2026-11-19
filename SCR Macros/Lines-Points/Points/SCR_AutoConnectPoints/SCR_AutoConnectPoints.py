@@ -22,7 +22,7 @@ from System.Collections.Generic import List, IEnumerable
 exec(open(r"C:\ProgramData\Trimble\MacroCommands3\SCR Macros\SCR_Imports.py").read())
 
 _OPTIONS = {
-    "layerpicker": 8, "usepointid": True, "boltspecial": False,
+    "layerpicker": 8, "usepointid": True, "boltspecial": False, "useviewvector": False,
     "addtosurface": False, "surfacepicker": 0,
 }
 
@@ -40,7 +40,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.ShortCaption = "AutoConnect Points"
         cmdData.DefaultRibbonToolSize = 3 # Default=0, ImageOnly=1, Normal=2, Large=3
 
-        cmdData.Version = 1.27
+        cmdData.Version = 1.273
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo = r""
         
@@ -134,9 +134,79 @@ class SCR_AutoConnectPoints(StackPanel): # this inherits from the WPF StackPanel
             self.OkClicked(None, None)
 
 
+    def GetViewPlaneAxes(self):
+        # returns two orthonormal axes (ux, uy, uz), (wx, wy, wz) spanning the plane
+        # perpendicular to the viewing direction of the active view, or None if not possible
+        activeForm = TrimbleOffice.TheOffice.MainWindow.AppViewManager.ActiveView
+
+        if isinstance(activeForm, clr.GetClrType(Hoops2dView)):
+            # plan view - looking straight down, rotation of the view doesn't matter for distances
+            return (1.0, 0.0, 0.0), (0.0, 1.0, 0.0)
+
+        # don't rely on the form type, any view whose inner control has a camera will do
+        inner = getattr(activeForm, "View", None)
+        if inner is None:
+            inner = activeForm
+        # the CameraPosition/CameraTarget properties are plain backing fields and not the live camera
+        # GetViewDirection() / GetCameraPosition() / GetCameraTarget() query the actual Hoops camera
+        try:
+            vd = inner.GetViewDirection()
+            dx, dy, dz = vd.X, vd.Y, vd.Z
+        except:
+            try:
+                cpos = inner.GetCameraPosition()
+                ctgt = inner.GetCameraTarget()
+                # camera coordinates may be in a translated local system, the direction isn't affected by that
+                dx = ctgt.X - cpos.X
+                dy = ctgt.Y - cpos.Y
+                dz = ctgt.Z - cpos.Z
+            except:
+                return None
+        if math.isnan(dx) or math.isnan(dy) or math.isnan(dz):
+            return None
+        dl = math.sqrt(dx * dx + dy * dy + dz * dz)
+        if dl < 1e-12:
+            return None
+        dx /= dl
+        dy /= dl
+        dz /= dl
+
+        # helper axis that isn't parallel to the view direction
+        if abs(dz) < 0.9:
+            hx, hy, hz = 0.0, 0.0, 1.0
+        else:
+            hx, hy, hz = 1.0, 0.0, 0.0
+
+        # u = d x h
+        ux = dy * hz - dz * hy
+        uy = dz * hx - dx * hz
+        uz = dx * hy - dy * hx
+        ul = math.sqrt(ux * ux + uy * uy + uz * uz)
+        ux /= ul
+        uy /= ul
+        uz /= ul
+
+        # w = d x u  (already unit length since d and u are orthonormal)
+        wx = dy * uz - dz * uy
+        wy = dz * ux - dx * uz
+        wz = dx * uy - dy * ux
+
+        return (ux, uy, uz), (wx, wy, wz)
+
     def OkClicked(self, cmd, e):
         Keyboard.Focus(self.okBtn)
         self.error.Content=''
+
+        # axes of the plane we measure the "2D" distances on in bolt mode
+        uaxis, waxis = (1.0, 0.0, 0.0), (0.0, 1.0, 0.0)
+        if self.boltspecial.IsChecked and self.useviewvector.IsChecked:
+            axes = self.GetViewPlaneAxes()
+            if axes is None:
+                activeForm = TrimbleOffice.TheOffice.MainWindow.AppViewManager.ActiveView
+                self.error.Content = '\nactive view must be a Plan or 3D View\n(found: ' + \
+                                     (activeForm.GetType().FullName if activeForm is not None else 'None') + ')'
+                return
+            uaxis, waxis = axes
 
 
         # self.label_benchmark.Content = ''
@@ -178,13 +248,31 @@ class SCR_AutoConnectPoints(StackPanel): # this inherits from the WPF StackPanel
                     jj = pointlist.Count
                     ProgressBar.TBC_ProgressBar.Title = "connect Points"
                     if self.boltspecial.IsChecked:  # always just connect the two closest points
-                        
+
+                        # project every point onto the measuring plane once - [pos, serial, u, w]
+                        # without the view option the axes are X/Y, which gives the plain 2D distance
+                        ux, uy, uz = uaxis
+                        wx, wy, wz = waxis
+                        for pe in pointlist:
+                            p = pe[0]
+                            pe.Add(p.X * ux + p.Y * uy + p.Z * uz)
+                            pe.Add(p.X * wx + p.Y * wy + p.Z * wz)
+
                         while pointlist.Count>1: # as long as we have more than 1 point in the list
                             i1 = 0
                             i2 = 1
                             if pointlist.Count>2:
+                                p1u = pointlist[i1][2]
+                                p1w = pointlist[i1][3]
+                                du = pointlist[i2][2] - p1u
+                                dw = pointlist[i2][3] - p1w
+                                bestdist = du * du + dw * dw
                                 for i in range(2, pointlist.Count): # we find the closest second point
-                                    if Vector3D(pointlist[i1][0], pointlist[i][0]).Length2D < Vector3D(pointlist[i1][0], pointlist[i2][0]).Length2D:
+                                    du = pointlist[i][2] - p1u
+                                    dw = pointlist[i][3] - p1w
+                                    dist = du * du + dw * dw
+                                    if dist < bestdist:
+                                        bestdist = dist
                                         i2 = i
                             # now that we have two close points we draw the line and delete them from the list
                             l = wv.Add(clr.GetClrType(Linestring))

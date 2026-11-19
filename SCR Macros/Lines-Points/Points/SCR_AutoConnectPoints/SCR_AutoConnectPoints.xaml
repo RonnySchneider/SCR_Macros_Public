@@ -10,6 +10,9 @@
             <Wpf:LayerPicker x:Name="layerpicker"/>
             <CheckBox x:Name="usepointid" Content="use Point-ID if possible" IsChecked="True" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
             <CheckBox x:Name="boltspecial" Content="Bolt Special - connect the two points&#xA;that are closest in 2D" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <CheckBox x:Name="useviewvector" Content="use current view viewvector" IsChecked="False" Margin="16,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center"
+                      IsEnabled="{Binding IsChecked, ElementName=boltspecial, Mode=OneWay}"
+                      ToolTip="2D distances are measured on a plane perpendicular to the viewing direction of the active view&#xA;(Plan View = plain 2D, 3D View = camera direction)"/>
             <CheckBox x:Name="addtosurface" Content="add as breakline to Surface" IsChecked="False" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
             <StackPanel IsEnabled="{Binding IsChecked, ElementName=addtosurface}">
                 <Label Content="FSL Surface:" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
