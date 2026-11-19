@@ -143,10 +143,11 @@
   </head>
   <body>
     <div class="wrapper" id="sitewidewrapper" style="">
-      <div id ="macrohelp" style="padding-left: 2%; padding-right: 2%;position: absolute; height: 100%; width: 80%; z-index: 2; left: 18%; top: 0px; list-style-type: none; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; white-space: normal; font-size: medium; overflow-y: scroll;">
+      <div id ="macrohelp" style="padding-left: 2%; padding-right: 2%;position: absolute; height: 100%; width: 78%; z-index: 2; left: 18%; top: 0px; list-style-type: none; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; white-space: normal; font-size: medium; overflow-y: scroll;">
         <h1 id="News" class="header1"><a id="mozTocId447017" class="mozTocH1"></a>News</h1>
         <ul>
 
+          <li>19/11/2026 – <a class="class2" href="#SCR_AutoConnectPoints">SCR_AutoConnectPoints</a> – Bolt Special can now measure distances across the active view's line of sight, to connect bolts in any direction, even horizontal ones</li>
           <li>18/11/2026 – <a class="class2" href="#SCR_RecurvePolyline">SCR_RecurvePolyline</a> <span class="auto-style2">(BETA)</span> – new Survey mode for picked-up lines, e.g. a surveyed centreline; the elements are fitted by least squares instead of passing through the vertices</li>
           <li>18/11/2026 – new <a class="class2" href="#SCR_IFCUnderside">SCR_IFCUnderside</a> <span class="auto-style2">(BETA)</span> – creates a surface along the underside of the selected IFC objects; vertical steps between objects become steep slopes</li>
           <li>15/11/2026 – new <a class="class2" href="#SCR_RecurvePolyline">SCR_RecurvePolyline</a> <span class="auto-style2">(BETA)</span> – re-engineers chorded polylines back into straights, tangent arcs, grades and vertical curves, so the lines can be edited again</li>
@@ -1535,10 +1536,10 @@
 
         <h3 id="SCR_BestFitPlane" class="header3"><a id="SCR_BestFitPlane"></a>SCR_BestFitPlane</h3>
           <ul>
-			  <li>works with TBC2024 only, uses some new release built-in computation methods</li>
+			  <li>works with TBC2024 or newer, uses some new release built-in computation methods</li>
 			  <li>works with standard and cloud points</li>
 			  <li>I wouldn’t advise selecting more than 15000 normal points, the fitting algorithm might take ages or fail</li>
-			  <li>in terms of cloud points, you can select as many as you want, it will automatically sample them down to around 15000, it will show a statistic at the end</li>
+			  <li>in terms of cloud points, you can select as many as you want, it will automatically sample them down to around 15000, it will show a summary at the end</li>
 			  <li>the macro does compute a temporary/intermediate surface from the selected/sampled points</li>
 			  <ul>
 			      <li>it’s mainly used to compute the outer boundary edge breakline, which can be used to limit the planar surface</li>
@@ -1626,7 +1627,7 @@
               <li>fetches the file tree of the public <a href="https://github.com/RonnySchneider/SCR_Macros_Public">SCR_Macros_Public</a> GitHub repository and compares it against your local SCR Macros folder</li>
               <li>each macro is shown in a grid with its local version, and a status of New, Up to date, Update available, Local is newer, Modified, Incomplete, Local only or Deleted</li>
               <li>version comparison reads <span class="auto-style3">cmdData.Version</span> from the local and remote .py file; file identity/changes are detected with a git-compatible blob SHA1 hash, so line-ending differences don't cause false positives</li>
-              <li>tick the macros to download (or Select All/Deselect All), then Download selected – files download in the background with a progress bar and can be cancelled mid-way</li>
+              <li>tick the macros to download (or use Select New/Updated, Select All or Deselect All), then Download selected – files download in the background with a progress bar and can be cancelled mid-way</li>
               <li>ticking any non-helper macro automatically also ticks the shared SCR_Imports.py/SCR_GlobalHelpers.py helper files, since macros depend on them</li>
               <li><span style="color:#CC0000; font-weight:bold;">!! rows marked "Local only" are macros that exist locally but not in the repo – ticking them will delete that macro's folder instead of downloading anything !!</span></li>
               <li>after a download, local folders that no longer exist in the repo and contain no .py file are silently removed (e.g. leftover resource files from a renamed/deleted macro)</li>
@@ -1902,6 +1903,7 @@
 			  <br>
 			  <li>large models with finely curved objects (pipes, round columns) contain many triangles and can take a while; the progress bar shows the current step and can be cancelled</li>
 			  <br>
+			  <img alt="" src="Media/SCR_IFCUnderside-1.png" width="100%"><br>
 		  </ul>
 
         <h3 id="SCR_PlaceObjects" class="header3"><a id="SCR_PlaceObjects"></a>SCR_PlaceObjects</h3>
@@ -2465,15 +2467,17 @@
 			  <li>the macro will start at the first point and will jump to the next closest one<br><br>
 			  <video controls="controls" width="800">
 			  <source src="./Media/SCR_AutoConnectPoints.mp4" type="video/mp4">Your browser does not support the video tag.</video>
-			  <br></li>
+			  <br><br></li>
 			  <li>it includes a special function for near vertical bolts (the 2D distance to the second point of the bolt must be smaller than to any other selected point), it won’t work for horizontal bolts<br><br>
 					<video controls="controls" width="800">
 					<source src="./Media/SCR_AutoConnectPoints_BoltSpecial.mp4" type="video/mp4">Your browser does not support the video tag.</video>
-			  <br></li>
+			  <br><br></li>
 			  <li>with "use current view viewvector" ticked, the Bolt Special measures the 2D distances on a plane perpendicular to the viewing direction of the active view<br>
 			  this lets you connect bolts in any direction, including horizontal ones: rotate a 3D View to look along the bolts and run the macro<br>
-			  in a Plan View this is the same as the normal 2D distance</li>
-			  <li>added option to add the line as breakline to a surface; makes it faster to fix wrong triangulations in a surface<br><br>
+			  in a Plan View this is the same as the normal 2D distance</li><br>
+					<video controls="controls" width="800">
+					<source src="./Media/SCR_AutoConnectPoints_BoltSpecial2.mp4" type="video/mp4">Your browser does not support the video tag.</video>
+			  <br><br><li>added option to add the line as breakline to a surface; makes it faster to fix wrong triangulations in a surface<br><br>
 					<img alt="" height="300" src="Media/SCR_AutoConnectPoints-1.png" border="1"> <img alt="" height="300" src="Media/SCR_AutoConnectPoints-2.png" border="1">
 			  </li><br>
 		  </ul>

@@ -96,8 +96,9 @@ _XAML = """<Window Background="#FFF3F3F7"
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <UniformGrid Grid.Row="0" Rows="1" Columns="4" Margin="0,0,0,6">
+        <UniformGrid Grid.Row="0" Rows="1" Columns="5" Margin="0,0,0,6">
             <Button x:Name="fetchbtn"       Content="&#x2193;  Fetch File List from GitHub" Height="30" Margin="0,0,4,0" FontWeight="Bold" Background="#FFBDE0FF"/>
+            <Button x:Name="selectnewbtn"   Content="Select New/Updated" Height="30" Margin="2,0"/>
             <Button x:Name="selectallbtn"   Content="Select All"   Height="30" Margin="2,0"/>
             <Button x:Name="deselectallbtn" Content="Deselect All" Height="30" Margin="2,0"/>
             <Button x:Name="helpbtn"        Content="Help"         Height="30" Margin="4,0,0,0"/>
@@ -164,7 +165,7 @@ def Setup(cmdData, macroFileFolder):
         cmdData.DefaultRibbonToolSize = 3
         cmdData.EnableNoProject       = True
 
-        cmdData.Version     = 1.15
+        cmdData.Version     = 1.151
         cmdData.MacroAuthor = "SCR"
         cmdData.MacroInfo   = r""
 
@@ -205,6 +206,7 @@ class SCR_MacroUpdateDialog(Window):
         self._cancel         = False
 
         self.fetchbtn.Click       += self._fetch_click
+        self.selectnewbtn.Click   += self._select_new_updated
         self.selectallbtn.Click   += self._select_all
         self.deselectallbtn.Click += self._deselect_all
         self.helpbtn.Click        += self._help_click
@@ -512,6 +514,29 @@ class SCR_MacroUpdateDialog(Window):
             row["download"] = True
         self._rebind_grid()
 
+    def _select_new_updated(self, sender, e):
+        # tick exactly the rows that are new, have an update or are incomplete; untick everything else
+        if self._dt is None:
+            return
+        self._propagating = True
+        try:
+            any_dl = False
+            for row in self._dt.Rows:
+                if row["path"].split("/")[-1].lower() in _HELPER_FILENAMES:
+                    continue
+                status = row["status"]
+                tick   = status in ("New", "Update available") or status.startswith("Incomplete")
+                row["download"] = tick
+                if tick and not row["path"].lower().endswith(".htm"):
+                    any_dl = True
+            # helpers are mandatory whenever a macro gets downloaded
+            for row in self._dt.Rows:
+                if row["path"].split("/")[-1].lower() in _HELPER_FILENAMES:
+                    row["download"] = any_dl
+        finally:
+            self._propagating = False
+        self._rebind_grid()
+
     def _deselect_all(self, sender, e):
         if self._dt is None:
             return
@@ -591,6 +616,7 @@ class SCR_MacroUpdateDialog(Window):
         self._downloading             = True
         self._cancel                  = False
         self.fetchbtn.IsEnabled       = False
+        self.selectnewbtn.IsEnabled   = False
         self.selectallbtn.IsEnabled   = False
         self.deselectallbtn.IsEnabled = False
         self.downloadbtn.Content      = "✕  Cancel"
@@ -739,6 +765,7 @@ class SCR_MacroUpdateDialog(Window):
             self.progressbar.Visibility   = Visibility.Collapsed
             self.fetchbtn.IsEnabled       = True
             self.downloadbtn.Content      = "↓  Download selected   –   ⚠ ticked 'Local only' files will be deleted"
+            self.selectnewbtn.IsEnabled   = True
             self.selectallbtn.IsEnabled   = True
             self.deselectallbtn.IsEnabled = True
             self._rebind_grid()
